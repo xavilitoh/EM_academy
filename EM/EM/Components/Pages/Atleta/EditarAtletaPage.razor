@@ -1,0 +1,56 @@
+@page "/Atletas/Editar/{Id:int}"
+@using EM.Components.Pages.Atleta.Componentes
+@using EM.Extentions
+@inject EM.Repositorio.IAtletaRepositorio RepositorioAtleta
+@rendermode InteractiveServer
+@inject NotificationService NotificationService
+<RadzenComponents @rendermode="InteractiveServer" />
+<h3>Editar atleta @_atleta?.Persona.FullName</h3>
+
+<AtletaForm Atleta="_atleta" EditMode="true" Guardar="Guardar"></AtletaForm>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    Atleta? _atleta = new Atleta() { Persona = new()};
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _atleta = await RepositorioAtleta.Get(Id);
+        Console.WriteLine(_atleta);
+    }
+
+    
+    async Task Guardar(Atleta? atleta)
+    {
+        try
+        {
+            if (atleta != null) 
+            {
+                await RepositorioAtleta.Update(atleta);
+                NotificationService.Notify(                                         
+                    new NotificationMessage                                         
+                    {                                                               
+                        Style = "position: absolute; top: -100%; right: 50%;",      
+                        Severity = NotificationSeverity.Success,                      
+                        Summary = "",                                          
+                        Detail = "Registro guardado",                     
+                        Duration = 5000                                             
+                    });
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            NotificationService.Notify(                                         
+                new NotificationMessage                                         
+                {                                                               
+                    Style = "position: absolute; top: -100%; right: 50%;",      
+                    Severity = NotificationSeverity.Error,                      
+                    Summary = "",                                          
+                    Detail = e.GetMEssage(),                     
+                    Duration = 5000                                             
+                });
+        }
+        StateHasChanged();
+    }
+}

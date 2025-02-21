@@ -1,0 +1,40 @@
+@page "/Disciplina/Editar/{id:int}"
+@inject EM.Repositorio.IDiciplinaRepositorio RepositorioDisciplina
+@rendermode InteractiveServer
+@inject NotificationService NotificationService
+<RadzenComponents @rendermode="InteractiveServer" />
+<h3>Editar Disciplina @disciplina.Descripcion</h3>
+
+<DisciplinaForm Guardar="Guardar" EditMode="true" Disciplina=disciplina />
+
+@code {
+    [Parameter] public int id { get; set; }
+    Disciplinas? disciplina;
+
+    protected override async Task OnInitializedAsync()
+    {
+        disciplina = await RepositorioDisciplina.Get(id);
+    }
+
+    async Task Guardar(Disciplinas? disciplina)
+    {
+        try
+        {
+            await RepositorioDisciplina.Update(disciplina);
+            NotificationService.Notify(                                         
+                new NotificationMessage                                         
+                {                                                               
+                    Style = "position: absolute; top: -100%; right: 50%;",      
+                    Severity = NotificationSeverity.Success,                      
+                    Summary = "",                                          
+                    Detail = "Registro guardado",                     
+                    Duration = 5000                                             
+                });                                                             
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        StateHasChanged();
+    }
+}

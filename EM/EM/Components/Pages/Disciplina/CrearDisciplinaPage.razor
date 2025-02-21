@@ -1,0 +1,47 @@
+@page "/Disciplina/Crear"
+@using EM.Entidades
+@inject EM.Repositorio.IDiciplinaRepositorio RepositorioDisciplina
+@rendermode InteractiveServer
+@inject NotificationService NotificationService
+<RadzenComponents @rendermode="InteractiveServer" />
+
+<h3>Nueva Disciplina</h3>
+
+<DisciplinaForm Guardar="Guardar"  Disciplina="new Disciplinas()"/>
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+    
+    async Task Guardar(Disciplinas? disciplina)
+    {
+        try
+        {
+            await RepositorioDisciplina.Save(disciplina);
+            NotificationService.Notify(
+                new NotificationMessage
+                {
+                    Style = "position: absolute; top: -100%; right: 50%;",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "",
+                    Detail = "Registro guardado",
+                    Duration = 5000
+                });
+        }
+        catch (Exception e)
+        {
+            NotificationService.Notify(                                         
+                new NotificationMessage                                         
+                {                                                               
+                    Style = "position: absolute; top: -100%; right: 50%;",      
+                    Severity = NotificationSeverity.Error,                      
+                    Summary = "",                                          
+                    Detail = e.Message,                     
+                    Duration = 5000                                             
+                });
+        }
+    }
+
+}

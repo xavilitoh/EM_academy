@@ -1,0 +1,47 @@
+@page "/Atletas/Crear"
+@using EM.Components.Pages.Atleta.Componentes
+@inject IAtletaRepositorio AtletaRepositorio
+@inject NotificationService NotificationService
+<PageTitle>Atletas</PageTitle>
+<h3>Registro de Nuevo Atleta</h3>
+
+<AtletaForm Guardar="Guardar" Atleta="_atleta" EditMode="false"/>
+
+@code {
+    Atleta _atleta = new();
+
+    protected override void OnInitialized()
+    {
+        _atleta = new Atleta(){Persona = new()};
+    }
+
+
+    async Task Guardar(Atleta atleta)
+    {
+        try
+        {
+            await AtletaRepositorio.Save(atleta);
+            NotificationService.Notify(
+                new NotificationMessage
+                {
+                    Style = "position: absolute; top: -100%; right: 50%;",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "",
+                    Detail = "Registro guardado",
+                    Duration = 5000
+                });
+        }
+        catch (Exception e)
+        {
+            NotificationService.Notify(                                         
+                new NotificationMessage                                         
+                {                                                               
+                    Style = "position: absolute; top: -100%; right: 50%;",       
+                    Severity = NotificationSeverity.Error,                      
+                    Summary = "",                                          
+                    Detail = e.Message,                     
+                    Duration = 5000                                             
+                });
+        }
+    }
+}

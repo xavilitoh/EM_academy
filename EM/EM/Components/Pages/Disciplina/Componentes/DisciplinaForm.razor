@@ -1,0 +1,66 @@
+@using EM.Entidades
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+@inject NotificationService NotificationService
+@inject IJSRuntime JSRuntime
+
+<RadzenTemplateForm Data="@Disciplina">
+    <RadzenFieldset Text="Formulario de Disciplina">
+        <RadzenRow>
+            <RadzenNumeric hidden="true" @bind-Value="@Disciplina.Id"/>
+        </RadzenRow>
+
+        <RadzenRow>
+            <RadzenLabel Component="disciplina" Property="Id"/>
+            <RadzenFormField Text="Nombre" Variant="Variant.Outlined">
+                <RadzenTextBox Placeholder="Nombre" @bind-Value="@Disciplina.Descripcion"/>
+            </RadzenFormField>
+            <RadzenRequiredValidator Component="disciplina" Property="Descripcion" Text="Esto es requerido"/>
+        </RadzenRow>
+        <br/>
+        <RadzenRow>
+            <RadzenButton Icon="cancel" ButtonType="ButtonType.Button" class="rz-danger" Click="GoBack" Text="Cancelar" />
+            <RadzenButton Icon="save" ButtonType="ButtonType.Button" class="rz-info" Click="EnviarForm" Text="Guardar" />
+        </RadzenRow>
+        
+    </RadzenFieldset>
+    
+</RadzenTemplateForm>
+
+@code {
+    [Parameter] public EventCallback<Disciplinas?> Guardar { get; set; }
+    [Parameter] public bool EditMode { get; set; }
+    [Parameter] public Disciplinas Disciplina { get; set; }
+    
+    
+    override protected async Task OnInitializedAsync()
+    {
+        
+
+    }
+    
+    private async Task GoBack()
+    {
+        await JSRuntime.InvokeVoidAsync("history.back");
+    }
+    
+    private async Task EnviarForm()
+    {
+        if (string.IsNullOrEmpty(Disciplina?.Descripcion))
+        {
+            NotificationService.Notify(
+                new NotificationMessage
+                {
+                    Style = "position: absolute; top: -100%; right: 50%;",
+                    Severity = NotificationSeverity.Error, 
+                    Summary = "Error", 
+                    Detail = "La descripción es requerida", 
+                    Duration = 5000
+                });
+            return;
+            
+        }
+        await Guardar.InvokeAsync(Disciplina);
+        NavigationManager.NavigateTo("/Disciplina");
+    }
+}

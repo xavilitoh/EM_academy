@@ -1,0 +1,85 @@
+@using EM.Models
+@inject IJSRuntime JsRuntime
+@inject IDiciplinaRepositorio DisciplinaRepositorio
+@inject NavigationManager NavigationManager
+
+<RadzenTemplateForm Data="@Atleta">
+    <RadzenFieldset Text="Formulario de Atleta">
+        <RadzenRow>
+            <RadzenNumeric hidden="true" @bind-Value="@Atleta.Id"/>
+        </RadzenRow>
+
+        <RadzenRow>
+            <RadzenFormField Text="Nombre" Variant="Variant.Outlined">
+                <RadzenTextBox Placeholder="Nombre" @bind-Value="@Atleta.Persona.Nombre"/>
+                <RadzenRequiredValidator Component="atleta" Property="@Atleta.Persona.Nombre" Text="Esto es requerido"/>
+            </RadzenFormField>
+            <RadzenFormField Text="Apellido" Variant="Variant.Outlined">
+                <RadzenTextBox Placeholder="Nombre" @bind-Value="@Atleta.Persona.Apellido"/>
+                <RadzenRequiredValidator Component="atleta" Property="@Atleta.Persona.Apellido" Text="Esto es requerido"/>
+            </RadzenFormField>
+        </RadzenRow>
+        <br/>
+        <RadzenRow>
+            <RadzenFormField Text="Peso" Variant="Variant.Outlined">
+                <RadzenNumeric Placeholder="Peso" @bind-Value="@Atleta.Altura"/>
+                <RadzenRequiredValidator Component="atleta" Property="@Atleta.Altura" Text="Esto es requerido"/>
+            </RadzenFormField>
+
+            <RadzenFormField Text="Altura" Variant="Variant.Outlined">
+                <RadzenNumeric Placeholder="Peso" @bind-Value="@Atleta.Peso"/>
+                <RadzenRequiredValidator Component="atleta" Property="@Atleta.Peso" Text="Esto es requerido"/>
+            </RadzenFormField>
+        </RadzenRow>
+        <br/>
+        <RadzenRow>
+            <RadzenFormField Text="Nacionalidad" Variant="Variant.Outlined">
+                <RadzenNumeric Placeholder="Peso" @bind-Value="@Atleta.Persona.Nacionalidad"/>
+                <RadzenRequiredValidator Component="atleta" Property="@Atleta.Altura" Text="Esto es requerido"/>
+            </RadzenFormField>
+            <RadzenFormField Text="Fecha de Nacimiento" Variant="Variant.Outlined">
+                <RadzenDatePicker Placeholder="Fecha de Nacimiento" @bind-Value="@Atleta.Persona.FechaNacimiento"/>
+                <RadzenRequiredValidator Component="atleta" Property="@Atleta.Persona.FechaNacimiento" Text="Esto es requerido"/>
+            </RadzenFormField>
+        </RadzenRow>
+        <br/>
+        <RadzenRow>
+            <RadzenFormField Text="Disciplina" Variant="Variant.Outlined">
+                <RadzenDropDown @bind-Value=@Atleta.IdDisciplina Data=@_disciplinas TextProperty="@nameof(SelectListItem.Value)" ValueProperty="Id" AllowClear=true Placeholder="Seleccione una Disciplina" Style="width: 100%; max-width: 400px;" Name="DropDownClear" />
+                <RadzenRequiredValidator Component="atleta" Property="@Atleta.Persona.FechaNacimiento" Text="Esto es requerido"/>
+            </RadzenFormField>
+        </RadzenRow>
+        <br/>
+        <RadzenRow>
+            <RadzenButton Icon="cancel" ButtonType="ButtonType.Button" class="rz-danger" Click="GoBack" Text="Cancelar" />
+            <RadzenButton Icon="save" ButtonType="ButtonType.Button" class="rz-info" Click="EnviarForm" Text="Guardar" />
+        </RadzenRow>
+
+    </RadzenFieldset>
+
+</RadzenTemplateForm>
+
+@code {
+    [Parameter] public EventCallback<Atleta> Guardar { get; set; }
+    [Parameter] public bool EditMode { get; set; }
+    [Parameter] public Atleta Atleta { get; set; } = new (){Persona = new Persona()};
+    
+    
+    List<SelectListItem> _disciplinas = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _disciplinas = await DisciplinaRepositorio.SelectList();
+    }
+
+    private async Task GoBack()
+    {
+        await JsRuntime.InvokeVoidAsync("history.back");
+    }
+
+    private async Task EnviarForm()
+    {
+        await Guardar.InvokeAsync(Atleta);
+        NavigationManager.NavigateTo("/Atletas");
+    }
+}
