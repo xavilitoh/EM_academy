@@ -74,9 +74,9 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
-
-
 app.UseAntiforgery();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
@@ -84,7 +84,6 @@ app.MapRazorComponents<App>()
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
-app.UseHsts();
 app.Run();
 
 
