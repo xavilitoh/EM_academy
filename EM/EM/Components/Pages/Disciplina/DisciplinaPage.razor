@@ -1,11 +1,9 @@
 @page "/Disciplina"
-@using EM.Repositorio
-@using EM.Entidades
 @attribute [StreamRendering]
 @inject IDiciplinaRepositorio DiciplinaRepositorio
 @inject NavigationManager NavigationManager
 @inject NotificationService NotificationService
-
+@attribute [Authorize]
 <PageTitle>Disciplinas</PageTitle>
 
 
