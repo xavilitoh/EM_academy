@@ -1,18 +1,17 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
-@inject CookieThemeService CookieThemeService
 <RadzenComponents @rendermode="InteractiveServer" />
 <RadzenLayout>
     <RadzenHeader>
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="5">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="5">
-                <RadzenSidebarToggle Click="@(() => sidebar1Expanded = !sidebar1Expanded)"/>
+                <RadzenSidebarToggle Click="@(() => _sidebar1Expanded = !_sidebar1Expanded)"/>
                 <RadzenLabel Text="Academia Deportiva EM"/>
             </RadzenStack>
             <RadzenAppearanceToggle/>
         </RadzenStack>
     </RadzenHeader>
-    <RadzenSidebar @bind-Expanded="@sidebar1Expanded">
+    <RadzenSidebar @bind-Expanded="@_sidebar1Expanded">
         <RadzenPanelMenu>
             <RadzenPanelMenuItem Text="Inicio" Icon="home" Click='() => NavigationManager.NavigateTo("/")' />
             <RadzenPanelMenuItem Text="Disciplinas" Icon="motorcycle" Click='() => NavigationManager.NavigateTo("/Disciplina")' />
@@ -36,25 +35,21 @@
 </div>
 
 @code {
-    bool sidebar1Expanded = true;
+    bool _sidebar1Expanded = true;
     
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; }
+    [CascadingParameter] private HttpContext? HttpContext { get; set; }
 
-    [Inject]
-    private ThemeService ThemeService { get; set; }
+    [Inject] private ThemeService? ThemeService { get; set; }
 
     protected override void OnInitialized()
     {
-        base.OnInitialized();
-
         if (HttpContext != null)
         {
             var theme = HttpContext.Request.Cookies["theme"];
 
             if (!string.IsNullOrEmpty(theme))
             {
-                ThemeService.SetTheme(theme, false);
+                ThemeService?.SetTheme(theme, false);
             }
         }
     }
