@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using EM.Components;
 using EM.Components.Account;
 using EM.Data;
 using EM.Repositorio;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,9 +25,10 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
+                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContext<ApplicationDbContext>(options => { options.UseSqlite(connectionString); }
+);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -40,9 +41,9 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 builder.Services.AddScoped<IDiciplinaRepositorio, DiciplinaRepositorio>();
 builder.Services.AddScoped<IAtletaRepositorio, AtletaRepositorio>();
 builder.Services.AddRadzenComponents();
- builder.Services.AddScoped<Radzen.DialogService>();
- builder.Services.AddScoped<Radzen.NotificationService>();
- builder.Services.AddScoped<Radzen.ThemeService>();
+builder.Services.AddScoped<DialogService>();
+builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<ThemeService>();
 
 builder.Services.AddRadzenCookieThemeService(options =>
 {
@@ -69,6 +70,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
     context.Database.Migrate();
+    await SeedDefaultUser(services);
 }
 
 app.UseHttpsRedirection();
@@ -84,3 +86,20 @@ app.MapRazorComponents<App>()
 app.MapAdditionalIdentityEndpoints();
 
 app.Run();
+
+
+static async Task SeedDefaultUser(IServiceProvider serviceProvider)
+{
+    var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var user = await userManager.FindByEmailAsync("usuario1@prueba.dev");
+    if (user == null)
+    {
+        user = new ApplicationUser
+        {
+            UserName = "usuario1@prueba.dev",
+            Email = "usuario1@prueba.dev",
+            EmailConfirmed = true
+        };
+        await userManager.CreateAsync(user, "Abcd1234.");
+    }
+}

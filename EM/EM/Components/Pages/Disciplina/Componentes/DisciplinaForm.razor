@@ -1,30 +1,40 @@
-@using EM.Entidades
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
 @inject NotificationService NotificationService
 @inject IJSRuntime JSRuntime
 
 <RadzenTemplateForm Data="@Disciplina">
-    <RadzenFieldset Text="Formulario de Disciplina">
-        <RadzenRow>
-            <RadzenNumeric hidden="true" @bind-Value="@Disciplina.Id"/>
-        </RadzenRow>
-
-        <RadzenRow>
-            <RadzenLabel Component="disciplina" Property="Id"/>
-            <RadzenFormField Text="Nombre" Variant="Variant.Outlined">
-                <RadzenTextBox Placeholder="Nombre" @bind-Value="@Disciplina.Descripcion"/>
-            </RadzenFormField>
-            <RadzenRequiredValidator Component="disciplina" Property="Descripcion" Text="Esto es requerido"/>
-        </RadzenRow>
-        <br/>
-        <RadzenRow>
-            <RadzenButton Icon="cancel" ButtonType="ButtonType.Button" class="rz-danger" Click="GoBack" Text="Cancelar" />
-            <RadzenButton Icon="save" ButtonType="ButtonType.Button" class="rz-info" Click="EnviarForm" Text="Guardar" />
-        </RadzenRow>
-        
-    </RadzenFieldset>
-    
+    <RadzenRow Gap="2rem" class="rz-p-0 rz-p-lg-12" JustifyContent="JustifyContent.Center">
+        <RadzenColumn Size="12" SizeMD="12">
+            <RadzenStack>
+                <RadzenFieldset Text="Formulario de Disciplina">
+                    <RadzenStack Gap="1rem">
+                        <RadzenRow>
+                            <RadzenNumeric hidden="true" @bind-Value="@Disciplina.Id"/>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenLabel Component="disciplina" Property="Id" Text="Nombre"/>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="8">
+                                <RadzenFormField Text="Nombre" Variant="Variant.Outlined">
+                                    <RadzenTextBox Placeholder="Nombre" Style="width: 100%"
+                                                   @bind-Value="@Disciplina.Descripcion"/>
+                                </RadzenFormField>
+                            </RadzenColumn>
+                            <RadzenRequiredValidator Component="disciplina" Property="Descripcion"
+                                                     Text="Esto es requerido"/>
+                        </RadzenRow>
+                    </RadzenStack>
+                </RadzenFieldset>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="1rem"
+                 class="rz-mt-8 rz-mb-4">
+        <RadzenButton Icon="cancel" ButtonType="ButtonType.Button" class="rz-danger" Click="GoBack" Text="Cancelar"/>
+        <RadzenButton Icon="save" ButtonType="ButtonType.Button" class="rz-info" Click="EnviarForm" Text="Guardar"/>
+    </RadzenStack>
 </RadzenTemplateForm>
 
 @code {

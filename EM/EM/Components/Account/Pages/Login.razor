@@ -9,8 +9,8 @@
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
-
 @layout LoginLayout
+@rendermode InteractiveAuto
 
 <PageTitle>Inicio de sesion</PageTitle>
 
@@ -85,28 +85,35 @@
 
     public async Task LoginUser()
     {
-        // This doesn't count login failures towards account lockout
-        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
-        if (result.Succeeded)
+        try
         {
-            Logger.LogInformation("User logged in.");
-            RedirectManager.RedirectTo(ReturnUrl);
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+            var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+            if (result.Succeeded)
+            {
+                Logger.LogInformation("User logged in.");
+                RedirectManager.RedirectTo(ReturnUrl);
+            }
+            else if (result.RequiresTwoFactor)
+            {
+                RedirectManager.RedirectTo(
+                    "Account/LoginWith2fa",
+                    new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
+            }
+            else if (result.IsLockedOut)
+            {
+                Logger.LogWarning("User account locked out.");
+                RedirectManager.RedirectTo("Account/Lockout");
+            }
+            else
+            {
+                _errorMessage = "Error: Invalid login attempt.";
+            }
         }
-        else if (result.RequiresTwoFactor)
+        catch (Exception e)
         {
-            RedirectManager.RedirectTo(
-                "Account/LoginWith2fa",
-                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
-        }
-        else if (result.IsLockedOut)
-        {
-            Logger.LogWarning("User account locked out.");
-            RedirectManager.RedirectTo("Account/Lockout");
-        }
-        else
-        {
-            _errorMessage = "Error: Invalid login attempt.";
+            Console.WriteLine(e);
         }
     }
 
