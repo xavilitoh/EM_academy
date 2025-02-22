@@ -104,6 +104,6 @@ public class DiciplinaRepositorio : IDiciplinaRepositorio
 
     public async Task<bool> CambiaEstado(int id, bool nuevoEstado = false)
     {
-        throw new NotImplementedException();
+        return false;
     }
 }
