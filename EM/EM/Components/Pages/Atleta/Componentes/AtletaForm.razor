@@ -21,12 +21,12 @@
         </RadzenRow>
         <br/>
         <RadzenRow>
-            <RadzenFormField Text="Peso" Variant="Variant.Outlined">
-                <RadzenNumeric Placeholder="Peso" @bind-Value="@Atleta.Altura"/>
+            <RadzenFormField Text="Altura" Variant="Variant.Outlined">
+                <RadzenNumeric Placeholder="Altura" @bind-Value="@Atleta.Altura"/>
                 <RadzenRequiredValidator Component="atleta" Property="@Atleta.Altura" Text="Esto es requerido"/>
             </RadzenFormField>
 
-            <RadzenFormField Text="Altura" Variant="Variant.Outlined">
+            <RadzenFormField Text="Peso" Variant="Variant.Outlined">
                 <RadzenNumeric Placeholder="Peso" @bind-Value="@Atleta.Peso"/>
                 <RadzenRequiredValidator Component="atleta" Property="@Atleta.Peso" Text="Esto es requerido"/>
             </RadzenFormField>

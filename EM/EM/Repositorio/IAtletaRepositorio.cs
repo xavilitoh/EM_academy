@@ -35,16 +35,17 @@ public class AtletaRepositorio(ApplicationDbContext context) : IAtletaRepositori
     {
         try
         {
-            var existingEntity = await context.Atletas
-                .AsNoTracking()
+            var toUpdate = await context.Atletas
+                .Include(a=> a.Persona)
                 .FirstOrDefaultAsync(a => a.Id == modelo.Id);
-
-            if (existingEntity != null)
+            
+            if (toUpdate != null)
             {
-                context.Entry(existingEntity).State = EntityState.Detached;
+                context.Entry(toUpdate).CurrentValues.SetValues(modelo);
+                context.Entry(toUpdate.Persona).CurrentValues.SetValues(modelo.Persona);
             }
             
-            context.Atletas.Update(modelo);
+            context.Atletas.Update(toUpdate);
             return await context.SaveChangesAsync();
         }
         catch (Exception e)
