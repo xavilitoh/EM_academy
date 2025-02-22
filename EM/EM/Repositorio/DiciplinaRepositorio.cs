@@ -45,7 +45,7 @@ public class DiciplinaRepositorio : IDiciplinaRepositorio
                 _dbContext.Entry(toUpdate).CurrentValues.SetValues(modelo);
             }
 
-            _dbContext.Diciplinas.Update(modelo);
+            if (toUpdate != null) _dbContext.Diciplinas.Update(toUpdate);
             return await _dbContext.SaveChangesAsync();
         }
         catch (Exception e)
