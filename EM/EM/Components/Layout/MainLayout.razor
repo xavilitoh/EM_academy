@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
+<AntiforgeryToken />
 <RadzenComponents @rendermode="InteractiveServer" />
 <RadzenLayout>
     <RadzenHeader>
@@ -16,6 +17,24 @@
             <RadzenPanelMenuItem Text="Inicio" Icon="home" Click='() => NavigationManager.NavigateTo("/")' />
             <RadzenPanelMenuItem Text="Disciplinas" Icon="motorcycle" Click='() => NavigationManager.NavigateTo("/Disciplina")' />
             <RadzenPanelMenuItem Text="Atletas" Icon="face" Click='() => NavigationManager.NavigateTo("/Atletas")' />
+            <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Manage">
+                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <form action="Account/Logout" method="post">
+                        <AntiforgeryToken/>
+                        <input type="hidden" name="ReturnUrl" value="@_currentUrl"/>
+                        <button type="submit" class="nav-link">
+                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                        </button>
+                    </form>
+                </div>
+            </Authorized>
+            </AuthorizeView>
         </RadzenPanelMenu>
     </RadzenSidebar>
     <RadzenBody>
@@ -40,9 +59,12 @@
     [CascadingParameter] private HttpContext? HttpContext { get; set; }
 
     [Inject] private ThemeService? ThemeService { get; set; }
+    string _currentUrl = "";
 
     protected override void OnInitialized()
     {
+        _currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
         if (HttpContext != null)
         {
             var theme = HttpContext.Request.Cookies["theme"];
@@ -52,5 +74,11 @@
                 ThemeService?.SetTheme(theme, false);
             }
         }
+    }
+    
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        _currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
     }
 }

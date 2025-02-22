@@ -1,14 +1,14 @@
 using System.Security.Claims;
 using System.Text.Json;
+using EM.Components.Account.Pages;
+using EM.Components.Account.Pages.Manage;
+using EM.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
-using EM.Components.Account.Pages;
-using EM.Components.Account.Pages.Manage;
-using EM.Data;
 
 namespace Microsoft.AspNetCore.Routing;
 
@@ -49,7 +49,7 @@ internal static class IdentityComponentsEndpointRouteBuilderExtensions
         {
             await signInManager.SignOutAsync();
             return TypedResults.LocalRedirect($"~/{returnUrl}");
-        });
+        }).DisableAntiforgery();
 
         var manageGroup = accountGroup.MapGroup("/Manage").RequireAuthorization();
 

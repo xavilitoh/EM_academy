@@ -1,10 +1,8 @@
 @page "/Login"
-
 @using System.ComponentModel.DataAnnotations
 @using EM.Components.Account
 @using EM.Components.Layout
 @using EM.Data
-@using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
 
 @inject SignInManager<ApplicationUser> SignInManager
@@ -12,7 +10,7 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 @layout LoginLayout
-@rendermode InteractiveServer
+@* @rendermode InteractiveServer *@
 
 <PageTitle>Login</PageTitle>
 
@@ -28,7 +26,7 @@
     <RadzenColumn Size="12" SizeMD="6">
         <RadzenCard class="rz-shadow-0 rz-border-radius-0 rz-p-12">
 
-            <RadzenTemplateForm Data=@("Localization")>
+            <RadzenTemplateForm Data=@("Localization") >
                 <RadzenLogin AllowRegister="false" AllowResetPassword="true"
                              AllowRememberMe="true"
                              LoginText="Iniciar Sesion" UserText="Usuario" PasswordText="Contraseña"

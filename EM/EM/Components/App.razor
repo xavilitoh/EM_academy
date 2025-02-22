@@ -16,7 +16,14 @@
 </head>
 
 <body>
-<Routes />
+@if (_logeado)
+{
+    <Routes/>
+}
+else
+{
+    <NoLoggedRoutes/>
+}
 <script src="_framework/blazor.web.js"></script>
 <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Colors).Assembly.GetName().Version)"></script>
 <script>
@@ -42,8 +49,11 @@
     [Inject]
     private ThemeService? ThemeService { get; set; }
 
+    bool _logeado = false;
+
     protected override void OnInitialized()
     {
+        
         base.OnInitialized();
 
         if (HttpContext != null)
@@ -53,6 +63,10 @@
             if (!string.IsNullOrEmpty(theme))
             {
                 ThemeService?.SetTheme(theme, false);
+            }
+            if (HttpContext.User.Identity != null && HttpContext.User.Identity.IsAuthenticated)
+            {
+                _logeado = true;
             }
         }
     }
