@@ -3,7 +3,7 @@
 @inject NotificationService NotificationService
 @inject IJSRuntime JSRuntime
 
-<RadzenTemplateForm Data="@Disciplina">
+<RadzenTemplateForm Data="@Disciplina" Submit="Guardar" InvalidSubmit="() => { }">
     <RadzenRow Gap="2rem" class="rz-p-0 rz-p-lg-12" JustifyContent="JustifyContent.Center">
         <RadzenColumn Size="12" SizeMD="12">
             <RadzenStack>
@@ -18,12 +18,13 @@
                             </RadzenColumn>
                             <RadzenColumn Size="12" SizeMD="8">
                                 <RadzenFormField Text="Nombre" Variant="Variant.Outlined">
-                                    <RadzenTextBox Placeholder="Nombre" Style="width: 100%"
+                                    <RadzenTextBox Name="Nombre" Placeholder="Nombre" Style="width: 100%"
                                                    @bind-Value="@Disciplina.Descripcion"/>
+                                    <RadzenRequiredValidator Component="Nombre" Property="Descripcion"
+                                                             Text="Esto es requerido"/>
                                 </RadzenFormField>
+
                             </RadzenColumn>
-                            <RadzenRequiredValidator Component="disciplina" Property="Descripcion"
-                                                     Text="Esto es requerido"/>
                         </RadzenRow>
                     </RadzenStack>
                 </RadzenFieldset>
@@ -33,44 +34,17 @@
     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="1rem"
                  class="rz-mt-8 rz-mb-4">
         <RadzenButton Icon="cancel" ButtonType="ButtonType.Button" class="rz-danger" Click="GoBack" Text="Cancelar"/>
-        <RadzenButton Icon="save" ButtonType="ButtonType.Button" class="rz-info" Click="EnviarForm" Text="Guardar"/>
+        <RadzenButton Icon="save" ButtonType="ButtonType.Submit" class="rz-info" Text="Guardar"/>
     </RadzenStack>
 </RadzenTemplateForm>
 
 @code {
     [Parameter] public EventCallback<Disciplinas?> Guardar { get; set; }
     [Parameter] public bool EditMode { get; set; }
-    [Parameter] public Disciplinas Disciplina { get; set; }
-    
-    
-    override protected async Task OnInitializedAsync()
-    {
-        
-
-    }
+    [Parameter] public Disciplinas? Disciplina { get; set; }
     
     private async Task GoBack()
     {
         await JSRuntime.InvokeVoidAsync("history.back");
-    }
-    
-    private async Task EnviarForm()
-    {
-        if (string.IsNullOrEmpty(Disciplina?.Descripcion))
-        {
-            NotificationService.Notify(
-                new NotificationMessage
-                {
-                    Style = "position: absolute; top: -100%; right: 50%;",
-                    Severity = NotificationSeverity.Error, 
-                    Summary = "Error", 
-                    Detail = "La descripción es requerida", 
-                    Duration = 5000
-                });
-            return;
-            
-        }
-        await Guardar.InvokeAsync(Disciplina);
-        NavigationManager.NavigateTo("/Disciplina");
     }
 }

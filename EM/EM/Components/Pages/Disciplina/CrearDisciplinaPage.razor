@@ -1,8 +1,9 @@
 @page "/Disciplina/Crear"
-@using EM.Entidades
-@inject EM.Repositorio.IDiciplinaRepositorio RepositorioDisciplina
+@inject IDiciplinaRepositorio RepositorioDisciplina
 @rendermode InteractiveServer
 @inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+
 <RadzenComponents @rendermode="InteractiveServer" />
 
 <h3>Nueva Disciplina</h3>
@@ -29,6 +30,7 @@
                     Detail = "Registro guardado",
                     Duration = 5000
                 });
+            NavigationManager.NavigateTo("/Disciplina");
         }
         catch (Exception e)
         {

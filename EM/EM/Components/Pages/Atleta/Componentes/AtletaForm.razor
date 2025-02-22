@@ -2,7 +2,7 @@
 @inject IJSRuntime JsRuntime
 @inject IDiciplinaRepositorio DisciplinaRepositorio
 
-<RadzenTemplateForm Data="@Atleta" Submit=@Guardar InvalidSubmit=@EnviarForm>
+<RadzenTemplateForm Data="@Atleta" Submit=@Guardar InvalidSubmit="() => {}">
     <RadzenRow>
         <RadzenNumeric hidden="true" @bind-Value="@Atleta.Id"/>
     </RadzenRow>
@@ -74,9 +74,12 @@
                         </RadzenColumn>
                         <RadzenColumn Size="12" SizeMD="8">
                             <RadzenFormField Text="Altura" Variant="Variant.Outlined">
-                                <RadzenNumeric Name="Altura" Placeholder="Altura" @bind-Value="@Atleta.Altura"/>
+                                <RadzenNumeric Name="Altura" Placeholder="Altura" @bind-Value="@Atleta.Altura" ta/>
                                 <RadzenRequiredValidator Component="Altura" Property="@Atleta.Altura"
                                                          Text="Esto es requerido"/>
+                                <RadzenCompareValidator Value=@objetivoAltura Component="Peso"
+                                                        Style="position: absolute" Operator=@CompareOperator.GreaterThan
+                                                        Text="El valor debe ser mayor"/>
                             </RadzenFormField>
                         </RadzenColumn>
                     </RadzenRow>
@@ -89,6 +92,9 @@
                                 <RadzenNumeric Name="Peso" Placeholder="Peso" @bind-Value="@Atleta.Peso"/>
                                 <RadzenRequiredValidator Component="Peso" Property="@Atleta.Peso"
                                                          Text="Esto es requerido"/>
+                                <RadzenCompareValidator Value=@objetivoPeso Component="Peso" Style="position: absolute"
+                                                        Operator=@CompareOperator.GreaterThan
+                                                        Text="El valor debe ser mayor"/>
                             </RadzenFormField>
                         </RadzenColumn>
                     </RadzenRow>
@@ -121,8 +127,9 @@
     [Parameter] public EventCallback<Atleta> Guardar { get; set; }
     [Parameter] public bool EditMode { get; set; }
     [Parameter] public Atleta Atleta { get; set; } = new (){Persona = new Persona()};
-    
-    
+
+    decimal objetivoPeso = 10m;
+    decimal objetivoAltura = 2m;
     List<SelectListItem> _disciplinas = new();
 
     protected override async Task OnInitializedAsync()
@@ -133,9 +140,5 @@
     private async Task GoBack()
     {
         await JsRuntime.InvokeVoidAsync("history.back");
-    }
-
-    private async Task EnviarForm()
-    {
     }
 }

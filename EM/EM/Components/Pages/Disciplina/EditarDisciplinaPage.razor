@@ -1,7 +1,9 @@
 @page "/Disciplina/Editar/{id:int}"
-@inject EM.Repositorio.IDiciplinaRepositorio RepositorioDisciplina
+@inject IDiciplinaRepositorio RepositorioDisciplina
 @rendermode InteractiveServer
 @inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+
 <RadzenComponents @rendermode="InteractiveServer" />
 <h3>Editar Disciplina @disciplina.Descripcion</h3>
 
@@ -28,8 +30,10 @@
                     Severity = NotificationSeverity.Success,                      
                     Summary = "",                                          
                     Detail = "Registro guardado",                     
-                    Duration = 5000                                             
-                });                                                             
+                    Duration = 5000
+                });
+
+            NavigationManager.NavigateTo("/Disciplina");
         }
         catch (Exception e)
         {
