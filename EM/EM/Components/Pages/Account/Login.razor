@@ -1,11 +1,10 @@
 @page "/Login"
-
 @using System.ComponentModel.DataAnnotations
 @using EM.Components.Account
 @using EM.Components.Layout
+@using EM.Data
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
-@using EM.Data
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject ILogger<Login> Logger
@@ -40,10 +39,10 @@
                              Login="OnLogin"/>
             </RadzenTemplateForm>
 
-            @if (!string.IsNullOrEmpty(errorMessage))
+            @if (!string.IsNullOrEmpty(_errorMessage))
             {
                 <RadzenAlert AllowClose="false" Icon="Error" AlertStyle="AlertStyle.Danger" Variant="Variant.Flat" Shade="Shade.Lighter">
-                    @errorMessage
+                    @_errorMessage
                 </RadzenAlert>
             }
 
@@ -54,7 +53,7 @@
 
 
 @code {
-    private string? errorMessage;
+    private string? _errorMessage;
 
     [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
 
@@ -73,7 +72,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (HttpMethods.IsGet(HttpContext?.Request?.Method))
+        if (HttpContext?.Request?.Method != null && HttpMethods.IsGet(HttpContext.Request.Method))
         {
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
@@ -103,7 +102,7 @@
         }
         else
         {
-            errorMessage = "Error: Intento de inicio de sesión no válido.";
+            _errorMessage = "Error: Intento de inicio de sesión no válido.";
         }
     }
 
