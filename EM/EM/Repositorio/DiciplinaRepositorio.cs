@@ -7,9 +7,7 @@ namespace EM.Repositorio;
 
 public interface IDiciplinaRepositorio : IRepositorioBase<Disciplinas>
 {
-    
 }
-
 
 public class DiciplinaRepositorio : IDiciplinaRepositorio
 {
@@ -19,7 +17,7 @@ public class DiciplinaRepositorio : IDiciplinaRepositorio
     {
         _dbContext = dbContext;
     }
-    
+
     public async Task<Disciplinas> Save(Disciplinas modelo)
     {
         try
@@ -39,6 +37,14 @@ public class DiciplinaRepositorio : IDiciplinaRepositorio
     {
         try
         {
+            var toUpdate = await _dbContext.Diciplinas
+                .FirstOrDefaultAsync(a => a.Id == modelo.Id);
+
+            if (toUpdate != null)
+            {
+                _dbContext.Entry(toUpdate).CurrentValues.SetValues(modelo);
+            }
+
             _dbContext.Diciplinas.Update(modelo);
             return await _dbContext.SaveChangesAsync();
         }
@@ -55,7 +61,7 @@ public class DiciplinaRepositorio : IDiciplinaRepositorio
         {
             return await _dbContext
                 .Diciplinas
-                .AsNoTracking() 
+                .AsNoTracking()
                 .FirstOrDefaultAsync(d => d.Id == id);
         }
         catch (Exception e)
@@ -91,7 +97,7 @@ public class DiciplinaRepositorio : IDiciplinaRepositorio
                 .Select(d => new SelectListItem
                 {
                     Id = d.Id,
-                    Value= d.Descripcion
+                    Value = d.Descripcion
                 })
                 .ToListAsync();
         }
