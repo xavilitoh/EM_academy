@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace EM.Migrations
+namespace EM.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateIdentitySchema : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,7 +20,10 @@ namespace EM.Migrations
                     NormalizedName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "TEXT", nullable: true)
                 },
-                constraints: table => { table.PrimaryKey("PK_AspNetRoles", x => x.Id); });
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
@@ -42,7 +45,69 @@ namespace EM.Migrations
                     LockoutEnabled = table.Column<bool>(type: "INTEGER", nullable: false),
                     AccessFailedCount = table.Column<int>(type: "INTEGER", nullable: false)
                 },
-                constraints: table => { table.PrimaryKey("PK_AspNetUsers", x => x.Id); });
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Diciplinas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Descripcion = table.Column<string>(type: "TEXT", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Diciplinas", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Marcas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Descripcion = table.Column<string>(type: "TEXT", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Marcas", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Personas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Nombre = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    Apellido = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    Nacionalidad = table.Column<string>(type: "TEXT", nullable: false),
+                    FechaNacimiento = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Personas", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TiposUtileria",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Descripcion = table.Column<string>(type: "TEXT", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TiposUtileria", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
@@ -150,6 +215,35 @@ namespace EM.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Atletas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    IdPersona = table.Column<int>(type: "INTEGER", nullable: false),
+                    IdDisciplina = table.Column<int>(type: "INTEGER", nullable: false),
+                    Peso = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Altura = table.Column<decimal>(type: "TEXT", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Atletas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Atletas_Diciplinas_IdDisciplina",
+                        column: x => x.IdDisciplina,
+                        principalTable: "Diciplinas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Atletas_Personas_IdPersona",
+                        column: x => x.IdPersona,
+                        principalTable: "Personas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -186,6 +280,16 @@ namespace EM.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Atletas_IdDisciplina",
+                table: "Atletas",
+                column: "IdDisciplina");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Atletas_IdPersona",
+                table: "Atletas",
+                column: "IdPersona");
         }
 
         /// <inheritdoc />
@@ -207,10 +311,25 @@ namespace EM.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Atletas");
+
+            migrationBuilder.DropTable(
+                name: "Marcas");
+
+            migrationBuilder.DropTable(
+                name: "TiposUtileria");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Diciplinas");
+
+            migrationBuilder.DropTable(
+                name: "Personas");
         }
     }
 }

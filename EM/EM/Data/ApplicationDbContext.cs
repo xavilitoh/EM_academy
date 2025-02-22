@@ -10,4 +10,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Disciplinas> Diciplinas { get; set; }
     public DbSet<Atleta> Atletas { get; set; }
     public DbSet<Persona> Personas { get; set; }
+    public DbSet<Marca> Marcas { get; set; }
+    public DbSet<TipoUtileria> TiposUtileria { get; set; }
 }

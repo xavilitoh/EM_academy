@@ -401,3 +401,5 @@ FodyWeavers.xsd
 .DS_Store
 EM/EM/Data\app.db
 *.db
+*.db
+EM/EM/Data\app.db

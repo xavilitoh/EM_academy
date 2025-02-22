@@ -1,8 +1,5 @@
 namespace EM.Entidades;
 
-public class TipoUtileria
+public class TipoUtileria : ModeloBAse
 {
-    public int Id { get; set; }
-    public string Descripcion { get; set; }
-    public DateTime FechaRegistro { get; set; } = DateTime.Now;
 }
