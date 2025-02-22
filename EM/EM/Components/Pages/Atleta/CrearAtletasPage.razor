@@ -2,6 +2,8 @@
 @using EM.Components.Pages.Atleta.Componentes
 @inject IAtletaRepositorio AtletaRepositorio
 @inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+
 <PageTitle>Atletas</PageTitle>
 <h3>Registro de Nuevo Atleta</h3>
 
@@ -30,6 +32,9 @@
                     Detail = "Registro guardado",
                     Duration = 5000
                 });
+
+
+            NavigationManager.NavigateTo("/Atletas");
         }
         catch (Exception e)
         {

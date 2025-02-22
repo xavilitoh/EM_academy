@@ -1,9 +1,11 @@
 @page "/Atletas/Editar/{Id:int}"
 @using EM.Components.Pages.Atleta.Componentes
 @using EM.Extentions
-@inject EM.Repositorio.IAtletaRepositorio RepositorioAtleta
+@inject IAtletaRepositorio RepositorioAtleta
 @rendermode InteractiveServer
 @inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+
 <RadzenComponents @rendermode="InteractiveServer" />
 <h3>Editar atleta @_atleta?.Persona.FullName</h3>
 
@@ -36,6 +38,8 @@
                         Detail = "Registro guardado",                     
                         Duration = 5000                                             
                     });
+
+                NavigationManager.NavigateTo("/Atletas");
             }
         }
         catch (Exception e)
