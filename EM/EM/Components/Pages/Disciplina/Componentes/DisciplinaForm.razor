@@ -1,7 +1,7 @@
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
 @inject NotificationService NotificationService
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 
 <RadzenTemplateForm Data="@Disciplina" Submit="Guardar" InvalidSubmit="() => { }">
     <RadzenRow Gap="2rem" class="rz-p-0 rz-p-lg-12" JustifyContent="JustifyContent.Center">
@@ -10,7 +10,7 @@
                 <RadzenFieldset Text="Formulario de Disciplina">
                     <RadzenStack Gap="1rem">
                         <RadzenRow>
-                            <RadzenNumeric hidden="true" @bind-Value="@Disciplina.Id"/>
+                            <RadzenNumeric hidden="true" @bind-Value="@Disciplina!.Id"/>
                         </RadzenRow>
                         <RadzenRow AlignItems="AlignItems.Center">
                             <RadzenColumn Size="12" SizeMD="4">
@@ -19,11 +19,10 @@
                             <RadzenColumn Size="12" SizeMD="8">
                                 <RadzenFormField Text="Nombre" Variant="Variant.Outlined">
                                     <RadzenTextBox Name="Nombre" Placeholder="Nombre" Style="width: 100%"
-                                                   @bind-Value="@Disciplina.Descripcion"/>
+                                                   @bind-Value="@Disciplina!.Descripcion"/>
                                     <RadzenRequiredValidator Component="Nombre" Property="Descripcion"
                                                              Text="Esto es requerido"/>
                                 </RadzenFormField>
-
                             </RadzenColumn>
                         </RadzenRow>
                     </RadzenStack>
@@ -45,6 +44,6 @@
     
     private async Task GoBack()
     {
-        await JSRuntime.InvokeVoidAsync("history.back");
+        await JsRuntime.InvokeVoidAsync("history.back");
     }
 }
