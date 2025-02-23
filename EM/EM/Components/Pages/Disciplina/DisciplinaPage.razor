@@ -12,7 +12,7 @@
     <RadzenButton class="rz-info" ButtonType="ButtonType.Button" Size="ButtonSize.Large" Icon="add" Text="Crear" Click='() => { NavigationManager.NavigateTo("/Disciplina/Crear"); }'/>
 </RadzenRow>
 <br/>
-<RadzenDataGrid TItem="Disciplinas" AllowPaging="true" PageSize="10" Data="@diciplinas">
+<RadzenDataGrid TItem="Disciplinas" AllowPaging="true" PageSize="10" Data="@_diciplinas">
     <Columns>
         <RadzenDataGridColumn TItem="Disciplinas" Property="Id" Title="ID" />
         <RadzenDataGridColumn TItem="Disciplinas" Property="Descripcion" Title="Nombre" />
@@ -26,11 +26,11 @@
 
 @code {
 
-    List<Disciplinas> diciplinas;
+    List<Disciplinas> _diciplinas;
 
     protected override async Task OnInitializedAsync()
     {
-        diciplinas = await DiciplinaRepositorio.Get();
+        _diciplinas = await DiciplinaRepositorio.Get();
 
     }
 }

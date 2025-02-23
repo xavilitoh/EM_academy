@@ -1,0 +1,35 @@
+@page "/Marcas"
+@rendermode InteractiveServer
+@inject IMarcaRepositorio MarcasRepositorio
+@inject NavigationManager NavigationManager
+<PageTitle>Marcas</PageTitle>
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+    <h3>Marcas</h3>
+    <RadzenButton class="rz-info" ButtonType="ButtonType.Button" Size="ButtonSize.Large" Icon="add" Text="Crear"
+                  Click='() => { NavigationManager.NavigateTo("/Marcas/Crear"); }'/>
+</RadzenRow>
+<br/>
+<RadzenDataGrid TItem="Marca" AllowPaging="true" PageSize="10" Data="@_marcas">
+    <Columns>
+        <RadzenDataGridColumn TItem="Marca" Property="Id" Title="ID"/>
+        <RadzenDataGridColumn TItem="Marca" Property="Descripcion" Title="Nombre"/>
+        <RadzenDataGridColumn TItem="Marca" Title="Opciones">
+            <Template Context="diciplina">
+                <RadzenButton class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
+                              Click='() => { NavigationManager.NavigateTo($"/Marcas/editar/{diciplina.Id}"); }'
+                              Text="Editar"/>
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    List<Marca>? _marcas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _marcas = await MarcasRepositorio.Get();
+    }
+
+}

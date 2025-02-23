@@ -1,0 +1,50 @@
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+@inject NotificationService NotificationService
+@inject IJSRuntime JsRuntime
+
+<RadzenTemplateForm Data="@Marca" Submit="Guardar" InvalidSubmit="() => { }">
+    <RadzenRow Gap="2rem" class="rz-p-0 rz-p-lg-12" JustifyContent="JustifyContent.Center">
+        <RadzenColumn Size="12" SizeMD="12">
+            <RadzenStack>
+                <RadzenFieldset Text="Formulario de Marca">
+                    <RadzenStack Gap="1rem">
+                        <RadzenRow>
+                            <RadzenNumeric hidden="true" @bind-Value="@Marca!.Id"/>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenLabel Component="Marca" Property="Id" Text="Nombre"/>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="8">
+                                <RadzenFormField Text="Nombre" Variant="Variant.Outlined">
+                                    <RadzenTextBox Name="Nombre" Placeholder="Nombre" Style="width: 100%"
+                                                   @bind-Value="@Marca!.Descripcion"/>
+                                    <RadzenRequiredValidator Component="Nombre" Property="Descripcion"
+                                                             Text="Esto es requerido"/>
+                                </RadzenFormField>
+                            </RadzenColumn>
+                        </RadzenRow>
+                    </RadzenStack>
+                </RadzenFieldset>
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="1rem"
+                 class="rz-mt-8 rz-mb-4">
+        <RadzenButton Icon="cancel" ButtonType="ButtonType.Button" class="rz-danger" Click="GoBack" Text="Cancelar"/>
+        <RadzenButton Icon="save" ButtonType="ButtonType.Submit" class="rz-info" Text="Guardar"/>
+    </RadzenStack>
+</RadzenTemplateForm>
+
+@code {
+    [Parameter] public EventCallback<Marca?> Guardar { get; set; }
+    [Parameter] public bool EditMode { get; set; }
+    [Parameter] public Marca? Marca { get; set; }
+
+    private async Task GoBack()
+    {
+        await JsRuntime.InvokeVoidAsync("history.back");
+    }
+
+}

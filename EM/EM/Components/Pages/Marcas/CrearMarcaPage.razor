@@ -1,0 +1,47 @@
+@page "/Marcas/Crear"
+@using EM.Components.Pages.Marcas.Componentes
+@inject IMarcaRepositorio MarcasRepositorio
+@rendermode InteractiveServer
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<RadzenComponents @rendermode="InteractiveServer"/>
+
+<h3>Nueva Marca</h3>
+
+<MarcaForm Guardar="Guardar" Marca="new Marca()"/>
+
+@code {
+
+    async Task Guardar(Marca? marca)
+    {
+        try
+        {
+            if (marca != null) await MarcasRepositorio.Save(marca);
+            NotificationService.Notify(
+                new NotificationMessage
+                {
+                    Style = "position: absolute; top: -100%; right: 50%;",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "",
+                    Detail = "Registro guardado",
+                    Duration = 5000
+                });
+            NavigationManager.NavigateTo("/Marcas");
+        }
+        catch (Exception e)
+        {
+            NotificationService.Notify(
+                new NotificationMessage
+                {
+                    Style = "position: absolute; top: -100%; right: 50%;",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "",
+                    Detail = e.Message,
+                    Duration = 5000
+                });
+        }
+    }
+
+}
