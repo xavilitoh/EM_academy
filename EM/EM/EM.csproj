@@ -26,4 +26,10 @@
       <Folder Include="Components\Pages\Account\Componentes\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Data\app.db">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
