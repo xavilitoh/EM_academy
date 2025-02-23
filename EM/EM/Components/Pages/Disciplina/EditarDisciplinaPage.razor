@@ -18,11 +18,11 @@
         disciplina = await RepositorioDisciplina.Get(id);
     }
 
-    async Task Guardar(Disciplinas? disciplina)
+    async Task Guardar(Disciplinas? disciplinaToSave)
     {
         try
         {
-            await RepositorioDisciplina.Update(disciplina);
+            if (disciplinaToSave != null) await RepositorioDisciplina.Update(disciplinaToSave);
             NotificationService.Notify(                                         
                 new NotificationMessage                                         
                 {                                                               

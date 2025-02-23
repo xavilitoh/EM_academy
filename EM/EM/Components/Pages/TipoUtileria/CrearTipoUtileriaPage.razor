@@ -1,0 +1,50 @@
+@page "/TiposUtileria/Crear"
+@using EM.Components.Pages.TipoUtileria.Componentes
+@inject ITipoUtileriaRepositorio RepositorioTipoUtileria
+@rendermode InteractiveServer
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<RadzenComponents @rendermode="InteractiveServer" />
+
+<h3>Nuevo Tipo de Utilería</h3>
+
+<TipoUtileriaForm Guardar="Guardar" TipoUtileria="new TipoUtileria()"/>
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
+
+    async Task Guardar(TipoUtileria? tipoUtileria)
+    {
+        try
+        {
+            if (tipoUtileria != null) await RepositorioTipoUtileria.Save(tipoUtileria);
+            NotificationService.Notify(
+                new NotificationMessage
+                {
+                    Style = "position: absolute; top: -100%; right: 50%;",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "",
+                    Detail = "Registro guardado",
+                    Duration = 5000
+                });
+            NavigationManager.NavigateTo("/TiposUtileria");
+        }
+        catch (Exception e)
+        {
+            NotificationService.Notify(
+                new NotificationMessage
+                {
+                    Style = "position: absolute; top: -100%; right: 50%;",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "",
+                    Detail = e.Message,
+                    Duration = 5000
+                });
+        }
+    }
+}

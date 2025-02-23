@@ -1,0 +1,39 @@
+@page "/TiposUtileria"
+@attribute [StreamRendering]
+@inject ITipoUtileriaRepositorio TipoUtileriaRepositorio
+@inject NavigationManager NavigationManager
+@inject NotificationService NotificationService
+@attribute [Authorize]
+
+<PageTitle>Tipos de Utileria</PageTitle>
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+    <h3>Tipos de Utileria</h3>
+    <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Size="ButtonSize.Medium"
+                  Icon="add" Text="Crear" Click='() => { NavigationManager.NavigateTo("/TiposUtileria/Crear"); }'/>
+</RadzenRow>
+<br/>
+<RadzenDataGrid TItem="TipoUtileria" AllowPaging="true" PageSize="10" Data="@_tiposUtileria">
+    <Columns>
+        <RadzenDataGridColumn TItem="TipoUtileria" Property="Id" Title="ID"/>
+        <RadzenDataGridColumn TItem="TipoUtileria" Property="Descripcion" Title="Nombre"/>
+        <RadzenDataGridColumn TItem="TipoUtileria" Title="Opciones">
+            <Template Context="tipoUtileria">
+                <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
+                              Click='() => { NavigationManager.NavigateTo($"/TiposUtileria/editar/{tipoUtileria.Id}"); }'
+                              Text="Editar"/>
+            </Template>
+        </RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+
+    List<TipoUtileria>? _tiposUtileria;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _tiposUtileria = await TipoUtileriaRepositorio.Get();
+    }
+
+}
