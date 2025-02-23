@@ -6,37 +6,46 @@
 <RadzenLayout>
     <RadzenHeader>
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween" Gap="5">
-            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="5">
-                <RadzenSidebarToggle Click="@(() => _sidebar1Expanded = !_sidebar1Expanded)"/>
-                <RadzenLabel Text="Academia Deportiva EM"/>
-            </RadzenStack>
-            <RadzenAppearanceToggle/>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="5">
+                    <RadzenSidebarToggle Click="@(() => _sidebar1Expanded = !_sidebar1Expanded)"/>
+                    <RadzenLabel Text="Academia Deportiva EM"/>
+                </RadzenStack>
+            </RadzenRow>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenAppearanceToggle/>
+                <RadzenProfileMenu>
+                    <Template>
+                        <RadzenGravatar Email="@HttpContext?.User?.Identity?.Name" Size="32">
+                        </RadzenGravatar>
+                    </Template>
+                    <ChildContent>
+                        <div class="nav-item px-3">
+                            <form action="Account/Logout" method="post">
+                                <AntiforgeryToken/>
+                                <input type="hidden" name="ReturnUrl" value="@_currentUrl"/>
+                                <button type="submit" class="nav-link">
+                                    <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </ChildContent>
+                </RadzenProfileMenu>
+            </RadzenRow>
         </RadzenStack>
     </RadzenHeader>
     <RadzenSidebar @bind-Expanded="@_sidebar1Expanded">
-        <RadzenPanelMenu>
+        <RadzenPanelMenu
+            DisplayStyle="@(_sidebar1Expanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)"
+            ShowArrow="true">
             <RadzenPanelMenuItem Text="Inicio" Icon="home" Click='() => NavigationManager.NavigateTo("/")' />
             <RadzenPanelMenuItem Text="Disciplinas" Icon="motorcycle" Click='() => NavigationManager.NavigateTo("/Disciplina")' />
             <RadzenPanelMenuItem Text="Atletas" Icon="face" Click='() => NavigationManager.NavigateTo("/Atletas")' />
-            <RadzenPanelMenuItem Text="Marcas" Icon="bookmark" Click='() => NavigationManager.NavigateTo("/Marcas")'/>
-            <AuthorizeView>
-            <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Manage">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> @context.User.Identity?.Name
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <form action="Account/Logout" method="post">
-                        <AntiforgeryToken/>
-                        <input type="hidden" name="ReturnUrl" value="@_currentUrl"/>
-                        <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
-                        </button>
-                    </form>
-                </div>
-            </Authorized>
-            </AuthorizeView>
+
+            <RadzenPanelMenuItem Text="Inventario" Icon="assignment">
+                <RadzenPanelMenuItem Text="Marcas" Icon="bookmark"
+                                     Click='() => NavigationManager.NavigateTo("/Marcas")'/>
+            </RadzenPanelMenuItem>
         </RadzenPanelMenu>
     </RadzenSidebar>
     <RadzenBody>
@@ -45,7 +54,9 @@
         </div>
     </RadzenBody>
     <RadzenFooter>
-        Footer
+        <RadzenStack AlignItems="AlignItems.Center">
+            Power By Radzen Blazor Components | Copyright © @DateTime.Now.Year All rights reserved.
+        </RadzenStack>
     </RadzenFooter>
 </RadzenLayout>
 

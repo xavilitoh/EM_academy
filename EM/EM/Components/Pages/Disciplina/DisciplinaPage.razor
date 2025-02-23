@@ -9,7 +9,8 @@
 
 <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
     <h3>Disciplinas</h3>
-    <RadzenButton class="rz-info" ButtonType="ButtonType.Button" Size="ButtonSize.Large" Icon="add" Text="Crear" Click='() => { NavigationManager.NavigateTo("/Disciplina/Crear"); }'/>
+    <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Size="ButtonSize.Medium"
+                  Icon="add" Text="Crear" Click='() => { NavigationManager.NavigateTo("/Disciplina/Crear"); }'/>
 </RadzenRow>
 <br/>
 <RadzenDataGrid TItem="Disciplinas" AllowPaging="true" PageSize="10" Data="@_diciplinas">
@@ -18,7 +19,9 @@
         <RadzenDataGridColumn TItem="Disciplinas" Property="Descripcion" Title="Nombre" />
         <RadzenDataGridColumn TItem="Disciplinas" Title="Opciones">
             <Template Context="diciplina">
-                <RadzenButton class="rz-info" ButtonType="ButtonType.Button" Icon="edit" Click='() => { NavigationManager.NavigateTo($"/Disciplina/editar/{diciplina.Id}"); }' Text="Editar" />
+                <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
+                              Click='() => { NavigationManager.NavigateTo($"/Disciplina/editar/{diciplina.Id}"); }'
+                              Text="Editar"/>
             </Template>
         </RadzenDataGridColumn>
     </Columns>

@@ -7,7 +7,8 @@
 
 <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
     <h3>Atleta</h3>
-    <RadzenButton class="rz-info" ButtonType="ButtonType.Button" Size="ButtonSize.Large" Icon="add" Text="Crear" Click='() => { NavigationManager.NavigateTo("/Atletas/Crear"); }'/>
+    <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Size="ButtonSize.Medium"
+                  Icon="add" Text="Crear" Click='() => { NavigationManager.NavigateTo("/Atletas/Crear"); }'/>
 </RadzenRow>
 <br/>
 <RadzenDataGrid TItem="Atleta" AllowPaging="true" PageSize="10" Data="@atletas">
@@ -27,7 +28,9 @@
         <RadzenDataGridColumn TItem="Atleta" Property="Altura" Title="Altura" />
         <RadzenDataGridColumn TItem="Atleta" Title="Opciones">
             <Template Context="atleta">
-                <RadzenButton class="rz-info" ButtonType="ButtonType.Button" Icon="edit" Click='() => { NavigationManager.NavigateTo($"/atletas/editar/{atleta.Id}"); }' Text="Editar" />
+                <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
+                              Click='() => { NavigationManager.NavigateTo($"/atletas/editar/{atleta.Id}"); }'
+                              Text="Editar"/>
             </Template>
         </RadzenDataGridColumn>
     </Columns>

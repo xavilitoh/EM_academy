@@ -6,7 +6,8 @@
 
 <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
     <h3>Marcas</h3>
-    <RadzenButton class="rz-info" ButtonType="ButtonType.Button" Size="ButtonSize.Large" Icon="add" Text="Crear"
+    <RadzenButton Size="ButtonSize.Medium" Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button"
+                  Icon="add" Text="Crear"
                   Click='() => { NavigationManager.NavigateTo("/Marcas/Crear"); }'/>
 </RadzenRow>
 <br/>
@@ -16,7 +17,7 @@
         <RadzenDataGridColumn TItem="Marca" Property="Descripcion" Title="Nombre"/>
         <RadzenDataGridColumn TItem="Marca" Title="Opciones">
             <Template Context="diciplina">
-                <RadzenButton class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
+                <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
                               Click='() => { NavigationManager.NavigateTo($"/Marcas/editar/{diciplina.Id}"); }'
                               Text="Editar"/>
             </Template>
