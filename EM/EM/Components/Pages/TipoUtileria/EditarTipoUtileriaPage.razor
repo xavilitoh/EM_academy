@@ -1,6 +1,47 @@
-@page "/EditarTipoUtileriaPage"
-<h3>EditarTipoUtileriaPage</h3>
+@page "/TiposUtileria/Editar/{id:int}"
+@using EM.Components.Pages.TipoUtileria.Componentes
+@inject ITipoUtileriaRepositorio RepositorioTipoUtileria
+@rendermode InteractiveServer
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<RadzenComponents @rendermode="InteractiveServer"/>
+
+<h3>Editar Tipo de Utilería @tipoUtileria?.Descripcion</h3>
+
+<TipoUtileriaForm Guardar="Guardar" EditMode="true" TipoUtileria="@tipoUtileria"/>
 
 @code {
-    
+    [Parameter] public int id { get; set; }
+    TipoUtileria? tipoUtileria;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tipoUtileria = await RepositorioTipoUtileria.Get(id);
+    }
+
+    async Task Guardar(TipoUtileria? tipoUtileriaToSave)
+    {
+        try
+        {
+            if (tipoUtileriaToSave != null) await RepositorioTipoUtileria.Update(tipoUtileriaToSave);
+            NotificationService.Notify(
+                new NotificationMessage
+                {
+                    Style = "position: absolute; top: -100%; right: 50%;",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "",
+                    Detail = "Registro guardado",
+                    Duration = 5000
+                });
+            NavigationManager.NavigateTo("/TiposUtileria");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+
+        StateHasChanged();
+    }
 }
