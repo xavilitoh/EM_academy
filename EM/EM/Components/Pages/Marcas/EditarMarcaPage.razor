@@ -1,0 +1,48 @@
+@page "/Marcas/Editar/{Id:int}"
+@using EM.Components.Pages.Marcas.Componentes
+@inject IMarcaRepositorio MarcaRepositorio
+@rendermode InteractiveServer
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<RadzenComponents @rendermode="InteractiveServer"/>
+<h3>Editar Marca @_marca.Descripcion</h3>
+
+<MarcaForm Guardar="Guardar" EditMode="true" Marca=_marca/>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    Marca? _marca;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _marca = await MarcaRepositorio.Get(Id);
+    }
+
+    async Task Guardar(Marca? marca)
+    {
+        try
+        {
+            if (marca != null) await MarcaRepositorio.Update(marca);
+            NotificationService.Notify(
+                new NotificationMessage
+                {
+                    Style = "position: absolute; top: -100%; right: 50%;",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "",
+                    Detail = "Registro guardado",
+                    Duration = 5000
+                });
+
+            NavigationManager.NavigateTo("/Marcas");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+
+        StateHasChanged();
+    }
+
+}

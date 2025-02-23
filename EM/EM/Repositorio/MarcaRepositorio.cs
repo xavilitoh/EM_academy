@@ -37,7 +37,15 @@ public class MarcaRepositorio : IMarcaRepositorio
     {
         try
         {
-            var result = _dbContext.Marcas.Update(modelo);
+            var toUpdate = await _dbContext.Marcas
+                .FirstOrDefaultAsync(a => a.Id == modelo.Id);
+
+            if (toUpdate != null)
+            {
+                _dbContext.Entry(toUpdate).CurrentValues.SetValues(modelo);
+            }
+
+            var result = _dbContext.Marcas.Update(toUpdate);
             await _dbContext.SaveChangesAsync();
             return result.Entity.Id;
         }
