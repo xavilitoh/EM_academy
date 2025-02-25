@@ -24,6 +24,7 @@
 
     <ItemGroup>
       <Folder Include="Components\Pages\Account\Componentes\" />
+        <Folder Include="Migrations\"/>
     </ItemGroup>
 
     <ItemGroup>
