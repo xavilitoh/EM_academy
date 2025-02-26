@@ -21,7 +21,7 @@
         </HeaderTemplate>
         <Columns>
             <RadzenDataGridColumn TItem="HistorialMedico" Property="Id" Title="ID"/>
-            <RadzenDataGridColumn TItem="HistorialMedico" Property="IdAtleta" Title="IdAtleta"/>
+            <RadzenDataGridColumn TItem="HistorialMedico" Property="IdAtleta" Title="IdAtleta" Visible="false"/>
             <RadzenDataGridColumn TItem="HistorialMedico" Property="Diagnostico" Title="Diagnostico">
                 <EditTemplate Context="historialMedico">
                     <RadzenTextBox @bind-Value="historialMedico.Diagnostico"/>
