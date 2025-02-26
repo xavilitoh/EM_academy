@@ -19,7 +19,6 @@
     protected override async Task OnInitializedAsync()
     {
         _atleta = await RepositorioAtleta.Get(Id);
-        Console.WriteLine(_atleta);
     }
 
     

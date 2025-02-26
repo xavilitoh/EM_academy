@@ -24,12 +24,16 @@
 
     <ItemGroup>
       <Folder Include="Components\Pages\Account\Componentes\" />
+        <Folder Include="Migrations\"/>
     </ItemGroup>
 
     <ItemGroup>
       <None Update="Data\app.db">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+        <None Update="app.db">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 </Project>

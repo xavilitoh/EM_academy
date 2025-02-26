@@ -42,6 +42,7 @@ builder.Services.AddScoped<IDiciplinaRepositorio, DiciplinaRepositorio>();
 builder.Services.AddScoped<IAtletaRepositorio, AtletaRepositorio>();
 builder.Services.AddScoped<IMarcaRepositorio, MarcaRepositorio>();
 builder.Services.AddScoped<ITipoUtileriaRepositorio, TipoUtileriaRepositorio>();
+builder.Services.AddScoped<IHistorialMedicoRepositorio, HistorialMedicoRepositorio>();
 builder.Services.AddRadzenComponents();
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();

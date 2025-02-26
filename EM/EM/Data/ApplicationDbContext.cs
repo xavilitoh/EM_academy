@@ -12,4 +12,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Persona> Personas { get; set; }
     public DbSet<Marca> Marcas { get; set; }
     public DbSet<TipoUtileria> TiposUtileria { get; set; }
+    public DbSet<HistorialMedico> HistorialesMedicos { get; set; }
 }

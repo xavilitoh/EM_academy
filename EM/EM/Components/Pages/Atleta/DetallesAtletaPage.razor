@@ -1,0 +1,81 @@
+@page "/Atletas/Detalles/{Id:int}"
+@using EM.Components.Pages.Atleta.Componentes.Detalles
+@inject IAtletaRepositorio AtletaRepositorio
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+@inject IAtletaRepositorio RepositorioAtleta
+@inject IHistorialMedicoRepositorio RepositorioHistorialMedico
+@rendermode InteractiveServer
+@attribute [Authorize]
+
+<PageTitle>Atleta @_atleta?.Persona.FullName</PageTitle>
+
+<RadzenCard>
+    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween"
+                 Style="height: 100%;">
+        <RadzenStack>
+            <RadzenRow>
+                <RadzenColumn Size="12" SizeMD="6" class="rz-p-4 rz-border-radius-1"
+                              Style="border: var(--rz-grid-cell-border)">
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+                        <RadzenImage Path="" Style="width: 80px; height: 80px; border-radius: 50%"
+                                     AlternateText="@(_atleta?.Persona.FullName)"/>
+                        <RadzenStack Gap="0" class="rz-text-truncate">
+                            <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-2 rz-my-0"
+                                        Style="color: var(--rz-text-tertiary-color);">Atleta
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate">
+                                <b>@(_atleta?.Persona.FullName)</b></RadzenText>
+                            <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-4 rz-mb-0"
+                                        Style="color: var(--rz-text-tertiary-color);">Diciplina
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate">
+                                <b>@_atleta?.Disciplinas.Descripcion</b></RadzenText>
+                            <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-2 rz-my-0"
+                                        Style="color: var(--rz-text-tertiary-color);">Nacionalidad
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate">
+                                <b>@(_atleta?.Persona.Nacionalidad)</b></RadzenText>
+                        </RadzenStack>
+                    </RadzenStack>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="6" class="rz-p-4 rz-border-radius-1"
+                              Style="border: var(--rz-grid-cell-border)">
+                    <RadzenStack Gap="0" class="rz-text-truncate">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-2 rz-my-0"
+                                    Style="color: var(--rz-text-tertiary-color);">Edad
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate"><b>@(_atleta?.Persona.Edad)</b>
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-2 rz-my-0"
+                                    Style="color: var(--rz-text-tertiary-color);">Altura
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate"><b>@(_atleta?.Altura)</b>
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-2 rz-my-0"
+                                    Style="color: var(--rz-text-tertiary-color);">Peso
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate"><b>@(_atleta?.Peso)</b>
+                        </RadzenText>
+                    </RadzenStack>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenStack>
+    </RadzenStack>
+</RadzenCard>
+<br/>
+<RadzenCard>
+    <HistorialMedicoAtleta IdAtleta="Id"/>
+</RadzenCard>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    Atleta? _atleta = new Atleta() { Persona = new() };
+    List<HistorialMedico> _historialMedico = new List<HistorialMedico>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _atleta = await RepositorioAtleta.Get(Id);
+    }
+
+}
