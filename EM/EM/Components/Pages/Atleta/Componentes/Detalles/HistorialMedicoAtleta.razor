@@ -72,7 +72,7 @@
     {
         await base.OnInitializedAsync();
 
-        HistorialMedico = await RepositorioHistorialMedico.Get();
+        HistorialMedico = await RepositorioHistorialMedico.GetByAtletaId(IdAtleta);
     }
 
     void Reset()

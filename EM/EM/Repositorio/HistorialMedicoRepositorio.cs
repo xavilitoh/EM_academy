@@ -7,6 +7,7 @@ namespace EM.Repositorio;
 
 public interface IHistorialMedicoRepositorio : IRepositorioBase<HistorialMedico>
 {
+    Task<List<HistorialMedico>> GetByAtletaId(int AtletaId);
 }
 
 public class HistorialMedicoRepositorio : IHistorialMedicoRepositorio
@@ -111,5 +112,22 @@ public class HistorialMedicoRepositorio : IHistorialMedicoRepositorio
     public async Task<bool> CambiaEstado(int id, bool nuevoEstado = false)
     {
         return false;
+    }
+
+    public async Task<List<HistorialMedico>> GetByAtletaId(int AtletaId)
+    {
+        try
+        {
+            return await _dbContext
+                .HistorialesMedicos
+                .AsNoTracking()
+                .Where(a => a.IdAtleta == AtletaId)
+                .ToListAsync();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw new Exception("Error al obtener los Historiales Médicos");
+        }
     }
 }
