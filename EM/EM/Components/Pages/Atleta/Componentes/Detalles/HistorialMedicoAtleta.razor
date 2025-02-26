@@ -5,7 +5,6 @@
     <RadzenDataGrid @ref="HistorialMedicosGrid" Data="@HistorialMedico" TItem="HistorialMedico" AllowFiltering="true"
                     AllowPaging="true"
                     AllowSorting="true" RowUpdate="@OnUpdateRow" EditMode="DataGridEditMode.Single"
-                    AllowColumnReHistorialMedicoing="true"
                     AllowColumnResizing="true" RowCreate="@OnCreateRow">
         <HeaderTemplate>
             <RadzenRow JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center">
@@ -20,7 +19,7 @@
             </RadzenRow>
         </HeaderTemplate>
         <Columns>
-            <RadzenDataGridColumn TItem="HistorialMedico" Property="Id" Title="ID"/>
+            <RadzenDataGridColumn TItem="HistorialMedico" Property="Id" Title="ID" Visible="false"/>
             <RadzenDataGridColumn TItem="HistorialMedico" Property="IdAtleta" Title="IdAtleta" Visible="false"/>
             <RadzenDataGridColumn TItem="HistorialMedico" Property="Diagnostico" Title="Diagnostico">
                 <EditTemplate Context="historialMedico">
