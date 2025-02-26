@@ -112,7 +112,7 @@ static async Task SeedDefaultMarcas(IServiceProvider serviceProvider)
 {
     var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
 
-    if (context.Marcas.Any())
+    if (!context.Marcas.Any())
     {
         var marcas = new List<Marca>
         {
@@ -138,7 +138,7 @@ static async Task SeedDefaultDisciplinas(IServiceProvider serviceProvider)
 {
     var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
 
-    if (context.Diciplinas.Any())
+    if (!context.Diciplinas.Any())
     {
         var disciplinas = new List<Disciplinas>
         {
