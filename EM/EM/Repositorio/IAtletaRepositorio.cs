@@ -8,7 +8,7 @@ namespace EM.Repositorio;
 
 public interface IAtletaRepositorio : IRepositorioBase<Atleta>
 {
-    
+    int Cantidad();
 }
 
 public class AtletaRepositorio(ApplicationDbContext context) : IAtletaRepositorio
@@ -36,15 +36,15 @@ public class AtletaRepositorio(ApplicationDbContext context) : IAtletaRepositori
         try
         {
             var toUpdate = await context.Atletas
-                .Include(a=> a.Persona)
+                .Include(a => a.Persona)
                 .FirstOrDefaultAsync(a => a.Id == modelo.Id);
-            
+
             if (toUpdate != null)
             {
                 context.Entry(toUpdate).CurrentValues.SetValues(modelo);
                 context.Entry(toUpdate.Persona).CurrentValues.SetValues(modelo.Persona);
             }
-            
+
             context.Atletas.Update(toUpdate);
             return await context.SaveChangesAsync();
         }
@@ -59,8 +59,8 @@ public class AtletaRepositorio(ApplicationDbContext context) : IAtletaRepositori
     {
         return await context
             .Atletas
-            .Include(a=> a.Persona)
-            .Include(a=> a.Disciplinas)
+            .Include(a => a.Persona)
+            .Include(a => a.Disciplinas)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
     }
@@ -69,8 +69,8 @@ public class AtletaRepositorio(ApplicationDbContext context) : IAtletaRepositori
     {
         return await context
             .Atletas
-            .Include(a=> a.Persona)
-            .Include(a=> a.Disciplinas)
+            .Include(a => a.Persona)
+            .Include(a => a.Disciplinas)
             .AsNoTracking()
             .ToListAsync();
     }
@@ -81,12 +81,12 @@ public class AtletaRepositorio(ApplicationDbContext context) : IAtletaRepositori
         {
             return await context
                 .Atletas
-                .Include(a=> a.Persona)
+                .Include(a => a.Persona)
                 .AsNoTracking()
                 .Select(d => new SelectListItem
                 {
                     Id = d.Id,
-                    Value= d.Persona.FullName
+                    Value = d.Persona.FullName
                 })
                 .ToListAsync();
         }
@@ -100,5 +100,10 @@ public class AtletaRepositorio(ApplicationDbContext context) : IAtletaRepositori
     public async Task<bool> CambiaEstado(int id, bool nuevoEstado = false)
     {
         return false;
+    }
+
+    public int Cantidad()
+    {
+        return context.Atletas.Count();
     }
 }

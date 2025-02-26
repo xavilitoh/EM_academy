@@ -18,8 +18,7 @@
                 <RadzenColumn Size="12" SizeMD="6" class="rz-p-4 rz-border-radius-1"
                               Style="border: var(--rz-grid-cell-border)">
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
-                        <RadzenImage Path="" Style="width: 80px; height: 80px; border-radius: 50%"
-                                     AlternateText="@(_atleta?.Persona.FullName)"/>
+                        <RadzenGravatar Email="_atleta?.Persona.FullName"></RadzenGravatar>
                         <RadzenStack Gap="0" class="rz-text-truncate">
                             <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-2 rz-my-0"
                                         Style="color: var(--rz-text-tertiary-color);">Atleta
