@@ -1,6 +1,7 @@
 using EM.Components;
 using EM.Components.Account;
 using EM.Data;
+using EM.Entidades;
 using EM.Repositorio;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -74,6 +75,7 @@ using (var scope = app.Services.CreateScope())
     var context = services.GetRequiredService<ApplicationDbContext>();
     context.Database.Migrate();
     await SeedDefaultUser(services);
+    await SeedDefaultDisciplinas(services);
 }
 
 app.UseHttpsRedirection();
@@ -103,5 +105,56 @@ static async Task SeedDefaultUser(IServiceProvider serviceProvider)
             EmailConfirmed = true
         };
         await userManager.CreateAsync(user, "Abcd1234.");
+    }
+}
+
+static async Task SeedDefaultMarcas(IServiceProvider serviceProvider)
+{
+    var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+
+    if (context.Marcas.Any())
+    {
+        var marcas = new List<Marca>
+        {
+            new Marca { Descripcion = "Base Ball" },
+            new Marca { Descripcion = "Basket Ball" },
+            new Marca { Descripcion = "Foot Ball" }
+        };
+
+        foreach (var marca in marcas)
+        {
+            if (!context.Marcas.Any(d => d.Descripcion == marca.Descripcion))
+            {
+                context.Marcas.Add(marca);
+            }
+        }
+
+        await context.SaveChangesAsync();
+    }
+}
+
+
+static async Task SeedDefaultDisciplinas(IServiceProvider serviceProvider)
+{
+    var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+
+    if (context.Diciplinas.Any())
+    {
+        var disciplinas = new List<Disciplinas>
+        {
+            new Disciplinas { Descripcion = "Base Ball" },
+            new Disciplinas { Descripcion = "Basket Ball" },
+            new Disciplinas { Descripcion = "Foot Ball" }
+        };
+
+        foreach (var disciplina in disciplinas)
+        {
+            if (!context.Diciplinas.Any(d => d.Descripcion == disciplina.Descripcion))
+            {
+                context.Diciplinas.Add(disciplina);
+            }
+        }
+
+        await context.SaveChangesAsync();
     }
 }
