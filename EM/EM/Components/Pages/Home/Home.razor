@@ -1,0 +1,31 @@
+﻿@page "/"
+@using EM.Components.Pages.Home.Componentes
+@inject NotificationService NotificationService
+@inject IAtletaRepositorio AtletaRepositorio
+@rendermode InteractiveServer
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="3" SizeSM="4" SizeXS="12">
+        <SimpleCard Title="Atletas" Value="_cantidadAtletas"/>
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3" SizeSM="4" SizeXS="12">
+        <SimpleCard Title="Atletas" Value="_cantidadAtletas"/>
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3" SizeSM="4" SizeXS="12">
+        <SimpleCard Title="Atletas" Value="_cantidadAtletas"/>
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3" SizeSM="4" SizeXS="12">
+        <SimpleCard Title="Atletas" Value="_cantidadAtletas"/>
+    </RadzenColumn>
+</RadzenRow>
+@attribute [Authorize]
+
+@code {
+
+    int _cantidadAtletas = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _cantidadAtletas = AtletaRepositorio.Cantidad();
+    }
+
+}

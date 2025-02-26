@@ -1,0 +1,21 @@
+<RadzenCard Style="width: 300px">
+    <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+        <RadzenCard Variant="Variant.Flat" class="@Color">
+            <RadzenIcon Icon="@Icon" IconStyle="IconStyle.Base"/>
+        </RadzenCard>
+        <RadzenColumn>
+            <RadzenRow AlignItems="AlignItems.Center">
+                <RadzenText TextStyle="TextStyle.Overline">@Title</RadzenText>
+                <br/>
+            </RadzenRow>
+            <RadzenText TextStyle="TextStyle.DisplayH5">@Value</RadzenText>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+
+@code {
+    [Parameter] public int Value { get; set; }
+    [Parameter] public string Icon { get; set; } = "sports_martial_arts";
+    [Parameter] public string Color { get; set; } = "rz-background-color-info";
+    [Parameter] public string Title { get; set; } = "";
+}

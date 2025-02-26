@@ -33,13 +33,14 @@
             </RadzenRow>
         </RadzenStack>
     </RadzenHeader>
-    <RadzenSidebar @bind-Expanded="@_sidebar1Expanded">
+    <RadzenSidebar @bind-Expanded="@_sidebar1Expanded" Responsive="true">
         <RadzenPanelMenu
             DisplayStyle="@(_sidebar1Expanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)"
             ShowArrow="true">
             <RadzenPanelMenuItem Text="Inicio" Icon="home" Click='() => NavigationManager.NavigateTo("/")' />
             <RadzenPanelMenuItem Text="Disciplinas" Icon="motorcycle" Click='() => NavigationManager.NavigateTo("/Disciplina")' />
-            <RadzenPanelMenuItem Text="Atletas" Icon="face" Click='() => NavigationManager.NavigateTo("/Atletas")' />
+            <RadzenPanelMenuItem Text="Atletas" Icon="sports_martial_arts"
+                                 Click='() => NavigationManager.NavigateTo("/Atletas")'/>
 
             <RadzenPanelMenuItem Text="Inventario" Icon="assignment">
                 <RadzenPanelMenuItem Text="Marcas" Icon="bookmark"
