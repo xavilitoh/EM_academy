@@ -1,0 +1,157 @@
+@rendermode InteractiveServer
+@inject IHistorialMedicoRepositorio RepositorioHistorialMedico
+<br/>
+<RadzenStack>
+    <RadzenDataGrid @ref="HistorialMedicosGrid" Data="@HistorialMedico" TItem="HistorialMedico" AllowFiltering="true"
+                    AllowPaging="true"
+                    AllowSorting="true" RowUpdate="@OnUpdateRow" EditMode="DataGridEditMode.Single"
+                    AllowColumnReHistorialMedicoing="true"
+                    AllowColumnResizing="true" RowCreate="@OnCreateRow">
+        <HeaderTemplate>
+            <RadzenRow JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center">
+                <RadzenStack>
+                    <h3>Historial Medico</h3>
+                </RadzenStack>
+                <RadzenStack>
+                    <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle" Text="Agregar"
+                                  Click="@InsertRow"
+                                  Disabled="@(_editMode == DataGridEditMode.Single && _historialMedicosToInsert.Count() > 0)"/>
+                </RadzenStack>
+            </RadzenRow>
+        </HeaderTemplate>
+        <Columns>
+            <RadzenDataGridColumn TItem="HistorialMedico" Property="Id" Title="ID"/>
+            <RadzenDataGridColumn TItem="HistorialMedico" Property="IdAtleta" Title="IdAtleta"/>
+            <RadzenDataGridColumn TItem="HistorialMedico" Property="Diagnostico" Title="Diagnostico">
+                <EditTemplate Context="historialMedico">
+                    <RadzenTextBox @bind-Value="historialMedico.Diagnostico"/>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="HistorialMedico" Property="Tratamiento" Title="Tratamiento">
+                <EditTemplate Context="historialMedico">
+                    <RadzenTextBox @bind-Value="historialMedico.Tratamiento"/>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="HistorialMedico" Property="FechaConsulta" Title="Fecha">
+                <EditTemplate Context="historialMedico">
+                    <RadzenDatePicker @bind-Value="historialMedico.FechaConsulta"/>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="HistorialMedico" Context="historialMedico">
+                <Template Context="order">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat"
+                                  Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@(args => EditRow(order))"
+                                  @onclick:stopPropagation="true"/>
+                </Template>
+                <EditTemplate Context="order">
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat"
+                                  Size="ButtonSize.Medium" Click="@((args) => SaveRow(order))" aria-label="Save"/>
+                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat"
+                                  Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1"
+                                  Click="@((args) => CancelEdit(order))" aria-label="Cancel"/>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+
+</RadzenStack>
+
+@code {
+    [Parameter] public int IdAtleta { get; set; }
+
+    List<HistorialMedico> HistorialMedico { get; set; } = new List<HistorialMedico>();
+
+    RadzenDataGrid<HistorialMedico> HistorialMedicosGrid;
+
+    List<HistorialMedico> _historialMedicosToInsert = new List<HistorialMedico>();
+    List<HistorialMedico> _historialMedicosToUpdate = new List<HistorialMedico>();
+
+    DataGridEditMode _editMode = DataGridEditMode.Single;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        HistorialMedico = await RepositorioHistorialMedico.Get();
+    }
+
+    void Reset()
+    {
+        _historialMedicosToInsert.Clear();
+        _historialMedicosToUpdate.Clear();
+    }
+
+    void Reset(HistorialMedico historialMedico)
+    {
+        _historialMedicosToInsert.Remove(historialMedico);
+        _historialMedicosToUpdate.Remove(historialMedico);
+    }
+
+    async Task EditRow(HistorialMedico historialMedico)
+    {
+        if (!HistorialMedicosGrid.IsValid) return;
+
+        if (_editMode == DataGridEditMode.Single)
+        {
+            Reset();
+        }
+
+        _historialMedicosToUpdate.Add(historialMedico);
+        await HistorialMedicosGrid.EditRow(historialMedico);
+    }
+
+    void OnUpdateRow(HistorialMedico historialMedico)
+    {
+        Reset(historialMedico);
+
+        RepositorioHistorialMedico.Update(historialMedico);
+    }
+
+    async Task SaveRow(HistorialMedico historialMedico)
+    {
+        await HistorialMedicosGrid.UpdateRow(historialMedico);
+    }
+
+    void CancelEdit(HistorialMedico historialMedico)
+    {
+        Reset(historialMedico);
+
+        HistorialMedicosGrid.CancelEditRow(historialMedico);
+    }
+
+    async Task InsertRow()
+    {
+        if (!HistorialMedicosGrid.IsValid) return;
+
+        if (_editMode == DataGridEditMode.Single)
+        {
+            Reset();
+        }
+
+        var historialMedico = new HistorialMedico() { IdAtleta = IdAtleta };
+        _historialMedicosToInsert.Add(historialMedico);
+        await HistorialMedicosGrid.InsertRow(historialMedico);
+    }
+
+    async Task InsertAfterRow(HistorialMedico row)
+    {
+        if (!HistorialMedicosGrid.IsValid) return;
+
+        if (_editMode == DataGridEditMode.Single)
+        {
+            Reset();
+        }
+
+        var historialMedico = new HistorialMedico();
+        _historialMedicosToInsert.Add(historialMedico);
+        await HistorialMedicosGrid.InsertAfterRow(historialMedico, row);
+    }
+
+    void OnCreateRow(HistorialMedico historialMedico)
+    {
+        RepositorioHistorialMedico.Save(historialMedico);
+
+        _historialMedicosToInsert.Remove(historialMedico);
+    }
+
+}
