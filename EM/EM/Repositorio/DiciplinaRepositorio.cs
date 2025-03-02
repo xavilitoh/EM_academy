@@ -7,6 +7,7 @@ namespace EM.Repositorio;
 
 public interface IDiciplinaRepositorio : IRepositorioBase<Disciplinas>
 {
+    int Cantidad();
 }
 
 public class DiciplinaRepositorio : IDiciplinaRepositorio
@@ -111,5 +112,10 @@ public class DiciplinaRepositorio : IDiciplinaRepositorio
     public async Task<bool> CambiaEstado(int id, bool nuevoEstado = false)
     {
         return false;
+    }
+
+    public int Cantidad()
+    {
+        return _dbContext.Diciplinas.Count();
     }
 }

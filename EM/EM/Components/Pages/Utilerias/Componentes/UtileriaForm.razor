@@ -1,0 +1,94 @@
+@using EM.Models
+@inject IJSRuntime JsRuntime
+@inject ITipoUtileriaRepositorio TipoUtileriaRepositorio
+@inject IMarcaRepositorio MarcaRepositorio
+
+<RadzenTemplateForm Data="@Utileria" Submit=@Guardar InvalidSubmit="() => {}">
+    <RadzenRow>
+        <RadzenNumeric hidden="true" @bind-Value="@Utileria.Id"/>
+    </RadzenRow>
+    <RadzenRow Gap="2rem" class="rz-p-0 rz-p-lg-4">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenFieldset Text="Datos de la Utilería">
+                <RadzenStack Gap="1rem">
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Cantidad" Component="Cantidad"/>
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenFormField Text="Cantidad" Variant="Variant.Outlined">
+                                <RadzenNumeric Name="Cantidad" Placeholder="Cantidad" @bind-Value="@Utileria.Cantidad"/>
+                                <RadzenRequiredValidator Component="Cantidad" Property="@Utileria.Cantidad"
+                                                         Text="Esto es requerido"/>
+                            </RadzenFormField>
+                        </RadzenColumn>
+                    </RadzenRow>
+                    @if (!EditMode)
+                    {
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenLabel Text="Tipo de Utilería" Component="TipoUtileria"/>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="8">
+                                <RadzenFormField Text="Tipo de Utilería" Variant="Variant.Outlined">
+                                    <RadzenDropDown Name="TipoUtileria" @bind-Value=@Utileria.IdTipo Data=@_tiposUtileria
+                                                    TextProperty="@nameof(SelectListItem.Value)" ValueProperty="Id"
+                                                    AllowClear=true Placeholder="Seleccione un Tipo de Utilería"
+                                                    Style="width: 100%; max-width: 400px;"/>
+                                    <RadzenRequiredValidator Component="TipoUtileria" Property="@Utileria.IdTipo"
+                                                             Text="Esto es requerido"/>
+                                </RadzenFormField>
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenLabel Text="Marca" Component="Marca"/>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="8">
+                                <RadzenFormField Text="Marca" Variant="Variant.Outlined">
+                                    <RadzenDropDown Name="Marca" @bind-Value=@Utileria.IdMarca Data=@_marcas
+                                                    TextProperty="@nameof(SelectListItem.Value)" ValueProperty="Id"
+                                                    AllowClear=true Placeholder="Seleccione una Marca"
+                                                    Style="width: 100%; max-width: 400px;"/>
+                                    <RadzenRequiredValidator Component="Marca" Property="@Utileria.IdMarca"
+                                                             Text="Esto es requerido"/>
+                                </RadzenFormField>
+                            </RadzenColumn>
+                        </RadzenRow>
+                    }
+                    else
+                    {
+                        <RadzenNumeric hidden="true" @bind-Value="@Utileria.IdMarca"/>
+                        <RadzenNumeric hidden="true" @bind-Value="@Utileria.IdTipo"/>
+                    }
+                </RadzenStack>
+            </RadzenFieldset>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenButton Variant="Variant.Outlined" Icon="cancel" ButtonType="ButtonType.Button" class="rz-danger"
+                      Click="GoBack" Text="Cancelar"/>
+        <RadzenButton Variant="Variant.Outlined" Icon="save" ButtonType="ButtonType.Submit" class="rz-info"
+                      Text="Guardar"/>
+    </RadzenRow>
+</RadzenTemplateForm>
+
+@code {
+    [Parameter] public EventCallback<Utileria> Guardar { get; set; }
+    [Parameter] public bool EditMode { get; set; }
+    [Parameter] public Utileria Utileria { get; set; } = new();
+
+    List<SelectListItem> _tiposUtileria = new();
+    List<SelectListItem> _marcas = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _tiposUtileria = await TipoUtileriaRepositorio.SelectList();
+        _marcas = await MarcaRepositorio.SelectList();
+    }
+
+    private async Task GoBack()
+    {
+        await JsRuntime.InvokeVoidAsync("history.back");
+    }
+}

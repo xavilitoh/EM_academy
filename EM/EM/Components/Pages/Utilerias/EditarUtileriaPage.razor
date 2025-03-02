@@ -1,0 +1,46 @@
+@page "/Utilerias/Editar/{id:int}"
+@using EM.Components.Pages.Utilerias.Componentes
+@inject IUtileriaRepositorio RepositorioUtileria
+@rendermode InteractiveServer
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<RadzenComponents @rendermode="InteractiveServer" />
+
+<h3>Editar Tipo de Utilería @_utileria?.Tipo?.Descripcion @_utileria?.Marca?.Descripcion</h3>
+
+<UtileriaForm Guardar="Guardar" EditMode="true" Utileria="@_utileria" />
+
+@code {
+    [Parameter] public int id { get; set; }
+    Utileria? _utileria;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _utileria = await RepositorioUtileria.Get(id);
+    }
+
+    async Task Guardar(Utileria? utileriaToSave)
+    {
+        try
+        {
+            if (utileriaToSave != null) await RepositorioUtileria.Update(utileriaToSave);
+            NotificationService.Notify(
+                new NotificationMessage
+                {
+                    Style = "position: absolute; top: -100%; right: 50%;",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "",
+                    Detail = "Registro guardado",
+                    Duration = 5000
+                });
+            NavigationManager.NavigateTo("/Utilerias");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        StateHasChanged();
+    }
+}
