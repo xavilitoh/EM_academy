@@ -38,14 +38,15 @@
             DisplayStyle="@(_sidebar1Expanded ? MenuItemDisplayStyle.IconAndText : MenuItemDisplayStyle.Icon)"
             ShowArrow="true">
             <RadzenPanelMenuItem Text="Inicio" Icon="home" Click='() => NavigationManager.NavigateTo("/")' />
-            <RadzenPanelMenuItem Text="Disciplinas" Icon="motorcycle" Click='() => NavigationManager.NavigateTo("/Disciplina")' />
+            <RadzenPanelMenuItem Text="Disciplinas" Icon="pool"
+                                 Click='() => NavigationManager.NavigateTo("/Disciplina")'/>
             <RadzenPanelMenuItem Text="Atletas" Icon="sports_martial_arts"
                                  Click='() => NavigationManager.NavigateTo("/Atletas")'/>
 
             <RadzenPanelMenuItem Text="Inventario" Icon="assignment">
-                <RadzenPanelMenuItem Text="Utilerias" Icon="bookmark"
+                <RadzenPanelMenuItem Text="Utilerias" Icon="sports_baseball"
                                      Click='() => NavigationManager.NavigateTo("/Utilerias")'/>
-                <RadzenPanelMenuItem Text="Marcas" Icon="bookmark"
+                <RadzenPanelMenuItem Text="Marcas" Icon="branding_watermark"
                                      Click='() => NavigationManager.NavigateTo("/Marcas")'/>
                 <RadzenPanelMenuItem Text="Tipos de Utilerias" Icon="bookmark"
                                      Click='() => NavigationManager.NavigateTo("/TiposUtileria")'/>

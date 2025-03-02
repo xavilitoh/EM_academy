@@ -8,9 +8,11 @@
 
 <RadzenComponents @rendermode="InteractiveServer"/>
 
-<h3>Editar Tipo de Utilería @tipoUtileria?.Descripcion</h3>
+<RadzenCard>
+    <h3>Editar Tipo de Utilería @tipoUtileria?.Descripcion</h3>
 
-<TipoUtileriaForm Guardar="Guardar" EditMode="true" TipoUtileria="@tipoUtileria"/>
+    <TipoUtileriaForm Guardar="Guardar" EditMode="true" TipoUtileria="@tipoUtileria"/>
+</RadzenCard>
 
 @code {
     [Parameter] public int id { get; set; }

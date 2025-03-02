@@ -8,9 +8,11 @@
 
 <RadzenComponents @rendermode="InteractiveServer" />
 
-<h3>Nuevo Tipo de Utilería</h3>
+<RadzenCard>
+    <h3>Nuevo Tipo de Utilería</h3>
 
-<TipoUtileriaForm Guardar="Guardar" TipoUtileria="new TipoUtileria()"/>
+    <TipoUtileriaForm Guardar="Guardar" TipoUtileria="new TipoUtileria()"/>
+</RadzenCard>
 
 @code {
     protected override void OnInitialized()

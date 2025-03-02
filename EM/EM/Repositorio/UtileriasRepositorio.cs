@@ -7,6 +7,7 @@ namespace EM.Repositorio;
 
 public interface IUtileriaRepositorio : IRepositorioBase<Utileria>
 {
+    int Cantidad();
 }
 
 public class UtileriaRepositorio : IUtileriaRepositorio
@@ -121,5 +122,16 @@ public class UtileriaRepositorio : IUtileriaRepositorio
     public async Task<bool> CambiaEstado(int id, bool nuevoEstado = false)
     {
         return false;
+    }
+
+    public int Cantidad()
+    {
+        int cantidad = 0;
+
+        var data = _dbContext.Utilerias.ToList();
+
+        data.ForEach(a => { cantidad += (int)a.Cantidad; });
+
+        return cantidad;
     }
 }

@@ -7,6 +7,7 @@ namespace EM.Repositorio;
 
 public interface ITipoUtileriaRepositorio : IRepositorioBase<TipoUtileria>
 {
+    int Cantidad();
 }
 
 public class TipoUtileriaRepositorio : ITipoUtileriaRepositorio
@@ -111,5 +112,10 @@ public class TipoUtileriaRepositorio : ITipoUtileriaRepositorio
     public async Task<bool> CambiaEstado(int id, bool nuevoEstado = false)
     {
         return false;
+    }
+
+    public int Cantidad()
+    {
+        return _dbContext.TiposUtileria.Count();
     }
 }

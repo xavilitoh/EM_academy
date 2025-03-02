@@ -1,31 +1,56 @@
 ﻿@page "/"
 @using EM.Components.Pages.Home.Componentes
+@using EM.Models
 @inject NotificationService NotificationService
 @inject IAtletaRepositorio AtletaRepositorio
+@inject ITipoUtileriaRepositorio TipoUtileriaRepositorio
+@inject IMarcaRepositorio MarcaRepositorio
+@inject IDiciplinaRepositorio DisciplinaRepositorio
+@inject IUtileriaRepositorio UtileriaRepositorio
 @rendermode InteractiveServer
 <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
     <RadzenColumn Size="12" SizeMD="3" SizeSM="4" SizeXS="12">
         <SimpleCard Title="Atletas" Value="_cantidadAtletas"/>
     </RadzenColumn>
     <RadzenColumn Size="12" SizeMD="3" SizeSM="4" SizeXS="12">
-        <SimpleCard Title="Atletas" Value="_cantidadAtletas"/>
+        <SimpleCard Title="Disciplinas" Value="_cantidadDisciplinas" Icon="pool"/>
     </RadzenColumn>
     <RadzenColumn Size="12" SizeMD="3" SizeSM="4" SizeXS="12">
-        <SimpleCard Title="Atletas" Value="_cantidadAtletas"/>
-    </RadzenColumn>
-    <RadzenColumn Size="12" SizeMD="3" SizeSM="4" SizeXS="12">
-        <SimpleCard Title="Atletas" Value="_cantidadAtletas"/>
+        <SimpleCard Title="Utilerias" Value="_cantidadUtilerias" Icon="sports_baseball"/>
     </RadzenColumn>
 </RadzenRow>
+<br/>
+<RadzenRow>
+    <RadzenColumn Size="12" SizeMD="6" SizeSM="12" SizeXS="12">
+        <RadzenCard>
+            <h4>Atletas por Disciplinas</h4>
+            <RadzenChart style="height: 400px">
+                <RadzenBarSeries Data="@_disciplinaToChar" CategoryProperty="Disciplina" Title="Atletas"
+                                 ValueProperty="CantidadAtletas" LineType="LineType.Dotted">
+                    <RadzenSeriesDataLabels Visible="true"/>
+                </RadzenBarSeries>
+            </RadzenChart>
+        </RadzenCard>
+    </RadzenColumn>
+</RadzenRow>
+
 @attribute [Authorize]
 
 @code {
 
     int _cantidadAtletas = 0;
+    int _cantidadUtilerias = 0;
+    int _cantidadMarcas = 0;
+    int _cantidadDisciplinas = 0;
+    private List<DisciplinaAtletasCount> _disciplinaToChar = new();
 
     protected override async Task OnInitializedAsync()
     {
         _cantidadAtletas = AtletaRepositorio.Cantidad();
+        _cantidadDisciplinas = DisciplinaRepositorio.Cantidad();
+        _cantidadUtilerias = UtileriaRepositorio.Cantidad();
+        _cantidadUtilerias = UtileriaRepositorio.Cantidad();
+        _disciplinaToChar = await DisciplinaRepositorio.GetDisciplinasConCantidadDeAtletas();
     }
 
 }

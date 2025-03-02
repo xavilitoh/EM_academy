@@ -7,6 +7,7 @@ namespace EM.Repositorio;
 
 public interface IMarcaRepositorio : IRepositorioBase<Marca>
 {
+    int Cantidad();
 }
 
 public class MarcaRepositorio : IMarcaRepositorio
@@ -115,5 +116,10 @@ public class MarcaRepositorio : IMarcaRepositorio
     public async Task<bool> CambiaEstado(int id, bool nuevoEstado = false)
     {
         return false;
+    }
+
+    public int Cantidad()
+    {
+        return _dbContext.Marcas.Count();
     }
 }

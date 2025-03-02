@@ -7,9 +7,12 @@
 @attribute [Authorize]
 
 <RadzenComponents @rendermode="InteractiveServer"/>
-<h3>Editar Marca @_marca.Descripcion</h3>
 
-<MarcaForm Guardar="Guardar" EditMode="true" Marca=_marca/>
+<RadzenCard>
+    <h3>Editar Marca @_marca.Descripcion</h3>
+
+    <MarcaForm Guardar="Guardar" EditMode="true" Marca=_marca/>
+</RadzenCard>
 
 @code {
     [Parameter] public int Id { get; set; }
