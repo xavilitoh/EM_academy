@@ -1,33 +1,33 @@
-@page "/Marcas/Editar/{Id:int}"
-@using EM.Components.Pages.Marcas.Componentes
-@inject IMarcaRepositorio MarcaRepositorio
+@page "/Utilerias/Editar/{id:int}"
+@using EM.Components.Pages.Utilerias.Componentes
+@inject IUtileriaRepositorio RepositorioUtileria
 @rendermode InteractiveServer
 @inject NotificationService NotificationService
 @inject NavigationManager NavigationManager
 @attribute [Authorize]
 
-<RadzenComponents @rendermode="InteractiveServer"/>
+<RadzenComponents @rendermode="InteractiveServer" />
 
 <RadzenCard>
-    <h3>Editar Marca @_marca.Descripcion</h3>
+    <h3>Editar Tipo de Utilería @_utileria?.Tipo?.Descripcion @_utileria?.Marca?.Descripcion</h3>
 
-    <MarcaForm Guardar="Guardar" EditMode="true" Marca=_marca/>
+    <UtileriaForm Guardar="Guardar" EditMode="true" Utileria="@_utileria" />
 </RadzenCard>
 
 @code {
-    [Parameter] public int Id { get; set; }
-    Marca? _marca;
+    [Parameter] public int id { get; set; }
+    Utileria? _utileria;
 
     protected override async Task OnInitializedAsync()
     {
-        _marca = await MarcaRepositorio.Get(Id);
+        _utileria = await RepositorioUtileria.Get(id);
     }
 
-    async Task Guardar(Marca? marca)
+    async Task Guardar(Utileria? utileriaToSave)
     {
         try
         {
-            if (marca != null) await MarcaRepositorio.Update(marca);
+            if (utileriaToSave != null) await RepositorioUtileria.Update(utileriaToSave);
             NotificationService.Notify(
                 new NotificationMessage
                 {
@@ -37,15 +37,12 @@
                     Detail = "Registro guardado",
                     Duration = 5000
                 });
-
-            NavigationManager.NavigateTo("/Marcas");
+            NavigationManager.NavigateTo("/Utilerias");
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
         }
-
         StateHasChanged();
     }
-
 }

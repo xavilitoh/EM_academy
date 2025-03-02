@@ -44,6 +44,7 @@ builder.Services.AddScoped<IAtletaRepositorio, AtletaRepositorio>();
 builder.Services.AddScoped<IMarcaRepositorio, MarcaRepositorio>();
 builder.Services.AddScoped<ITipoUtileriaRepositorio, TipoUtileriaRepositorio>();
 builder.Services.AddScoped<IHistorialMedicoRepositorio, HistorialMedicoRepositorio>();
+builder.Services.AddScoped<IUtileriaRepositorio, UtileriaRepositorio>();
 builder.Services.AddRadzenComponents();
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
@@ -76,6 +77,7 @@ using (var scope = app.Services.CreateScope())
     context.Database.Migrate();
     await SeedDefaultUser(services);
     await SeedDefaultDisciplinas(services);
+    await SeedDefaultMarcas(services);
 }
 
 app.UseHttpsRedirection();
@@ -116,9 +118,13 @@ static async Task SeedDefaultMarcas(IServiceProvider serviceProvider)
     {
         var marcas = new List<Marca>
         {
-            new Marca { Descripcion = "Base Ball" },
-            new Marca { Descripcion = "Basket Ball" },
-            new Marca { Descripcion = "Foot Ball" }
+            new Marca { Descripcion = "Wilson" },
+            new Marca { Descripcion = "Under Armour" },
+            new Marca { Descripcion = "STAR" },
+            new Marca { Descripcion = "Rawlings" },
+            new Marca { Descripcion = "Molten" },
+            new Marca { Descripcion = "Mikasa" },
+            new Marca { Descripcion = "Adidas" }
         };
 
         foreach (var marca in marcas)

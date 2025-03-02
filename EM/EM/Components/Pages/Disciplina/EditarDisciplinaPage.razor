@@ -5,9 +5,11 @@
 @inject NavigationManager NavigationManager
 @attribute [Authorize]
 <RadzenComponents @rendermode="InteractiveServer" />
-<h3>Editar Disciplina @disciplina.Descripcion</h3>
+<RadzenCard>
+    <h3>Editar Disciplina @disciplina.Descripcion</h3>
 
-<DisciplinaForm Guardar="Guardar" EditMode="true" Disciplina=disciplina />
+    <DisciplinaForm Guardar="Guardar" EditMode="true" Disciplina=disciplina/>
+</RadzenCard>
 
 @code {
     [Parameter] public int id { get; set; }

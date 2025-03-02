@@ -7,6 +7,8 @@ namespace EM.Repositorio;
 
 public interface IDiciplinaRepositorio : IRepositorioBase<Disciplinas>
 {
+    int Cantidad();
+    Task<List<DisciplinaAtletasCount>> GetDisciplinasConCantidadDeAtletas();
 }
 
 public class DiciplinaRepositorio : IDiciplinaRepositorio
@@ -16,6 +18,17 @@ public class DiciplinaRepositorio : IDiciplinaRepositorio
     public DiciplinaRepositorio(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
+    }
+
+    public async Task<List<DisciplinaAtletasCount>> GetDisciplinasConCantidadDeAtletas()
+    {
+        return await _dbContext.Diciplinas
+            .Select(d => new DisciplinaAtletasCount
+            {
+                Disciplina = d.Descripcion,
+                CantidadAtletas = d.Atletas.Count
+            })
+            .ToListAsync();
     }
 
     public async Task<Disciplinas> Save(Disciplinas modelo)
@@ -111,5 +124,10 @@ public class DiciplinaRepositorio : IDiciplinaRepositorio
     public async Task<bool> CambiaEstado(int id, bool nuevoEstado = false)
     {
         return false;
+    }
+
+    public int Cantidad()
+    {
+        return _dbContext.Diciplinas.Count();
     }
 }

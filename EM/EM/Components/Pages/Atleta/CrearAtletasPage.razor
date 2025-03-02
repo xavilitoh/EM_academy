@@ -5,9 +5,11 @@
 @inject NavigationManager NavigationManager
 @attribute [Authorize]
 <PageTitle>Atletas</PageTitle>
-<h3>Registro de Nuevo Atleta</h3>
+<RadzenCard>
+    <h3>Registro de Nuevo Atleta</h3>
 
-<AtletaForm Guardar="Guardar" Atleta="_atleta" EditMode="false"/>
+    <AtletaForm Guardar="Guardar" Atleta="_atleta" EditMode="false"/>
+</RadzenCard>
 
 @code {
     Atleta _atleta = new();

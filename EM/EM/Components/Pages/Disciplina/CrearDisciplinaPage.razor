@@ -7,9 +7,11 @@
 
 <RadzenComponents @rendermode="InteractiveServer" />
 
-<h3>Nueva Disciplina</h3>
+<RadzenCard>
+    <h3>Nueva Disciplina</h3>
 
-<DisciplinaForm Guardar="Guardar"  Disciplina="new Disciplinas()"/>
+    <DisciplinaForm Guardar="Guardar" Disciplina="new Disciplinas()"/>
+</RadzenCard>
 
 @code {
     protected override void OnInitialized()

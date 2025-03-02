@@ -8,9 +8,11 @@
 @attribute [Authorize]
 
 <RadzenComponents @rendermode="InteractiveServer" />
-<h3>Editar atleta @_atleta?.Persona.FullName</h3>
+<RadzenCard>
+    <h3>Editar atleta @_atleta?.Persona.FullName</h3>
 
-<AtletaForm Atleta="_atleta" EditMode="true" Guardar="Guardar"></AtletaForm>
+    <AtletaForm Atleta="_atleta" EditMode="true" Guardar="Guardar"></AtletaForm>
+</RadzenCard>
 
 @code {
     [Parameter] public int Id { get; set; }

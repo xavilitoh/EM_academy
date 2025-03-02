@@ -13,4 +13,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Marca> Marcas { get; set; }
     public DbSet<TipoUtileria> TiposUtileria { get; set; }
     public DbSet<HistorialMedico> HistorialesMedicos { get; set; }
+
+    public DbSet<Utileria> Utilerias { get; set; }
 }

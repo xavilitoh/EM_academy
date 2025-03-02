@@ -4,42 +4,45 @@
 @attribute [Authorize]
 <PageTitle>Atletas</PageTitle>
 
+<RadzenCard>
 
-<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
-    <h3>Atleta</h3>
-    <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Size="ButtonSize.Medium"
-                  Icon="add" Text="Crear" Click='() => { NavigationManager.NavigateTo("/Atletas/Crear"); }'/>
-</RadzenRow>
-<br/>
-<RadzenDataGrid TItem="Atleta" AllowPaging="true" PageSize="10" Data="@atletas" AllowColumnResize="true"
-                AllowSorting="true" ColumnWidth="300px">
-    <Columns>
-        <RadzenDataGridColumn TItem="Atleta" Visible="false" Property="Id" Title="ID"/>
-        <RadzenDataGridColumn TItem="Atleta" Title="Nombre" Frozen="true">
-            <Template Context="atleta">
-                <RadzenLabel>@atleta.Persona.Nombre @atleta.Persona.Apellido</RadzenLabel>
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Atleta" Title="Diciplina">
-            <Template Context="atleta">
-                <RadzenLabel>@atleta.Disciplinas.Descripcion </RadzenLabel>
-            </Template>
-        </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Atleta" Property="Peso" Title="Peso" />
-        <RadzenDataGridColumn TItem="Atleta" Property="Altura" Title="Altura" />
-        <RadzenDataGridColumn TItem="Atleta" Title="Opciones" Frozen="true" FrozenPosition="FrozenColumnPosition.Right">
-            <Template Context="atleta">
-                <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
-                              Click='() => { NavigationManager.NavigateTo($"/atletas/editar/{atleta.Id}"); }'
-                              Text="Editar"/>
-                <RadzenButton Variant="Variant.Outlined" class="rz-warning" ButtonType="ButtonType.Button"
-                              Icon="feedback"
-                              Click='() => { NavigationManager.NavigateTo($"/atletas/Detalles/{atleta.Id}"); }'
-                              Text="Detalles"/>
-            </Template>
-        </RadzenDataGridColumn>
-    </Columns>
-</RadzenDataGrid>
+    <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+        <h3>Atleta</h3>
+        <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Size="ButtonSize.Medium"
+                      Icon="add" Text="Crear" Click='() => { NavigationManager.NavigateTo("/Atletas/Crear"); }'/>
+    </RadzenRow>
+    <br/>
+    <RadzenDataGrid TItem="Atleta" AllowPaging="true" PageSize="10" Data="@atletas" AllowColumnResize="true"
+                    AllowSorting="true" ColumnWidth="300px">
+        <Columns>
+            <RadzenDataGridColumn TItem="Atleta" Visible="false" Property="Id" Title="ID"/>
+            <RadzenDataGridColumn TItem="Atleta" Title="Nombre" Frozen="true">
+                <Template Context="atleta">
+                    <RadzenLabel>@atleta.Persona.Nombre @atleta.Persona.Apellido</RadzenLabel>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Atleta" Title="Diciplina">
+                <Template Context="atleta">
+                    <RadzenLabel>@atleta.Disciplinas.Descripcion </RadzenLabel>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Atleta" Property="Peso" Title="Peso"/>
+            <RadzenDataGridColumn TItem="Atleta" Property="Altura" Title="Altura"/>
+            <RadzenDataGridColumn TItem="Atleta" Title="Opciones" Frozen="true"
+                                  FrozenPosition="FrozenColumnPosition.Right">
+                <Template Context="atleta">
+                    <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
+                                  Click='() => { NavigationManager.NavigateTo($"/atletas/editar/{atleta.Id}"); }'
+                                  Text="Editar"/>
+                    <RadzenButton Variant="Variant.Outlined" class="rz-warning" ButtonType="ButtonType.Button"
+                                  Icon="feedback"
+                                  Click='() => { NavigationManager.NavigateTo($"/atletas/Detalles/{atleta.Id}"); }'
+                                  Text="Detalles"/>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenCard>
 
 @code {
 

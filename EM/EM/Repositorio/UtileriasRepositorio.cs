@@ -5,40 +5,40 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EM.Repositorio;
 
-public interface IMarcaRepositorio : IRepositorioBase<Marca>
+public interface IUtileriaRepositorio : IRepositorioBase<Utileria>
 {
     int Cantidad();
 }
 
-public class MarcaRepositorio : IMarcaRepositorio
+public class UtileriaRepositorio : IUtileriaRepositorio
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public MarcaRepositorio(ApplicationDbContext context)
+    public UtileriaRepositorio(ApplicationDbContext context)
     {
         _dbContext = context;
     }
 
-    public async Task<Marca> Save(Marca modelo)
+    public async Task<Utileria> Save(Utileria modelo)
     {
         try
         {
-            var result = await _dbContext.Marcas.AddAsync(modelo);
+            var result = await _dbContext.Utilerias.AddAsync(modelo);
             await _dbContext.SaveChangesAsync();
             return result.Entity;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            throw new Exception("Error al guardar la Marca");
+            throw new Exception("Error al guardar la Utilería");
         }
     }
 
-    public async Task<int> Update(Marca modelo)
+    public async Task<int> Update(Utileria modelo)
     {
         try
         {
-            var toUpdate = await _dbContext.Marcas
+            var toUpdate = await _dbContext.Utilerias
                 .FirstOrDefaultAsync(a => a.Id == modelo.Id);
 
             if (toUpdate != null)
@@ -46,48 +46,52 @@ public class MarcaRepositorio : IMarcaRepositorio
                 _dbContext.Entry(toUpdate).CurrentValues.SetValues(modelo);
             }
 
-            var result = _dbContext.Marcas.Update(toUpdate);
+            var result = _dbContext.Utilerias.Update(toUpdate);
             await _dbContext.SaveChangesAsync();
             return result.Entity.Id;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            throw new Exception("Error al actualizar la Marca");
+            throw new Exception("Error al actualizar la Utilería");
         }
     }
 
-    public async Task<Marca?> Get(int id)
+    public async Task<Utileria?> Get(int id)
     {
         try
         {
             var result = await _dbContext
-                .Marcas
+                .Utilerias
                 .AsNoTracking()
+                .Include(a => a.Tipo)
+                .Include(a => a.Marca)
                 .FirstOrDefaultAsync(a => a.Id == id);
             return result;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            throw new Exception("Error al obtener la Marca");
+            throw new Exception("Error al obtener la Utilería");
         }
     }
 
-    public async Task<List<Marca>> Get()
+    public async Task<List<Utileria>> Get()
     {
         try
         {
             var result = await _dbContext
-                .Marcas
+                .Utilerias
                 .AsNoTracking()
+                .Include(a => a.Tipo)
+                .Include(a => a.Marca)
                 .ToListAsync();
             return result;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
-            throw new Exception("Error al obtener las Marcas");
+            throw new Exception("Error al obtener las Utilerías");
         }
     }
 
@@ -96,12 +100,14 @@ public class MarcaRepositorio : IMarcaRepositorio
         try
         {
             var result = await _dbContext
-                .Marcas
+                .Utilerias
                 .AsNoTracking()
+                .Include(a => a.Tipo)
+                .Include(a => a.Marca)
                 .Select(a => new SelectListItem
                 {
                     Id = a.Id,
-                    Value = a.Descripcion
+                    Value = a.Tipo.Descripcion
                 })
                 .ToListAsync();
             return result;
@@ -109,7 +115,7 @@ public class MarcaRepositorio : IMarcaRepositorio
         catch (Exception e)
         {
             Console.WriteLine(e);
-            throw new Exception("Error al obtener las Marcas");
+            throw new Exception("Error al obtener las Utilerías");
         }
     }
 
@@ -120,6 +126,12 @@ public class MarcaRepositorio : IMarcaRepositorio
 
     public int Cantidad()
     {
-        return _dbContext.Marcas.Count();
+        int cantidad = 0;
+
+        var data = _dbContext.Utilerias.ToList();
+
+        data.ForEach(a => { cantidad += (int)a.Cantidad; });
+
+        return cantidad;
     }
 }

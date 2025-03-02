@@ -31,7 +31,7 @@ else
 <script>
         function setThemeBasedOnSystem() {
             const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
-            const theme = prefersDarkScheme ? "material-dark" : "material";
+            const theme = prefersDarkScheme ? "standard-dark" : "standard";
             localStorage.setItem("theme", theme);
             document.cookie = `theme=${theme}; path=/; max-age=${60 * 60 * 24 * 365}`;
         }

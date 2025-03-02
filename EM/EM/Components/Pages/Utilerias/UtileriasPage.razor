@@ -1,0 +1,72 @@
+@page "/Utilerias"
+@using EM.Components.Pages.Home.Componentes
+@rendermode InteractiveServer
+@inject IUtileriaRepositorio UtileriasRepositorio
+@inject ITipoUtileriaRepositorio    TipoUtileriasRepositorio
+@inject IMarcaRepositorio MarcasRepositorio
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+<PageTitle>Utilerías</PageTitle>
+
+<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+    <RadzenColumn Size="12" SizeMD="3" SizeSM="4" SizeXS="12">
+        <SimpleCard Title="Marcas" Value="_cantidadMarcas" Icon="branding_watermark"/>
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3" SizeSM="4" SizeXS="12">
+        <SimpleCard Title="Tipos de Utileria" Value="_cantidadTipos" Icon="bookmark"/>
+    </RadzenColumn>
+</RadzenRow>
+
+
+<br/>
+
+<RadzenCard>
+    <RadzenDataGrid TItem="Utileria" AllowPaging="true" PageSize="10" Data="@_utilerias">
+        <HeaderTemplate>
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                    <h3>Utilerías</h3>
+                    <RadzenButton Size="ButtonSize.Medium" Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button"
+                                  Icon="add" Text="Crear"
+                                  Click='() => { NavigationManager.NavigateTo("/Utilerias/Crear"); }'/>
+                </RadzenRow>
+            </RadzenStack>
+        </HeaderTemplate>
+        <Columns>
+            <RadzenDataGridColumn TItem="Utileria" Property="Id" Title="ID"/>
+            <RadzenDataGridColumn TItem="Utileria" Property="Cantidad" Title="Cantidad"/>
+            <RadzenDataGridColumn TItem="Utileria" Title="Tipo">
+                <Template Context="utileria">
+                    <RadzenLabel>@utileria?.Tipo?.Descripcion </RadzenLabel>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Utileria" Title="Marca">
+                <Template Context="utileria">
+                    <RadzenLabel>@utileria?.Marca?.Descripcion </RadzenLabel>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Utileria" Title="Opciones">
+                <Template Context="utileria">
+                    <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
+                                  Click='() => { NavigationManager.NavigateTo($"/Utilerias/editar/{utileria.Id}"); }'
+                                  Text="Editar"/>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenCard>
+
+@code {
+    List<Utileria>? _utilerias;
+    private int _cantidadMarcas = 0;
+    private int _cantidadTipos = 0;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _utilerias = await UtileriasRepositorio.Get();
+        _cantidadMarcas = MarcasRepositorio.Cantidad();
+        _cantidadTipos = TipoUtileriasRepositorio.Cantidad();
+    }
+
+}

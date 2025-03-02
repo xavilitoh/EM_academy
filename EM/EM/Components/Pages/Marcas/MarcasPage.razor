@@ -5,26 +5,28 @@
 @attribute [Authorize]
 <PageTitle>Marcas</PageTitle>
 
-<RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
-    <h3>Marcas</h3>
-    <RadzenButton Size="ButtonSize.Medium" Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button"
-                  Icon="add" Text="Crear"
-                  Click='() => { NavigationManager.NavigateTo("/Marcas/Crear"); }'/>
-</RadzenRow>
-<br/>
-<RadzenDataGrid TItem="Marca" AllowPaging="true" PageSize="10" Data="@_marcas">
-    <Columns>
-        <RadzenDataGridColumn TItem="Marca" Property="Id" Title="ID"/>
-        <RadzenDataGridColumn TItem="Marca" Property="Descripcion" Title="Nombre"/>
-        <RadzenDataGridColumn TItem="Marca" Title="Opciones">
-            <Template Context="diciplina">
-                <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
-                              Click='() => { NavigationManager.NavigateTo($"/Marcas/editar/{diciplina.Id}"); }'
-                              Text="Editar"/>
-            </Template>
-        </RadzenDataGridColumn>
-    </Columns>
-</RadzenDataGrid>
+<RadzenCard>
+    <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+        <h3>Marcas</h3>
+        <RadzenButton Size="ButtonSize.Medium" Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button"
+                      Icon="add" Text="Crear"
+                      Click='() => { NavigationManager.NavigateTo("/Marcas/Crear"); }'/>
+    </RadzenRow>
+    <br/>
+    <RadzenDataGrid TItem="Marca" AllowPaging="true" PageSize="10" Data="@_marcas">
+        <Columns>
+            <RadzenDataGridColumn TItem="Marca" Property="Id" Title="ID"/>
+            <RadzenDataGridColumn TItem="Marca" Property="Descripcion" Title="Nombre"/>
+            <RadzenDataGridColumn TItem="Marca" Title="Opciones">
+                <Template Context="diciplina">
+                    <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
+                                  Click='() => { NavigationManager.NavigateTo($"/Marcas/editar/{diciplina.Id}"); }'
+                                  Text="Editar"/>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenCard>
 
 @code {
     List<Marca>? _marcas;

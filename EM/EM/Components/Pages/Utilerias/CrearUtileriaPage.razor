@@ -1,0 +1,54 @@
+@page "/Utilerias/Crear"
+@using EM.Components.Pages.Utilerias.Componentes
+@inject IUtileriaRepositorio UtileriaRepositorio
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+<PageTitle>Utilerías</PageTitle>
+
+<RadzenCard>
+    <h3>Registro de Nueva Utilería</h3>
+
+    <UtileriaForm Guardar="Guardar" Utileria="_utileria" EditMode="false"/>
+</RadzenCard>
+
+@code {
+    Utileria _utileria = new();
+
+    protected override void OnInitialized()
+    {
+        _utileria = new Utileria();
+    }
+
+    async Task Guardar(Utileria utileria)
+    {
+        try
+        {
+            await UtileriaRepositorio.Save(utileria);
+            NotificationService.Notify(
+                    new NotificationMessage
+                    {
+                            Style = "position: absolute; top: -100%; right: 50%;",
+                            Severity = NotificationSeverity.Success,
+                            Summary = "",
+                            Detail = "Registro guardado",
+                            Duration = 5000
+                    });
+
+            NavigationManager.NavigateTo("/Utilerias");
+        }
+        catch (Exception e)
+        {
+            NotificationService.Notify(
+                    new NotificationMessage
+                    {
+                            Style = "position: absolute; top: -100%; right: 50%;",
+                            Severity = NotificationSeverity.Error,
+                            Summary = "",
+                            Detail = e.Message,
+                            Duration = 5000
+                    });
+        }
+    }
+
+}
