@@ -8,6 +8,7 @@ namespace EM.Repositorio;
 public interface ITipoUtileriaRepositorio : IRepositorioBase<TipoUtileria>
 {
     int Cantidad();
+    Task<List<TipoUtileriaCount>> GetTiposUtileriaConCantidad();
 }
 
 public class TipoUtileriaRepositorio : ITipoUtileriaRepositorio
@@ -17,6 +18,17 @@ public class TipoUtileriaRepositorio : ITipoUtileriaRepositorio
     public TipoUtileriaRepositorio(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
+    }
+
+    public async Task<List<TipoUtileriaCount>> GetTiposUtileriaConCantidad()
+    {
+        return await _dbContext.TiposUtileria
+            .Select(t => new TipoUtileriaCount
+            {
+                Tipo = t.Descripcion,
+                Cantidad = t.Utilerias.Count
+            })
+            .ToListAsync();
     }
 
     public async Task<TipoUtileria> Save(TipoUtileria modelo)
