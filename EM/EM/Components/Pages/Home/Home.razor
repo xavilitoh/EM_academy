@@ -6,8 +6,11 @@
 @inject ITipoUtileriaRepositorio TipoUtileriaRepositorio
 @inject IMarcaRepositorio MarcaRepositorio
 @inject IDiciplinaRepositorio DisciplinaRepositorio
-@inject IUtileriaRepositorio UtileriaRepositorio
+@inject IUtileriaRepositorio UtileriaRepositoriotletaUtileriaRepositorio
 @rendermode InteractiveServer
+@attribute [Authorize]
+
+<PageTitle>Home</PageTitle>
 <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
     <RadzenColumn Size="12" SizeMD="3" SizeSM="4" SizeXS="12">
         <SimpleCard Title="Atletas" Value="_cantidadAtletas"/>
@@ -18,13 +21,16 @@
     <RadzenColumn Size="12" SizeMD="3" SizeSM="4" SizeXS="12">
         <SimpleCard Title="Utilerias" Value="_cantidadUtilerias" Icon="sports_baseball"/>
     </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="3" SizeSM="4" SizeXS="12">
+        <SimpleCard Title="Utilerias" Value="_cantidadUtilerias" Icon="sports_baseball"/>
+    </RadzenColumn>
 </RadzenRow>
 <br/>
 <RadzenRow>
     <RadzenColumn Size="12" SizeMD="6" SizeSM="12" SizeXS="12">
         <RadzenCard>
             <h4>Atletas por Disciplinas</h4>
-            <RadzenChart style="height: 400px">
+            <RadzenChart style="height: 200px">
                 <RadzenBarSeries Data="@_disciplinaToChar" CategoryProperty="Disciplina" Title="Atletas"
                                  ValueProperty="CantidadAtletas" LineType="LineType.Dotted">
                     <RadzenSeriesDataLabels Visible="true"/>
@@ -32,9 +38,18 @@
             </RadzenChart>
         </RadzenCard>
     </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="6" SizeSM="12" SizeXS="12">
+        <RadzenCard>
+            <h4>Utilerias por Tipo</h4>
+            <RadzenChart style="height: 200px">
+                <RadzenBarSeries Data="@_tipoUtilkeriaToChar" CategoryProperty="Tipo" Title="Utilerías"
+                                 ValueProperty="Cantidad" LineType="LineType.Dotted">
+                    <RadzenSeriesDataLabels Visible="true"/>
+                </RadzenBarSeries>
+            </RadzenChart>
+        </RadzenCard>
+    </RadzenColumn>
 </RadzenRow>
-
-@attribute [Authorize]
 
 @code {
 
@@ -43,14 +58,15 @@
     int _cantidadMarcas = 0;
     int _cantidadDisciplinas = 0;
     private List<DisciplinaAtletasCount> _disciplinaToChar = new();
+    private List<TipoUtileriaCount> _tipoUtilkeriaToChar = new();
 
     protected override async Task OnInitializedAsync()
     {
         _cantidadAtletas = AtletaRepositorio.Cantidad();
         _cantidadDisciplinas = DisciplinaRepositorio.Cantidad();
-        _cantidadUtilerias = UtileriaRepositorio.Cantidad();
-        _cantidadUtilerias = UtileriaRepositorio.Cantidad();
+        _cantidadUtilerias = TipoUtileriaRepositorio.Cantidad();
         _disciplinaToChar = await DisciplinaRepositorio.GetDisciplinasConCantidadDeAtletas();
+        _tipoUtilkeriaToChar = await TipoUtileriaRepositorio.GetTiposUtileriaConCantidad();
     }
 
 }
