@@ -24,6 +24,8 @@ COPY --chown=$APP_UID:$APP_UID --from=publish /app/publish .
 
 
 # Crear un volumen para la base de datos
+RUN mkdir -p /app/data
+RUN chmod -R 755 /app/data
 VOLUME /app/data
 ENV docker=true
 ENTRYPOINT ["dotnet", "EM.dll"]

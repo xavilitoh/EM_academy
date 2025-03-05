@@ -26,7 +26,7 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = "DataSource=/data/app.db;Cache=Shared";
+var connectionString = "DataSource=/app/data/app.db;Cache=Shared";
 
 Console.WriteLine(connectionString);
 builder.Services.AddDbContext<ApplicationDbContext>(options => { options.UseSqlite(connectionString); }
