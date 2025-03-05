@@ -26,7 +26,10 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = "DataSource=/app/data/app.db;Cache=Shared";
+var connectionString = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"))
+    ? "DataSource=/app/data/app.db;Cache=Shared"
+    : builder.Configuration.GetConnectionString("DefaultConnection") ??
+      throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
 Console.WriteLine(connectionString);
 builder.Services.AddDbContext<ApplicationDbContext>(options => { options.UseSqlite(connectionString); }
