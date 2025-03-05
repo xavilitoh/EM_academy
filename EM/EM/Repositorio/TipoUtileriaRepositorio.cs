@@ -26,7 +26,7 @@ public class TipoUtileriaRepositorio : ITipoUtileriaRepositorio
             .Select(t => new TipoUtileriaCount
             {
                 Tipo = t.Descripcion,
-                Cantidad = t.Utilerias.Count
+                Cantidad = (int)t.Utilerias.Sum(a => a.Cantidad)
             })
             .ToListAsync();
     }
