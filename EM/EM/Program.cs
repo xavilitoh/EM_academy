@@ -74,15 +74,18 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
-    if (!File.Exists("/app/data/EMAcademy.db"))
-    {
-        context.Database.EnsureCreated();
-    }
 
-    context.Database.Migrate();
-    await SeedDefaultUser(services);
-    await SeedDefaultDisciplinas(services);
-    await SeedDefaultMarcas(services);
+    try
+    {
+        context.Database.Migrate();
+        await SeedDefaultUser(services);
+        await SeedDefaultDisciplinas(services);
+        await SeedDefaultMarcas(services);
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e);
+    }
 }
 
 app.UseHttpsRedirection();
