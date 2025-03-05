@@ -6,7 +6,7 @@
 @inject ITipoUtileriaRepositorio TipoUtileriaRepositorio
 @inject IMarcaRepositorio MarcaRepositorio
 @inject IDiciplinaRepositorio DisciplinaRepositorio
-@inject IUtileriaRepositorio UtileriaRepositoriotletaUtileriaRepositorio
+@inject IUtileriaRepositorio UtileriaRepositorio
 @rendermode InteractiveServer
 @attribute [Authorize]
 
@@ -22,7 +22,7 @@
         <SimpleCard Title="Utilerias" Value="_cantidadUtilerias" Icon="sports_baseball"/>
     </RadzenColumn>
     <RadzenColumn Size="12" SizeMD="3" SizeSM="4" SizeXS="12">
-        <SimpleCard Title="Utilerias" Value="_cantidadUtilerias" Icon="sports_baseball"/>
+        <SimpleCard Title="Marcas" Value="_cantidadMarcas" Icon="branding_watermark"/>
     </RadzenColumn>
 </RadzenRow>
 <br/>
@@ -64,9 +64,10 @@
     {
         _cantidadAtletas = AtletaRepositorio.Cantidad();
         _cantidadDisciplinas = DisciplinaRepositorio.Cantidad();
-        _cantidadUtilerias = TipoUtileriaRepositorio.Cantidad();
+        _cantidadUtilerias = UtileriaRepositorio.Cantidad();
         _disciplinaToChar = await DisciplinaRepositorio.GetDisciplinasConCantidadDeAtletas();
         _tipoUtilkeriaToChar = await TipoUtileriaRepositorio.GetTiposUtileriaConCantidad();
+        _cantidadMarcas = MarcaRepositorio.Cantidad();
     }
 
 }
