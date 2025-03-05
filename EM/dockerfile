@@ -1,5 +1,5 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
+USER $APP_UID:$APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
@@ -15,14 +15,15 @@ RUN dotnet build "EM.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "EM.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
+RUN dotnet publish "EM.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false && \
+    rm -rf /root/.nuget/packages && \
+    rm -rf /src
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --chown=$APP_UID:$APP_UID --from=publish /app/publish .
 
 
 # Crear un volumen para la base de datos
-VOLUME /app
-
+VOLUME /app/data
+ENV docker=true
 ENTRYPOINT ["dotnet", "EM.dll"]
