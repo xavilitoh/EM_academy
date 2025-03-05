@@ -23,6 +23,6 @@ COPY --from=publish /app/publish .
 
 
 # Crear un volumen para la base de datos
-VOLUME /app/data
+VOLUME /app
 
 ENTRYPOINT ["dotnet", "EM.dll"]
