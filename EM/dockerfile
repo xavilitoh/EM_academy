@@ -25,7 +25,4 @@ COPY --from=publish /app/publish .
 # Crear un volumen para la base de datos
 VOLUME /app/data
 
-# Copiar la base de datos inicial a /app/data
-COPY ["EM/Data/MAcademy.db", "/app/data/MAcademy.db"]
-
 ENTRYPOINT ["dotnet", "EM.dll"]
