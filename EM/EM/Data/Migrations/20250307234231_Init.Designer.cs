@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EM.Migrations
+namespace EM.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250225213119_HistorialMEdico")]
-    partial class HistorialMEdico
+    [Migration("20250307234231_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,6 +27,10 @@ namespace EM.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -43,6 +47,10 @@ namespace EM.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedEmail")
@@ -233,6 +241,36 @@ namespace EM.Migrations
                     b.ToTable("TiposUtileria");
                 });
 
+            modelBuilder.Entity("EM.Entidades.Utileria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Cantidad")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("Code")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("IdMarca")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("IdTipo")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdMarca");
+
+                    b.HasIndex("IdTipo");
+
+                    b.ToTable("Utilerias");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -364,7 +402,7 @@ namespace EM.Migrations
             modelBuilder.Entity("EM.Entidades.Atleta", b =>
                 {
                     b.HasOne("EM.Entidades.Disciplinas", "Disciplinas")
-                        .WithMany()
+                        .WithMany("Atletas")
                         .HasForeignKey("IdDisciplina")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -389,6 +427,25 @@ namespace EM.Migrations
                         .IsRequired();
 
                     b.Navigation("Atleta");
+                });
+
+            modelBuilder.Entity("EM.Entidades.Utileria", b =>
+                {
+                    b.HasOne("EM.Entidades.Marca", "Marca")
+                        .WithMany()
+                        .HasForeignKey("IdMarca")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EM.Entidades.TipoUtileria", "Tipo")
+                        .WithMany("Utilerias")
+                        .HasForeignKey("IdTipo")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Marca");
+
+                    b.Navigation("Tipo");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -440,6 +497,16 @@ namespace EM.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("EM.Entidades.Disciplinas", b =>
+                {
+                    b.Navigation("Atletas");
+                });
+
+            modelBuilder.Entity("EM.Entidades.TipoUtileria", b =>
+                {
+                    b.Navigation("Utilerias");
                 });
 #pragma warning restore 612, 618
         }

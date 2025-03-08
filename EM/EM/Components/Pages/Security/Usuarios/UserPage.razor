@@ -1,0 +1,29 @@
+@inject IUsuariosRepositorio UsuariosRepositorio
+
+@page "/Users"
+@using EM.Data
+<PageTitle>Usuarios</PageTitle>
+
+<RadzenCard>
+    <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+        <h3>Usuarios</h3>
+    </RadzenRow>
+    <br/>
+    <RadzenDataGrid Data="@_usuarios" TItem="ApplicationUser" ColumnWidth="200px">
+        <Columns>
+            <RadzenColumn TItem="ApplicationUser" Property="UserName" Title="User Name" />
+            <RadzenColumn TItem="ApplicationUser" Property="Email" Title="Email" />
+            <RadzenColumn TItem="ApplicationUser" Property="EmailConfirmed" Title="Email Confirmed" />
+        </Columns>
+    </RadzenDataGrid>
+</RadzenCard>
+
+@code {
+    List<ApplicationUser> _usuarios = new List<ApplicationUser>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _usuarios = await UsuariosRepositorio.ObtenerUsuarios();
+    }
+
+}

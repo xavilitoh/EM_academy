@@ -1,0 +1,48 @@
+@page "/Usuario/Crear"
+@using EM.Data
+@inject IUsuariosRepositorio RepositorioUsuarios
+@rendermode InteractiveServer
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<RadzenComponents @rendermode="InteractiveServer" />
+
+<RadzenCard>
+    <h3>Nuevo Usuario</h3>
+
+    <UserForm Guardar="Guardar" ApplicationUser="new ApplicationUser()"/>
+</RadzenCard>
+
+@code {
+
+    async Task Guardar(ApplicationUser? usuario)
+    {
+        try
+        {
+            await RepositorioUsuarios.Save(usuario);
+            NotificationService.Notify(
+                new NotificationMessage
+                {
+                    Style = "position: absolute; top: -100%; right: 50%;",
+                    Severity = NotificationSeverity.Success,
+                    Summary = "",
+                    Detail = "Registro guardado",
+                    Duration = 5000
+                });
+            NavigationManager.NavigateTo("/Usuario");
+        }
+        catch (Exception e)
+        {
+            NotificationService.Notify(
+                new NotificationMessage
+                {
+                    Style = "position: absolute; top: -100%; right: 50%;",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "",
+                    Detail = e.Message,
+                    Duration = 5000
+                });
+        }
+    }
+}

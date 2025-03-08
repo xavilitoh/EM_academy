@@ -25,6 +25,10 @@ namespace EM.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
@@ -40,6 +44,10 @@ namespace EM.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("NormalizedEmail")
@@ -391,7 +399,7 @@ namespace EM.Data.Migrations
             modelBuilder.Entity("EM.Entidades.Atleta", b =>
                 {
                     b.HasOne("EM.Entidades.Disciplinas", "Disciplinas")
-                        .WithMany()
+                        .WithMany("Atletas")
                         .HasForeignKey("IdDisciplina")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -420,19 +428,19 @@ namespace EM.Data.Migrations
 
             modelBuilder.Entity("EM.Entidades.Utileria", b =>
                 {
-                    b.HasOne("EM.Entidades.Marca", "Mabrca")
+                    b.HasOne("EM.Entidades.Marca", "Marca")
                         .WithMany()
                         .HasForeignKey("IdMarca")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("EM.Entidades.TipoUtileria", "Tipo")
-                        .WithMany()
+                        .WithMany("Utilerias")
                         .HasForeignKey("IdTipo")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Mabrca");
+                    b.Navigation("Marca");
 
                     b.Navigation("Tipo");
                 });
@@ -486,6 +494,16 @@ namespace EM.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("EM.Entidades.Disciplinas", b =>
+                {
+                    b.Navigation("Atletas");
+                });
+
+            modelBuilder.Entity("EM.Entidades.TipoUtileria", b =>
+                {
+                    b.Navigation("Utilerias");
                 });
 #pragma warning restore 612, 618
         }
