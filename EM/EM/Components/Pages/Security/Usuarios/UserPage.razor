@@ -22,8 +22,8 @@
             <RadzenDataGridColumn TItem="ApplicationUser" Title="Opciones">
                 <Template Context="usuario">
                     <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
-                                  Click='() => { NavigationManager.NavigateTo($"/Usuarios/editar/{usuario.Id}"); }'
-                                  Text="Editar"/>
+                                  Click='() => { NavigationManager.NavigateTo($"/Users/detail/{usuario.Id}"); }'
+                                  Text="Administrar Roles"/>
                 </Template>
             </RadzenDataGridColumn>
         </Columns>
