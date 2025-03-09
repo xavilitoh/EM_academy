@@ -3,7 +3,7 @@
 @using Microsoft.EntityFrameworkCore
 @inject NavigationManager NavigationManager
 @inject  RoleManager<IdentityRole> roleManager
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Seguridad")]
 @rendermode InteractiveServer
 <PageTitle>Roles</PageTitle>
 

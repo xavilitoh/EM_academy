@@ -2,7 +2,7 @@
 @rendermode InteractiveServer
 @inject IMarcaRepositorio MarcasRepositorio
 @inject NavigationManager NavigationManager
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Administrador,Auxiliar Almacen,Almacen")]
 <PageTitle>Marcas</PageTitle>
 
 <RadzenCard>

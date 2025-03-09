@@ -4,14 +4,19 @@
     <Found Context="routeData">
         <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(LoginLayout)">
             <NotAuthorized>
-                <RedirectToLogin/>
+                @* <RedirectToLogin/> *@
             </NotAuthorized>
         </AuthorizeRouteView>
         <FocusOnNavigate RouteData="routeData" Selector="h1"/>
     </Found>
     <NotFound>
         <LayoutView Layout="typeof(LoginLayout)">
-            <p>Lo siento, no hay nada en esta dirección.</p>
+            <RadzenRow JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center">
+                <RadzenColumn Style="text-align: center">
+                    <h1>404</h1>
+                    <p>Lo siento, no hay nada en esta dirección.</p>
+                </RadzenColumn>
+            </RadzenRow>
         </LayoutView>
     </NotFound>
 </Router>

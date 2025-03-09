@@ -84,9 +84,11 @@ using (var scope = app.Services.CreateScope())
     try
     {
         await context.Database.MigrateAsync();
+        await SeedDefaultRoles(services);
         await SeedDefaultUser(services);
         await SeedDefaultDisciplinas(services);
         await SeedDefaultMarcas(services);
+        await SeedDefaultTipoUtileria(services);
     }
     catch (Exception e)
     {
@@ -105,7 +107,7 @@ app.MapRazorComponents<App>()
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
-app.Run();
+await app.RunAsync();
 
 
 static async Task SeedDefaultUser(IServiceProvider serviceProvider)
@@ -124,15 +126,9 @@ static async Task SeedDefaultUser(IServiceProvider serviceProvider)
         };
         await userManager.CreateAsync(user, "Abcd1234.");
         
-        ApplicationUser user2 = new ApplicationUser
-        {
-            Nombre = "Usuario2",
-            Apellido = "Prueba",
-            UserName = "usuario2@prueba.dev",
-            Email = "usuario2@prueba.dev",
-            EmailConfirmed = true
-        };
-        await userManager.CreateAsync(user2, "Abcd1234.");
+        await userManager.AddToRoleAsync(user, "Administrador");
+        await userManager.AddToRoleAsync(user, "Seguridad");
+        
     }
 }
 
@@ -165,6 +161,47 @@ static async Task SeedDefaultMarcas(IServiceProvider serviceProvider)
     }
 }
 
+static async Task SeedDefaultRoles(IServiceProvider serviceProvider)
+{
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    var roles = new List<string> { "Administrador", "Seguridad", "Manager", "Auxiliar Manager", "Auxiliar Almacen", "Almacen" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+}
+
+static async Task SeedDefaultTipoUtileria(IServiceProvider serviceProvider)
+{
+    var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+
+    if (!context.TiposUtileria.Any())
+    {
+        var tipoUtilerias = new List<TipoUtileria>
+        {
+            new TipoUtileria { Descripcion = "Bate de Baseball" },
+            new TipoUtileria { Descripcion = "Pelota de Baseball" },
+            new TipoUtileria { Descripcion = "Bola de Basketball" },
+            new TipoUtileria { Descripcion = "Guante de Baseball" },
+            new TipoUtileria { Descripcion = "Balon de Football" },
+        };
+
+        foreach (var tipoUtileria in tipoUtilerias)
+        {
+            if (!context.TiposUtileria.Any(d => d.Descripcion == tipoUtileria.Descripcion))
+            {
+                context.TiposUtileria.Add(tipoUtileria);
+            }
+        }
+
+        await context.SaveChangesAsync();
+    }
+}
 
 static async Task SeedDefaultDisciplinas(IServiceProvider serviceProvider)
 {

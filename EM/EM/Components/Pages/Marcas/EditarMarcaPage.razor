@@ -4,14 +4,14 @@
 @rendermode InteractiveServer
 @inject NotificationService NotificationService
 @inject NavigationManager NavigationManager
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Administrador,Auxiliar Almacen,Almacen")]
 
 <RadzenComponents @rendermode="InteractiveServer"/>
 
 <RadzenCard>
     <h3>Editar Marca @_marca.Descripcion</h3>
 
-    <MarcaForm Guardar="Guardar" EditMode="true" Marca=_marca/>
+    <MarcaForm Guardar="Guardar" EditMode="true" Marca=_marca></MarcaForm>
 </RadzenCard>
 
 @code {

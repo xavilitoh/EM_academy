@@ -3,7 +3,7 @@
 @rendermode InteractiveServer
 @inject IUsuariosRepositorio UsuariosRepositorio
 @inject NavigationManager NavigationManager
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Seguridad")]
 <PageTitle>Usuarios</PageTitle>
 
 <RadzenCard>
