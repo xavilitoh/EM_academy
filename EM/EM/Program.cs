@@ -27,7 +27,7 @@ builder.Services.AddAuthentication(options =>
     .AddIdentityCookies();
 
 var connectionString = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"))
-    ? "DataSource=/app/data/app.db;Cache=Shared"
+    ? "DataSource=app.db;Cache=Shared"
     : builder.Configuration.GetConnectionString("DefaultConnection") ??
       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
