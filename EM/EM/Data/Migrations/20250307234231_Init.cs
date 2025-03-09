@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EM.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,6 +30,8 @@ namespace EM.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
+                    Nombre = table.Column<string>(type: "TEXT", nullable: false),
+                    Apellido = table.Column<string>(type: "TEXT", nullable: false),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -244,6 +246,59 @@ namespace EM.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Utilerias",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Code = table.Column<Guid>(type: "TEXT", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Cantidad = table.Column<decimal>(type: "TEXT", nullable: false),
+                    IdTipo = table.Column<int>(type: "INTEGER", nullable: false),
+                    IdMarca = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Utilerias", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Utilerias_Marcas_IdMarca",
+                        column: x => x.IdMarca,
+                        principalTable: "Marcas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Utilerias_TiposUtileria_IdTipo",
+                        column: x => x.IdTipo,
+                        principalTable: "TiposUtileria",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "HistorialesMedicos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    IdAtleta = table.Column<int>(type: "INTEGER", nullable: false),
+                    Diagnostico = table.Column<string>(type: "TEXT", nullable: false),
+                    Tratamiento = table.Column<string>(type: "TEXT", nullable: false),
+                    FechaConsulta = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Descripcion = table.Column<string>(type: "TEXT", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HistorialesMedicos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_HistorialesMedicos_Atletas_IdAtleta",
+                        column: x => x.IdAtleta,
+                        principalTable: "Atletas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -290,6 +345,21 @@ namespace EM.Data.Migrations
                 name: "IX_Atletas_IdPersona",
                 table: "Atletas",
                 column: "IdPersona");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HistorialesMedicos_IdAtleta",
+                table: "HistorialesMedicos",
+                column: "IdAtleta");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Utilerias_IdMarca",
+                table: "Utilerias",
+                column: "IdMarca");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Utilerias_IdTipo",
+                table: "Utilerias",
+                column: "IdTipo");
         }
 
         /// <inheritdoc />
@@ -311,6 +381,18 @@ namespace EM.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "HistorialesMedicos");
+
+            migrationBuilder.DropTable(
+                name: "Utilerias");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "Atletas");
 
             migrationBuilder.DropTable(
@@ -318,12 +400,6 @@ namespace EM.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "TiposUtileria");
-
-            migrationBuilder.DropTable(
-                name: "AspNetRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Diciplinas");

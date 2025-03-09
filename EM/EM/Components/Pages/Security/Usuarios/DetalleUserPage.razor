@@ -1,0 +1,88 @@
+@page "/users/detail/{userId:guid}"
+@using EM.Data
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
+@inject NavigationManager NavigationManager
+@inject NotificationService NotificationService
+@inject DialogService _dialogService
+@attribute [Authorize]
+
+<PageTitle>Detalle de Usuario</PageTitle>
+
+<RadzenRow AlignItems="AlignItems.Center">
+    <RadzenButton Click=GoBack Icon="keyboard_backspace" Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Base"/>
+    <h4>@user.FullName</h4>
+</RadzenRow>
+<br/>
+<RadzenCard>
+    <RadzenFieldset Text="Detalles del Usuario">
+        <RadzenTextBox Value="@user.FullName" Name="FullName" Placeholder="Nombre" Disabled="true" />
+        <RadzenTextBox @bind-Value="user.UserName" Name="UserName" Placeholder="Nombre de Usuario" Disabled="true" />
+    </RadzenFieldset>
+</RadzenCard>
+<br/>
+
+<RadzenCard>
+    <RadzenFieldset Text="Roles del Usuario">
+        <RadzenDataGrid TItem="string" Data="@userRoles" AllowPaging="true" PageSize="10">
+            <HeaderTemplate>
+                <RadzenButton Size="ButtonSize.Medium" Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button"
+                              Icon="add" Text="Agregar"
+                              Click='() => { NavigationManager.NavigateTo($"/Users/AddRole/{user.Id}"); }'/>
+            </HeaderTemplate>
+            <Columns>
+                <RadzenDataGridColumn TItem="string" Property="." Title="Rol"/>
+                <RadzenDataGridColumn TItem="string" Title="Acciones">
+                    <Template Context="role">
+                        <RadzenButton class="rz-danger" Variant="Variant.Outlined" Text="Eliminar" Icon="delete" Click="@(args => ConfirmDeleteRole(role))"/>
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenFieldset>
+</RadzenCard>
+
+@* <RadzenDialog @ref="dialogService" /> *@
+
+@code {
+    [Parameter] public Guid userId { get; set; }
+    private ApplicationUser user = new ApplicationUser();
+    private List<string> userRoles = new List<string>();
+    private RadzenDialog dialogService;
+
+    protected override async Task OnInitializedAsync()
+    {
+        dialogService = new ();
+        user = await UserManager.FindByIdAsync(userId.ToString());
+        userRoles = await UserManager.GetRolesAsync(user) as List<string>;
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/users");
+    }
+
+    private async Task ConfirmDeleteRole(string role)
+    {
+        var confirmed = await _dialogService.Confirm("¿Estás seguro de que deseas eliminar este rol?", "Confirmar eliminación");
+        if (confirmed.HasValue && confirmed.Value)
+        {
+            await DeleteRole(role);
+        }
+    }
+
+    private async Task DeleteRole(string role)
+    {
+        var result = await UserManager.RemoveFromRoleAsync(user, role);
+        if (result.Succeeded)
+        {
+            userRoles = await UserManager.GetRolesAsync(user) as List<string>;
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Éxito", Detail = "Rol eliminado exitosamente." });
+        }
+        else
+        {
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error", Detail = string.Join(", ", result.Errors.Select(e => e.Description)) });
+        }
+    }
+}

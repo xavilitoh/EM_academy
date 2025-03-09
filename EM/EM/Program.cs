@@ -26,13 +26,18 @@ builder.Services.AddAuthentication(options =>
     })
     .AddIdentityCookies();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var connectionString = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"))
+    ? "DataSource=/app/data/app.db;Cache=Shared"
+    : builder.Configuration.GetConnectionString("DefaultConnection") ??
+      throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+Console.WriteLine(connectionString);
 builder.Services.AddDbContext<ApplicationDbContext>(options => { options.UseSqlite(connectionString); }
 );
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
@@ -45,6 +50,7 @@ builder.Services.AddScoped<IMarcaRepositorio, MarcaRepositorio>();
 builder.Services.AddScoped<ITipoUtileriaRepositorio, TipoUtileriaRepositorio>();
 builder.Services.AddScoped<IHistorialMedicoRepositorio, HistorialMedicoRepositorio>();
 builder.Services.AddScoped<IUtileriaRepositorio, UtileriaRepositorio>();
+builder.Services.AddScoped<IUsuariosRepositorio, UsuariosRepositorio>();
 builder.Services.AddRadzenComponents();
 builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
@@ -74,15 +80,18 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
-    if (!File.Exists("/app/data/EMAcademy.db"))
-    {
-        context.Database.EnsureCreated();
-    }
 
-    context.Database.Migrate();
-    await SeedDefaultUser(services);
-    await SeedDefaultDisciplinas(services);
-    await SeedDefaultMarcas(services);
+    try
+    {
+        await context.Database.MigrateAsync();
+        await SeedDefaultUser(services);
+        await SeedDefaultDisciplinas(services);
+        await SeedDefaultMarcas(services);
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e);
+    }
 }
 
 app.UseHttpsRedirection();
@@ -107,11 +116,23 @@ static async Task SeedDefaultUser(IServiceProvider serviceProvider)
     {
         user = new ApplicationUser
         {
+            Nombre = "Usuario",
+            Apellido = "Prueba",
             UserName = "usuario1@prueba.dev",
             Email = "usuario1@prueba.dev",
             EmailConfirmed = true
         };
         await userManager.CreateAsync(user, "Abcd1234.");
+        
+        ApplicationUser user2 = new ApplicationUser
+        {
+            Nombre = "Usuario2",
+            Apellido = "Prueba",
+            UserName = "usuario2@prueba.dev",
+            Email = "usuario2@prueba.dev",
+            EmailConfirmed = true
+        };
+        await userManager.CreateAsync(user2, "Abcd1234.");
     }
 }
 

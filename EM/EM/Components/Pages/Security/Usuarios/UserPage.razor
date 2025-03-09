@@ -1,0 +1,40 @@
+@page "/users"
+@using EM.Data
+@rendermode InteractiveServer
+@inject IUsuariosRepositorio UsuariosRepositorio
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+<PageTitle>Usuarios</PageTitle>
+
+<RadzenCard>
+    <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+        <h3>Usuarios</h3>
+        <RadzenButton Size="ButtonSize.Medium" Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button"
+                      Icon="add" Text="Crear"
+                      Click='() => { NavigationManager.NavigateTo("/users/Crear"); }'/>
+    </RadzenRow>
+    <br/>
+    <RadzenDataGrid TItem="ApplicationUser" AllowPaging="true" PageSize="10" Data="@_usuarios">
+        <Columns>
+            <RadzenDataGridColumn TItem="ApplicationUser" Property="Id" Title="ID"/>
+            <RadzenDataGridColumn TItem="ApplicationUser" Property="FullName" Title="Nombre"/>
+            <RadzenDataGridColumn TItem="ApplicationUser" Property="Email" Title="Correo Electrónico"/>
+            <RadzenDataGridColumn TItem="ApplicationUser" Title="Opciones">
+                <Template Context="usuario">
+                    <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
+                                  Click='() => { NavigationManager.NavigateTo($"/Users/detail/{usuario.Id}"); }'
+                                  Text="Administrar Roles"/>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenCard>
+
+@code {
+    List<ApplicationUser>? _usuarios;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _usuarios = await UsuariosRepositorio.ObtenerUsuarios();
+    }
+}

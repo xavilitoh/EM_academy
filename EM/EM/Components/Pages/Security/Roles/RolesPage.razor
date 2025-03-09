@@ -1,0 +1,40 @@
+@page "/roles"
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@inject NavigationManager NavigationManager
+@inject  RoleManager<IdentityRole> roleManager
+@attribute [Authorize]
+@rendermode InteractiveServer
+<PageTitle>Roles</PageTitle>
+
+<RadzenCard>
+    <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+        <h3>Roles</h3>
+        <RadzenButton Size="ButtonSize.Medium" Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button"
+                      Icon="add" Text="Crear"
+                      Click='() => { NavigationManager.NavigateTo("/roles/crear"); }'/>
+    </RadzenRow>
+    <br/>
+    <RadzenDataGrid TItem="IdentityRole" AllowPaging="true" PageSize="10" Data="@_roles">
+        <Columns>
+            <RadzenDataGridColumn TItem="IdentityRole" Property="Id" Title="ID"/>
+            <RadzenDataGridColumn TItem="IdentityRole" Property="Name" Title="Nombre"/>
+            <RadzenDataGridColumn TItem="IdentityRole" Title="Opciones">
+                <Template Context="role">
+                    <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
+                                  Click='() => { NavigationManager.NavigateTo($"/roles/editar/{role.Id}"); }'
+                                  Text="Editar"/>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenCard>
+
+@code {
+    private List<IdentityRole>? _roles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _roles = await roleManager.Roles.ToListAsync();
+    }
+}

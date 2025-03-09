@@ -22,6 +22,10 @@ RUN dotnet publish "EM.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseApp
 FROM base AS final
 WORKDIR /app
 COPY --chown=$APP_UID:$APP_UID --from=publish /app/publish .
+RUN mkdir -p /app/data
+RUN chmod -R 755 /app/data
 VOLUME /app/data
+VOLUME /app/.aspnet/DataProtection-Keys
+VOLUME /app/wwwroot
 ENV docker=true
 ENTRYPOINT ["dotnet", "EM.dll"]

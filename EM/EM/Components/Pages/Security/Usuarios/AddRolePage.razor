@@ -1,0 +1,54 @@
+@page "/Users/AddRole/{userId:guid}"
+@using EM.Data
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.EntityFrameworkCore
+@inject UserManager<ApplicationUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<PageTitle>Agregar Rol a Usuario</PageTitle>
+
+<h3>Agregar Rol a Usuario</h3>
+
+<RadzenTemplateForm TItem="ApplicationUser" Data="@user" Submit="@HandleValidSubmit">
+    <RadzenFieldset Text="Detalles del Usuario">
+        <RadzenTextBox @bind-Value="user.Email" Name="Email" Placeholder="Correo Electrónico" Disabled="true" />
+    </RadzenFieldset>
+    <RadzenFieldset Text="Seleccionar Rol">
+        <RadzenDropDown @bind-Value="selectedRole" Data="@roles" TextProperty="Name" ValueProperty="Name" Name="Role" Placeholder="Seleccionar Rol" />
+        <RadzenRequiredValidator Component="Role" Text="El rol es requerido" />
+    </RadzenFieldset>
+    <RadzenButton ButtonType="ButtonType.Submit" Text="Agregar Rol" Style="margin-top: 10px;" />
+</RadzenTemplateForm>
+
+<RadzenNotification @ref="notification" />
+
+@code {
+    [Parameter] public Guid userId { get; set; }
+    private ApplicationUser user = new ApplicationUser();
+    private string selectedRole;
+    private List<IdentityRole> roles = new List<IdentityRole>();
+    private RadzenNotification notification;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserManager.FindByIdAsync(userId.ToString());
+        roles = await RoleManager.Roles.ToListAsync();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        var result = await UserManager.AddToRoleAsync(user, selectedRole);
+        if (result.Succeeded)
+        {
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Éxito", Detail = "Rol agregado exitosamente." });
+            NavigationManager.NavigateTo($"/Users/detail/{userId}");
+        }
+        else
+        {
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error", Detail = string.Join(", ", result.Errors.Select(e => e.Description)) });
+        }
+    }
+}

@@ -1,0 +1,38 @@
+@page "/roles/crear"
+@using Microsoft.AspNetCore.Identity
+@inject RoleManager<IdentityRole> RoleManager
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Crear Rol</PageTitle>
+
+<h3>Crear Rol</h3>
+
+<RadzenTemplateForm TItem="IdentityRole" Data="@newRole" Submit="@HandleValidSubmit">
+    <RadzenFieldset Text="Detalles del Rol">
+        <RadzenTextBox @bind-Value="newRole.Name" Name="Name" Placeholder="Nombre del Rol" />
+        <RadzenRequiredValidator Component="Name" Text="El nombre del rol es requerido" />
+    </RadzenFieldset>
+    <RadzenButton ButtonType="ButtonType.Submit" Text="Crear" Style="margin-top: 10px;" />
+</RadzenTemplateForm>
+
+<RadzenNotification @ref="notification" />
+
+@code {
+    private IdentityRole newRole = new IdentityRole();
+    private RadzenNotification notification;
+
+    private async Task HandleValidSubmit()
+    {
+        var result = await RoleManager.CreateAsync(newRole);
+        if (result.Succeeded)
+        {
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Éxito", Detail = "Rol creado exitosamente." });
+            NavigationManager.NavigateTo("/roles");
+        }
+        else
+        {
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error", Detail = string.Join(", ", result.Errors.Select(e => e.Description)) });
+        }
+    }
+}
