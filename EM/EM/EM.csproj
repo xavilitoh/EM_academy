@@ -28,13 +28,6 @@
     <ItemGroup>
       <Folder Include="Components\Pages\Account\Componentes\" />
       <Folder Include="Data\Migrations\" />
-        <Folder Include="Migrations\"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Update="app.db">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
-@page "/Usuario/Crear"
+@page "/Users/Crear"
 @using EM.Data
+@using EM.Components.Pages.Security.Componentes
 @inject IUsuariosRepositorio RepositorioUsuarios
 @rendermode InteractiveServer
 @inject NotificationService NotificationService
@@ -20,6 +21,9 @@
     {
         try
         {
+            usuario.UserName = usuario.Email;
+            usuario.NormalizedEmail = usuario.Email.ToUpper();
+            usuario.NormalizedUserName = usuario.Email.ToUpper();
             await RepositorioUsuarios.Save(usuario);
             NotificationService.Notify(
                 new NotificationMessage

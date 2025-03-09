@@ -1,4 +1,5 @@
 using EM.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace EM.Repositorio;
@@ -14,10 +15,12 @@ public interface IUsuariosRepositorio
 public class UsuariosRepositorio : IUsuariosRepositorio
 {
     private readonly ApplicationDbContext _context;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public UsuariosRepositorio(ApplicationDbContext context)
+    public UsuariosRepositorio(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
     {
         _context = context;
+        _userManager = userManager;
     }
 
     public async Task<ApplicationUser?> ObtenerUsuarioPorId(string id)
@@ -30,8 +33,26 @@ public class UsuariosRepositorio : IUsuariosRepositorio
         return await _context.Users.ToListAsync();
     }
 
-    public Task<ApplicationUser> Save(ApplicationUser usuario)
+    public async Task<ApplicationUser> Save(ApplicationUser usuario)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var resp = await _userManager.CreateAsync(usuario, "Password12$");
+
+            if (resp.Succeeded)
+            {
+                
+                return usuario;
+            }
+            else
+            {
+                throw new Exception(resp.Errors.First().Description);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

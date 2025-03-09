@@ -1,29 +1,40 @@
-@inject IUsuariosRepositorio UsuariosRepositorio
-
-@page "/Users"
+@page "/users"
 @using EM.Data
+@rendermode InteractiveServer
+@inject IUsuariosRepositorio UsuariosRepositorio
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
 <PageTitle>Usuarios</PageTitle>
 
 <RadzenCard>
     <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
         <h3>Usuarios</h3>
+        <RadzenButton Size="ButtonSize.Medium" Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button"
+                      Icon="add" Text="Crear"
+                      Click='() => { NavigationManager.NavigateTo("/users/Crear"); }'/>
     </RadzenRow>
     <br/>
-    <RadzenDataGrid Data="@_usuarios" TItem="ApplicationUser" ColumnWidth="200px">
+    <RadzenDataGrid TItem="ApplicationUser" AllowPaging="true" PageSize="10" Data="@_usuarios">
         <Columns>
-            <RadzenColumn TItem="ApplicationUser" Property="UserName" Title="User Name" />
-            <RadzenColumn TItem="ApplicationUser" Property="Email" Title="Email" />
-            <RadzenColumn TItem="ApplicationUser" Property="EmailConfirmed" Title="Email Confirmed" />
+            <RadzenDataGridColumn TItem="ApplicationUser" Property="Id" Title="ID"/>
+            <RadzenDataGridColumn TItem="ApplicationUser" Property="FullName" Title="Nombre"/>
+            <RadzenDataGridColumn TItem="ApplicationUser" Property="Email" Title="Correo Electrónico"/>
+            <RadzenDataGridColumn TItem="ApplicationUser" Title="Opciones">
+                <Template Context="usuario">
+                    <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
+                                  Click='() => { NavigationManager.NavigateTo($"/Usuarios/editar/{usuario.Id}"); }'
+                                  Text="Editar"/>
+                </Template>
+            </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
 </RadzenCard>
 
 @code {
-    List<ApplicationUser> _usuarios = new List<ApplicationUser>();
+    List<ApplicationUser>? _usuarios;
 
     protected override async Task OnInitializedAsync()
     {
         _usuarios = await UsuariosRepositorio.ObtenerUsuarios();
     }
-
 }

@@ -15,13 +15,26 @@
                         </RadzenRow>
                         <RadzenRow AlignItems="AlignItems.Center">
                             <RadzenColumn Size="12" SizeMD="4">
-                                <RadzenLabel Component="applicationUser" Property="UserName" Text="Nombre de Usuario"/>
+                                <RadzenLabel Component="applicationUser" Property="Nombre" Text="Nombre"/>
                             </RadzenColumn>
                             <RadzenColumn Size="12" SizeMD="8">
-                                <RadzenFormField Text="Nombre de Usuario" Variant="Variant.Outlined">
-                                    <RadzenTextBox Name="UserName" Placeholder="Nombre de Usuario" Style="width: 100%"
-                                                   @bind-Value="@ApplicationUser!.UserName"/>
-                                    <RadzenRequiredValidator Component="UserName" Property="UserName"
+                                <RadzenFormField Text="Nombre" Variant="Variant.Outlined">
+                                    <RadzenTextBox Name="Nombre" Placeholder="Nombre" Style="width: 100%"
+                                                   @bind-Value="@ApplicationUser!.Nombre"/>
+                                    <RadzenRequiredValidator Component="Nombre" Property="Nombre"
+                                                             Text="Esto es requerido"/>
+                                </RadzenFormField>
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenLabel Component="applicationUser" Property="Apellido" Text="Apellido"/>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="8">
+                                <RadzenFormField Text="Apellido" Variant="Variant.Outlined">
+                                    <RadzenTextBox Name="Apellido" Placeholder="Apellido" Style="width: 100%"
+                                                   @bind-Value="@ApplicationUser!.Apellido"/>
+                                    <RadzenRequiredValidator Component="Apellido" Property="Apellido"
                                                              Text="Esto es requerido"/>
                                 </RadzenFormField>
                             </RadzenColumn>

@@ -37,6 +37,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => { options.UseSqli
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
@@ -82,7 +83,7 @@ using (var scope = app.Services.CreateScope())
 
     try
     {
-        context.Database.Migrate();
+        await context.Database.MigrateAsync();
         await SeedDefaultUser(services);
         await SeedDefaultDisciplinas(services);
         await SeedDefaultMarcas(services);
@@ -115,11 +116,23 @@ static async Task SeedDefaultUser(IServiceProvider serviceProvider)
     {
         user = new ApplicationUser
         {
+            Nombre = "Usuario",
+            Apellido = "Prueba",
             UserName = "usuario1@prueba.dev",
             Email = "usuario1@prueba.dev",
             EmailConfirmed = true
         };
         await userManager.CreateAsync(user, "Abcd1234.");
+        
+        ApplicationUser user2 = new ApplicationUser
+        {
+            Nombre = "Usuario2",
+            Apellido = "Prueba",
+            UserName = "usuario2@prueba.dev",
+            Email = "usuario2@prueba.dev",
+            EmailConfirmed = true
+        };
+        await userManager.CreateAsync(user2, "Abcd1234.");
     }
 }
 
