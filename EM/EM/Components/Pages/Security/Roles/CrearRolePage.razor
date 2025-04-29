@@ -10,8 +10,10 @@
 
 <RadzenTemplateForm TItem="IdentityRole" Data="@newRole" Submit="@HandleValidSubmit">
     <RadzenFieldset Text="Detalles del Rol">
-        <RadzenTextBox @bind-Value="newRole.Name" Name="Name" Placeholder="Nombre del Rol" />
-        <RadzenRequiredValidator Component="Name" Text="El nombre del rol es requerido" />
+        <RadzenFormField Text="Nombre" Variant="Variant.Outlined">
+            <RadzenTextBox @bind-Value="newRole.Name" Name="Name" Placeholder="Nombre del Rol"/>
+            <RadzenRequiredValidator Component="Name" Text="requerido"/>
+        </RadzenFormField>
     </RadzenFieldset>
     <RadzenButton ButtonType="ButtonType.Submit" Text="Crear" Style="margin-top: 10px;" />
 </RadzenTemplateForm>

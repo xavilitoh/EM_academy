@@ -1,0 +1,49 @@
+@page "/roles/Editar/{Id}"
+@using EM.Data
+@using Microsoft.AspNetCore.Identity
+@inject RoleManager<IdentityRole> RoleManager
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+@inject ApplicationDbContext DbContext
+
+<PageTitle>Editar role @ElRole!.Name</PageTitle>
+
+<h3>Editar role @ElRole!.Name</h3>
+
+<RadzenTemplateForm TItem="IdentityRole" Data="@Role" Submit="@HandleValidSubmit">
+    <RadzenFieldset Text="Detalles del Rol" Variant="Variant.Outlined">
+        <RadzenFormField Text="Nombre" Variant="Variant.Outlined">
+            <RadzenTextBox @bind-Value="Role!.Name" Name="Name" Placeholder="Nombre del Rol"/>
+            <RadzenRequiredValidator Component="Name" Text="requerido"/>
+        </RadzenFormField>
+    </RadzenFieldset>
+    <RadzenButton ButtonType="ButtonType.Submit" Text="Editar" Style="margin-top: 10px;" />
+</RadzenTemplateForm>
+
+@code {
+    [Parameter] public string Id { get; set; }
+    private IdentityRole? Role = new IdentityRole();
+    private IdentityRole? ElRole = new IdentityRole();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Role = await DbContext.Roles.FindAsync(Id);
+        ElRole = Role;
+    }
+
+    private RadzenNotification notification;
+
+    private async Task HandleValidSubmit()
+    {
+        var result = await RoleManager.UpdateAsync(Role);
+        if (result.Succeeded)
+        {
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Success, Summary = "Éxito", Detail = "Rol actualizado exitosamente." });
+            NavigationManager.NavigateTo("/roles");
+        }
+        else
+        {
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error, Summary = "Error", Detail = string.Join(", ", result.Errors.Select(e => e.Description)) });
+        }
+    }
+}
