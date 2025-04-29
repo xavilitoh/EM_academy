@@ -1,12 +1,15 @@
 @inherits LayoutComponentBase
 @* @rendermode InteractiveServer *@
-<RadzenLayout>
-    <RadzenBody>
-        <div class="rz-p-4">
-            @Body
-        </div>
-    </RadzenBody>
-    <RadzenFooter>
-        <RadzenAppearanceToggle/>
-    </RadzenFooter>
-</RadzenLayout>
+
+<div Style="height: 100vh; width: 100vw; background: var(--rz-primary-light) no-repeat center center fixed url('/em.jpg'); background-size: cover;">
+    <RadzenLayout>
+        <RadzenBody>
+            <div class="rz-p-4">
+                @Body
+            </div>
+        </RadzenBody>
+        <RadzenFooter>
+            <RadzenAppearanceToggle/>
+        </RadzenFooter>
+    </RadzenLayout>
+</div>
