@@ -1,0 +1,22 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  em:
+    build:
+      context: "/Volumes/MAC/Documents/GitHub/EM_academy/EM"
+      dockerfile: "EM/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net9.0/EM.dll"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_STATICWEBASSETS: "/app/bin/Debug/net9.0/EM.staticwebassets.runtime.CT.json"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "em:dev"
+    ports: []
+    volumes:
+    - "/Volumes/MAC/Documents/GitHub/EM_academy/EM/EM:/app:rw"
+    - "/Volumes/MAC/Documents/GitHub/EM_academy/EM:/src:rw"
+    - "/Volumes/MAC/.nuget/packages:/root/.nuget/packages"
+    working_dir: "/app"

@@ -91,6 +91,7 @@ public class DiciplinaRepositorio : IDiciplinaRepositorio
             return await _dbContext
                 .Diciplinas
                 .AsNoTracking()
+                .Where(a => a.Enable)
                 .ToListAsync();
         }
         catch (Exception e)
@@ -107,6 +108,7 @@ public class DiciplinaRepositorio : IDiciplinaRepositorio
             return await _dbContext
                 .Diciplinas
                 .AsNoTracking()
+                .Where(a => a.Enable)
                 .Select(d => new SelectListItem
                 {
                     Id = d.Id,
@@ -123,7 +125,19 @@ public class DiciplinaRepositorio : IDiciplinaRepositorio
 
     public async Task<bool> CambiaEstado(int id, bool nuevoEstado = false)
     {
-        return false;
+        var diciplina = await _dbContext.Diciplinas
+            .FirstOrDefaultAsync(a => a.Id == id);
+        if (diciplina != null)
+        {
+            diciplina.Enable = nuevoEstado;
+            _dbContext.Entry(diciplina).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+        else
+        {
+            throw new Exception("Error al cambiar el estado de la diciplina");
+        }
     }
 
     public int Cantidad()

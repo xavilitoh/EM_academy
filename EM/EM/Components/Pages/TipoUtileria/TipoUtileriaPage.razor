@@ -1,8 +1,11 @@
 @page "/TiposUtileria"
+@using Microsoft.EntityFrameworkCore
 @attribute [StreamRendering]
 @inject ITipoUtileriaRepositorio TipoUtileriaRepositorio
 @inject NavigationManager NavigationManager
 @inject NotificationService NotificationService
+
+@inject DialogService DialogService
 @attribute [Authorize]
 
 <RadzenCard>
@@ -23,6 +26,16 @@
                     <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
                                   Click='() => { NavigationManager.NavigateTo($"/TiposUtileria/editar/{tipoUtileria.Id}"); }'
                                   Text="Editar"/>
+                    <RadzenButton Variant="Variant.Outlined" class="rz-danger" ButtonType="ButtonType.Button" Icon="delete"
+                                  Click=@(args => DialogService.Confirm("Está seguro que quiere eliminar este tipo? Esta accion no es reversible", "Eliminar Tipo", new ConfirmOptions() { OkButtonText = "Si", CancelButtonText = "No" })
+                                            .ContinueWith(async task =>
+                                            {
+                                                if (task.Result == true)
+                                                {
+                                                    await Delete(tipoUtileria.Id);
+                                                }
+                                            }))
+                                  Text="Eliminar"/>
                 </Template>
             </RadzenDataGridColumn>
         </Columns>
@@ -35,7 +48,25 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _tiposUtileria = await TipoUtileriaRepositorio.Get();
+        await GetData();
+    }
+
+    private async Task GetData()
+    {
+        try
+        {
+            _tiposUtileria = await TipoUtileriaRepositorio.Get();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+
+    private async Task Delete(int id)
+    {
+        await TipoUtileriaRepositorio.CambiaEstado(id, false);
+        await GetData();
     }
 
 }

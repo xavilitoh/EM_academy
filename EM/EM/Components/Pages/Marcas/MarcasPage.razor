@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @inject IMarcaRepositorio MarcasRepositorio
 @inject NavigationManager NavigationManager
+@inject DialogService DialogService
 @attribute [Authorize]
 <PageTitle>Marcas</PageTitle>
 
@@ -22,6 +23,16 @@
                     <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
                                   Click='() => { NavigationManager.NavigateTo($"/Marcas/editar/{diciplina.Id}"); }'
                                   Text="Editar"/>
+                   <RadzenButton Variant="Variant.Outlined" class="rz-danger" ButtonType="ButtonType.Button" Icon="delete"
+                                  Click=@(args => DialogService.Confirm("Està seguro que quiere eliminar esta marca? Esta accion no es reversible", "Eliminar marca", new ConfirmOptions() { OkButtonText = "Si", CancelButtonText = "No" })
+                                      .ContinueWith(async task =>
+                                      {
+                                          if (task.Result == true)
+                                          {
+                                              await Delete(diciplina.Id);
+                                          }
+                                      }))
+                                  Text="Eliminar"/>
                 </Template>
             </RadzenDataGridColumn>
         </Columns>
@@ -33,7 +44,31 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _marcas = await MarcasRepositorio.Get();
+        await GetMarcas();
     }
 
+    private async Task GetMarcas()
+    {
+        try
+        {
+            _marcas = await MarcasRepositorio.Get();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+    
+    private async Task Delete(int id)
+    {
+        try
+        {
+            await MarcasRepositorio.CambiaEstado(id, false);
+            await GetMarcas();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
 }

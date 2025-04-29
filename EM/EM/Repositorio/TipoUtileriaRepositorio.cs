@@ -91,6 +91,7 @@ public class TipoUtileriaRepositorio : ITipoUtileriaRepositorio
             return await _dbContext
                 .TiposUtileria
                 .AsNoTracking()
+                .Where(a => a.Enable)
                 .ToListAsync();
         }
         catch (Exception e)
@@ -107,6 +108,7 @@ public class TipoUtileriaRepositorio : ITipoUtileriaRepositorio
             return await _dbContext
                 .TiposUtileria
                 .AsNoTracking()
+                .Where(a => a.Enable)
                 .Select(d => new SelectListItem
                 {
                     Id = d.Id,
@@ -123,7 +125,19 @@ public class TipoUtileriaRepositorio : ITipoUtileriaRepositorio
 
     public async Task<bool> CambiaEstado(int id, bool nuevoEstado = false)
     {
-        return false;
+        var tipoUtileria = await _dbContext.TiposUtileria
+            .FirstOrDefaultAsync(a => a.Id == id);
+        if (tipoUtileria != null)
+        {
+            tipoUtileria.Enable = nuevoEstado;
+            _dbContext.Entry(tipoUtileria).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+        else
+        {
+            throw new Exception("Error al cambiar el estado del Tipo de Utileria");
+        }
     }
 
     public int Cantidad()

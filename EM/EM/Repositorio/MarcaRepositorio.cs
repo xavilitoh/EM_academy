@@ -81,6 +81,7 @@ public class MarcaRepositorio : IMarcaRepositorio
             var result = await _dbContext
                 .Marcas
                 .AsNoTracking()
+                .Where(a=> a.Enable)
                 .ToListAsync();
             return result;
         }
@@ -98,6 +99,7 @@ public class MarcaRepositorio : IMarcaRepositorio
             var result = await _dbContext
                 .Marcas
                 .AsNoTracking()
+                .Where(a => a.Enable)
                 .Select(a => new SelectListItem
                 {
                     Id = a.Id,
@@ -115,7 +117,19 @@ public class MarcaRepositorio : IMarcaRepositorio
 
     public async Task<bool> CambiaEstado(int id, bool nuevoEstado = false)
     {
-        return false;
+        var marca = await _dbContext.Marcas
+            .FirstOrDefaultAsync(a => a.Id == id);
+        if (marca != null)
+        {
+            marca.Enable = nuevoEstado;
+            _dbContext.Entry(marca).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+        else
+        {
+            throw new Exception("Error al cambiar el estado de la Marca");
+        }
     }
 
     public int Cantidad()

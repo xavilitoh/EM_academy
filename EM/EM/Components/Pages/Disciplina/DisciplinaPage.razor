@@ -3,6 +3,8 @@
 @inject IDiciplinaRepositorio DiciplinaRepositorio
 @inject NavigationManager NavigationManager
 @inject NotificationService NotificationService
+@inject DialogService DialogService
+
 @attribute [Authorize]
 
 <PageTitle>Disciplinas</PageTitle>
@@ -24,6 +26,17 @@
                     <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
                                   Click='() => { NavigationManager.NavigateTo($"/Disciplina/editar/{diciplina.Id}"); }'
                                   Text="Editar"/>
+                    <RadzenButton Variant="Variant.Outlined" class="rz-danger" ButtonType="ButtonType.Button" Icon="delete"
+                                  Click=@(args => DialogService.Confirm("Está seguro que quiere eliminar esta diciplina? Esta accion no es reversible", "Eliminar Diciplina", new ConfirmOptions() { OkButtonText = "Si", CancelButtonText = "No" })
+                                            .ContinueWith(async task =>
+                                            {
+                                                if (task.Result == true)
+                                                {
+                                                    await Delete(diciplina.Id);
+                                                }
+                                            }))
+                                  Text="Eliminar"/>
+                    
                 </Template>
             </RadzenDataGridColumn>
         </Columns>
@@ -36,7 +49,25 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _diciplinas = await DiciplinaRepositorio.Get();
+        await GetData();
+    }
 
+    private async Task GetData()
+    {
+        _diciplinas = await DiciplinaRepositorio.Get();
+    }
+
+    private async Task Delete(int id)
+    {
+        try
+        {
+            await DiciplinaRepositorio.CambiaEstado(id, false);
+            await GetData();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }

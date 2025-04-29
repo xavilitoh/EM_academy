@@ -129,6 +129,9 @@ namespace EM.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("Enable")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("TEXT");
 
@@ -150,6 +153,9 @@ namespace EM.Data.Migrations
                     b.Property<string>("Diagnostico")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("Enable")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("FechaConsulta")
                         .HasColumnType("TEXT");
@@ -180,6 +186,9 @@ namespace EM.Data.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("Enable")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("TEXT");
@@ -229,6 +238,9 @@ namespace EM.Data.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("Enable")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("TEXT");

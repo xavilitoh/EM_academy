@@ -1,0 +1,11 @@
+﻿services:
+  em:
+    image: em
+    build:
+      context: .
+      dockerfile: EM/Dockerfile
+    ports:
+      - 8080:8080
+      - 8081:8081
+      - 5002:5000
+      - 5003:5001
