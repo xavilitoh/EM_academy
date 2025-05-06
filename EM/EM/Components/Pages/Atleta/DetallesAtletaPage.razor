@@ -64,13 +64,24 @@
 </RadzenCard>
 <br/>
 <RadzenCard>
-    <HistorialMedicoAtleta IdAtleta="Id"/>
+    <RadzenTabs TabPosition="TabPosition.Top" @bind-SelectedIndex=@selectedIndex>
+        <Tabs>
+            <RadzenTabsItem Text="Historial Medico">
+                <HistorialMedicoAtleta IdAtleta="Id"/>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Facturas">
+               <FacturasAtletas IdAtleta="Id"></FacturasAtletas>
+            </RadzenTabsItem>
+        </Tabs>
+    </RadzenTabs>
+   
 </RadzenCard>
 
 @code {
     [Parameter] public int Id { get; set; }
     Atleta? _atleta = new Atleta() { Persona = new() };
     List<HistorialMedico> _historialMedico = new List<HistorialMedico>();
+    int selectedIndex = 0;
 
     protected override async Task OnInitializedAsync()
     {

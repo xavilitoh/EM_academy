@@ -1,0 +1,47 @@
+@using EM.Data
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext DbContext
+<RadzenStack>
+    <RadzenDataGrid Data="@_facturas" TItem="Entidades.FacturasAtletas" AllowFiltering="true">
+        <HeaderTemplate>
+            <RadzenRow JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center">
+                <RadzenStack>
+                    <h3>Facturas</h3>
+                </RadzenStack>
+            </RadzenRow>
+        </HeaderTemplate>
+        <Columns>
+            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Id" Title="ID" Visible="false"/>
+            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Descripcion" Title="Descripcion" Visible="true"/>
+            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Monto" Title="Monto" Visible="true"/>
+            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="FechaRegistro" Title="Fecha" Visible="true"/>
+            <RadzenDataGridColumn Title="Estado" TextAlign="TextAlign.Center" >
+                <Template Context="data">
+                    @if (data.Pagada)
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Success" Text="Pagada" />
+                    }
+                    else
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Danger" Text="No Pagada" />
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenStack>
+
+@code {
+    [Parameter] public int IdAtleta { get; set; }
+
+    List<Entidades.FacturasAtletas> _facturas = new List<Entidades.FacturasAtletas>();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _facturas = await DbContext.FacturasAtletas
+            .Where(a => a.IdAtleta == IdAtleta).ToListAsync();
+        StateHasChanged();
+    }
+}
