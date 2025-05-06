@@ -3,12 +3,19 @@ using EM.Components.Account;
 using EM.Data;
 using EM.Entidades;
 using EM.Repositorio;
+using EM.Workers;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<HostOptions>(options =>
+{
+    options.ServicesStartConcurrently = true;
+    options.ServicesStopConcurrently = false;
+});
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -61,6 +68,9 @@ builder.Services.AddRadzenCookieThemeService(options =>
     options.Name = "theme"; // The name of the cookie
     options.Duration = TimeSpan.FromDays(365); // The duration of the cookie
 });
+
+
+builder.Services.AddHostedService<FacturasWorker>();
 
 builder.Services.AddControllers();
 
@@ -178,9 +188,9 @@ static async Task SeedDefaultDisciplinas(IServiceProvider serviceProvider)
     {
         var disciplinas = new List<Disciplinas>
         {
-            new Disciplinas { Descripcion = "Base Ball" },
-            new Disciplinas { Descripcion = "Basket Ball" },
-            new Disciplinas { Descripcion = "Foot Ball" }
+            new Disciplinas { Descripcion = "Base Ball", MontoMensualidad = 2000},
+            new Disciplinas { Descripcion = "Basket Ball", MontoMensualidad = 2200 },
+            new Disciplinas { Descripcion = "Foot Ball", MontoMensualidad = 3000 }
         };
 
         foreach (var disciplina in disciplinas)

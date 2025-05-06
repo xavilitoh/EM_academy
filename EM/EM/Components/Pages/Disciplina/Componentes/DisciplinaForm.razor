@@ -25,6 +25,18 @@
                                 </RadzenFormField>
                             </RadzenColumn>
                         </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenLabel Text="Valor de Mebresía" Component="Monto"/>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="8">
+                                <RadzenFormField Text="Monto" Variant="Variant.Outlined">
+                                    <RadzenNumeric Name="Monto" Placeholder="Monto" @bind-Value="@Disciplina!.MontoMensualidad" ta/>
+                                    <RadzenRequiredValidator Component="Monto" Property="@Disciplina.MontoMensualidad"
+                                                             Text="Esto es requerido"/>
+                                </RadzenFormField>
+                            </RadzenColumn>
+                        </RadzenRow>
                     </RadzenStack>
                 </RadzenFieldset>
             </RadzenStack>

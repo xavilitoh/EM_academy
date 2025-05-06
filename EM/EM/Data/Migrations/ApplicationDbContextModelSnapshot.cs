@@ -135,9 +135,41 @@ namespace EM.Data.Migrations
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("TEXT");
 
+                    b.Property<decimal>("MontoMensualidad")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("Diciplinas");
+                });
+
+            modelBuilder.Entity("EM.Entidades.FacturasAtletas", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Enable")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("IdAtleta")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Monto")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FacturasAtletas");
                 });
 
             modelBuilder.Entity("EM.Entidades.HistorialMedico", b =>

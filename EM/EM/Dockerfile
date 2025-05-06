@@ -5,13 +5,6 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
- # Instalar dependencias de sistema
-     RUN apt update && apt install -y curl libgdiplus libc6-dev && \
-         apt clean && rm -rf /var/lib/apt/lists/*
-    # Instalar herramientas adicionales
-    RUN apt update && apt install -y git vim nano && \
-        apt clean && rm -rf /var/lib/apt/lists/* 
-
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
@@ -29,21 +22,12 @@ RUN dotnet publish "EM.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseApp
 
 FROM base AS final
 WORKDIR /app
-COPY --chown=$APP_UID:$APP_UID --from=publish /app/publish .
-RUN mkdir -p /app/data
-RUN chmod -R 755 /app/data
-RUN chmod -R 755 /app/Rotativa
-RUN chmod +x /app/bin/Debug/net9.0/Rotativa/wkhtmltopdf.exe
-RUN chmod +x /app/Rotativa/wkhtmltopdf.exe
+COPY --chown=root:root --from=publish /app/publish .
+
 VOLUME /app/data
 VOLUME /app/Rotativa
 VOLUME /app/.aspnet/DataProtection-Keys
 VOLUME /app/wwwroot
 ENV docker=true
-
-    # For Rotativa SDK
-RUN apt update && \
-    apt install -y fontconfig libfreetype6 libpng16-16 libx11-6 libxcb1 libxext6 libxrender1 xfonts-75dpi xfonts-base libgdiplus libc6-dev wkhtmltopdf && \
-    apt clean && rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["dotnet", "EM.dll"]

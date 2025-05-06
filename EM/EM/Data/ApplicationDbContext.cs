@@ -21,4 +21,5 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
     public DbSet<HistorialMedico> HistorialesMedicos { get; set; }
     public new DbSet<ApplicationUser>  Users { get; set; }
     public DbSet<Utileria> Utilerias { get; set; }
+    public DbSet<FacturasAtletas> FacturasAtletas { get; set; }
 }
