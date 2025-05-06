@@ -38,8 +38,12 @@ var connectionString = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable(
     : builder.Configuration.GetConnectionString("DefaultConnection") ??
       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-Console.WriteLine(connectionString);
-builder.Services.AddDbContext<ApplicationDbContext>(options => { options.UseSqlite(connectionString); }
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    {
+       options.UseSqlite(connectionString);
+       options.EnableSensitiveDataLogging(false);
+       options.LogTo(_ => { }); // Deshabilita el log de queries
+    }
 );
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

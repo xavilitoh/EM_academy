@@ -20,11 +20,13 @@ public class FacturasWorker : IHostedService, IDisposable
     {
         _logger.LogInformation("Facturas Worker running.");
 
-        var now = DateTime.Now;
-        var nextRun = now.Date.AddDays(now.Hour >= 8 ? 1 : 0).AddHours(8);
-        var initialDelay = nextRun - now;
-
-        _timer = new Timer(DoWork, null, initialDelay, TimeSpan.FromDays(1));
+        // var now = DateTime.Now;
+        // var nextRun = now.Date.AddDays(now.Hour >= 8 ? 1 : 0).AddHours(8);
+        // var initialDelay = nextRun - now;
+        //
+        // _timer = new Timer(DoWork, null, initialDelay, TimeSpan.FromDays(1));
+        
+        _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromDays(1));
 
         return Task.CompletedTask;
     }
@@ -55,13 +57,13 @@ public class FacturasWorker : IHostedService, IDisposable
                     var nuevaFactura = new FacturasAtletas
                     {
                         IdAtleta = atleta.Id,
-                        Monto = atleta.Disciplinas?.MontoMensualidad ?? 0, // Asumiendo que el monto está relacionado con el atleta
+                        Monto = atleta.Disciplinas?.MontoMensualidad ?? 0,
                         Pagada = false,
                         FechaRegistro = fechaActual
                     };
             
                     dbContext.FacturasAtletas.Add(nuevaFactura);
-                    _logger.LogInformation($"Factura creada para el atleta {atleta.Persona.FullName} con monto {nuevaFactura.Monto}");
+                    _logger.LogInformation("Factura creada para el atleta {Atleta} con monto {Monto}", atleta.Persona.FullName, nuevaFactura.Monto);
                 }
             }
             
