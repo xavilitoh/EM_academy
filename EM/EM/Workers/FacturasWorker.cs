@@ -1,5 +1,6 @@
 using EM.Data;
 using EM.Entidades;
+using Microsoft.EntityFrameworkCore;
 
 namespace EM.Workers;
 
@@ -30,10 +31,16 @@ public class FacturasWorker : IHostedService, IDisposable
 
     private void DoWork(object? state)
     {
+        
+        _logger.LogInformation("Validando facturas...");
         using (var scope = _scopeFactory.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var atletas = dbContext.Atletas.ToList();
+            var atletas = dbContext.Atletas
+                .Include(a=> a.Disciplinas)
+                .Include(a=> a.Persona)
+                .ToList();
+            
             var fechaActual = DateTime.Now;
             
             foreach (var atleta in atletas)
@@ -54,12 +61,12 @@ public class FacturasWorker : IHostedService, IDisposable
                     };
             
                     dbContext.FacturasAtletas.Add(nuevaFactura);
+                    _logger.LogInformation($"Factura creada para el atleta {atleta.Persona.FullName} con monto {nuevaFactura.Monto}");
                 }
             }
             
             dbContext.SaveChanges();
         }
-        _logger.LogInformation("Validando facturas...");
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
