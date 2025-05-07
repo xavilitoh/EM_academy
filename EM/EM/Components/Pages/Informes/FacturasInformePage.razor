@@ -1,0 +1,38 @@
+@page "/FacturasInformePage"
+@using EM.Data
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext context
+<RadzenCard>
+    <RadzenRow>
+        <RadzenColumn>
+            <RadzenDatePicker @bind-Value="FechaInicio" Placeholder="Fecha Inicio" />
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenDatePicker @bind-Value="FechaFin" Placeholder="Fecha Fin" />
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenButton Text="Filtrar" Click="FiltrarFacturas" />
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenDataGrid TItem="FacturasAtletas" Data="@Facturas" AllowPaging="true" PageSize="10">
+        <Columns>
+            <RadzenDataGridColumn TItem="FacturasAtletas" Property="Id" Title="ID" />
+            <RadzenDataGridColumn TItem="FacturasAtletas" Property="Fecha" Title="Fecha" />
+            <RadzenDataGridColumn TItem="FacturasAtletas" Property="Monto" Title="Monto" />
+        </Columns>
+    </RadzenDataGrid>
+</RadzenCard>
+
+@code {
+    private DateTime? FechaInicio { get; set; }
+    private DateTime? FechaFin { get; set; }
+    private List<FacturasAtletas> Facturas { get; set; } = new();
+
+    private async Task FiltrarFacturas()
+    {
+        Facturas = await context.FacturasAtletas
+            .Where(f => (!FechaInicio.HasValue || f.FechaRegistro >= FechaInicio) &&
+                        (!FechaFin.HasValue || f.FechaRegistro <= FechaFin))
+            .ToListAsync();
+    }
+}
