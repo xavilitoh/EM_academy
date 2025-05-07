@@ -94,22 +94,48 @@
     
     private async Task ProcesarPago()
     {
-        if (_montoAPagar > 0)
+        using var transaction = await DbContext.Database.BeginTransactionAsync();
+        try
         {
-            _factura.Resto -= _montoAPagar;
-            if (_factura.Resto <= 0)
+            var descripcion = "";
+            if (_montoAPagar > 0)
             {
-                _factura.Pagada = true;
-                _factura.Resto = 0;
+                _factura.Resto -= _montoAPagar;
+                if (_factura.Resto <= 0)
+                {
+                    _factura.Pagada = true;
+                    _factura.Resto = 0;
+                    descripcion = _factura.Descripcion;
+                }
+                else
+                {
+                    _factura.Pagada = false;
+                    descripcion = $"Pago parcial de membresía de {_factura.Atleta.Persona.Nombre} {_factura.Atleta.Persona.Apellido}";
+                }
+                
+                var pagoFactura = new PagosFacturas()
+                {
+                    IdAtleta = _factura.IdAtleta,
+                    IdFactura = _factura.Id,
+                    Monto = _montoAPagar,
+                    FechaRegistro = DateTime.Now,
+                    Descripcion = descripcion
+                };
+
+                await DbContext.AddAsync(pagoFactura);
+
+                DbContext.FacturasAtletas.Update(_factura);
+                await DbContext.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                await JSRuntime.InvokeVoidAsync("open", $"/Factura/{_factura.Id}/{pagoFactura.Id}", "_blank");
+                NavigationManager.NavigateTo($"atletas/Detalles/{_factura.IdAtleta}");
             }
-            else
-            {
-                _factura.Pagada = false;
-            }
-            DbContext.FacturasAtletas.Update(_factura);
-            await DbContext.SaveChangesAsync();await DbContext.SaveChangesAsync();
-            await JSRuntime.InvokeVoidAsync("open", $"/Factura/{_factura.Id}", "_blank");
-            NavigationManager.NavigateTo($"atletas/Detalles/{_factura.IdAtleta}");
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
         }
     }
     
