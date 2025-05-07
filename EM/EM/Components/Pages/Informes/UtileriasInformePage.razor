@@ -1,0 +1,130 @@
+@page "/UtileriasInformePage"
+@using EM.Data
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext context
+@inject NavigationManager NavigationManager
+
+<RadzenCard>
+    <RadzenRow>
+        <RadzenColumn>
+            <RadzenDatePicker @bind-Value="FechaInicio" Placeholder="Fecha Inicio" />
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenDatePicker @bind-Value="FechaFin" Placeholder="Fecha Fin" />
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenDropDown Data="@TiposUtileria" TextProperty="Descripcion" ValueProperty="Id" @bind-Value="TipoSeleccionado"
+                            Placeholder="Seleccionar Tipo" />
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenDropDown Data="@Marcas" TextProperty="Descripcion" ValueProperty="Id" @bind-Value="MarcaSeleccionada"
+                            Placeholder="Seleccionar Marca" />
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenButton Text="Buscar" Variant="Variant.Outlined" Click="FiltrarUtilerias" />
+        </RadzenColumn>
+        <RadzenColumn>
+        <RadzenButton Text="Quitar Filtros" Variant="Variant.Outlined" Click="QuitarFiltros" />
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+<br/>
+<RadzenCard>
+    <RadzenRow AlignItems="AlignItems.End" JustifyContent="JustifyContent.Start">
+        <RadzenButton Variant="Variant.Outlined" class="rz-success" ButtonType="ButtonType.Button" Size="ButtonSize.Medium"
+                      Icon="download" Text="Exportar a Excel" Click="@(() => ExportarUtileriasAExcel())"/>
+    </RadzenRow>
+    <br/>
+    <RadzenDataGrid TItem="Utileria" Data="@Utilerias" AllowPaging="true" PageSize="10">
+        <Columns>
+            <RadzenDataGridColumn TItem="Utileria" Property="Id" Title="ID"/>
+            <RadzenDataGridColumn TItem="Utileria" Property="Cantidad" Title="Cantidad"/>
+            <RadzenDataGridColumn TItem="Utileria" Title="Tipo">
+                <Template Context="utileria">
+                    <RadzenLabel>@utileria?.Tipo?.Descripcion </RadzenLabel>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Utileria" Title="Marca">
+                <Template Context="utileria">
+                    <RadzenLabel>@utileria?.Marca?.Descripcion </RadzenLabel>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenCard>
+
+@code {
+    private DateTime? FechaInicio { get; set; }
+    private DateTime? FechaFin { get; set; }
+    private int? TipoSeleccionado { get; set; }
+    private int? MarcaSeleccionada { get; set; }
+    private List<Utileria> Utilerias { get; set; } = new();
+    private List<TipoUtileria> TiposUtileria { get; set; } = new();
+    private List<Marca> Marcas { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        TiposUtileria = await context.TiposUtileria.AsNoTracking().ToListAsync();
+        Marcas = await context.Marcas.AsNoTracking().ToListAsync();
+    }
+
+    private async Task FiltrarUtilerias()
+    {
+        Utilerias = await context.Utilerias
+            .AsNoTracking()
+            .Include(u => u.Tipo)
+            .Include(u => u.Marca)
+            .Where(u => (!FechaInicio.HasValue || u.FechaRegistro >= FechaInicio) &&
+                        (!FechaFin.HasValue || u.FechaRegistro <= FechaFin) &&
+                        (!TipoSeleccionado.HasValue || u.IdTipo == TipoSeleccionado) &&
+                        (!MarcaSeleccionada.HasValue || u.IdMarca == MarcaSeleccionada))
+            .ToListAsync();
+    }
+    
+    private void QuitarFiltros()
+    {
+        FechaInicio = null;
+        FechaFin = null;
+        TipoSeleccionado = null;
+        MarcaSeleccionada = null;
+        Utilerias.Clear();
+        StateHasChanged();
+    }
+
+    public async Task ExportarUtileriasAExcel()
+    {
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        using var package = new ExcelPackage();
+        var worksheet = package.Workbook.Worksheets.Add("Utilerias");
+
+        // Agregar encabezados
+        worksheet.Cells[1, 1].Value = "ID";
+        worksheet.Cells[1, 2].Value = "Tipo";
+        worksheet.Cells[1, 3].Value = "Marca";
+        worksheet.Cells[1, 4].Value = "Cantidad";
+        worksheet.Cells[1, 5].Value = "Fecha";
+
+        // Agregar datos
+        for (int i = 0; i < Utilerias.Count; i++)
+        {
+            var utileria = Utilerias[i];
+            worksheet.Cells[i + 2, 1].Value = utileria.Id;
+            worksheet.Cells[i + 2, 2].Value = utileria?.Tipo?.Descripcion ?? "";
+            worksheet.Cells[i + 2, 3].Value = utileria?.Marca?.Descripcion ?? "";
+            worksheet.Cells[i + 2, 4].Value = utileria?.Cantidad ?? 0;
+            worksheet.Cells[i + 2, 5].Value = utileria?.FechaRegistro.ToShortDateString() ?? "";
+        }
+
+        // Ajustar columnas
+        worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+        // Generar archivo Excel
+        byte[] excelBytes = package.GetAsByteArray();
+        string base64String = Convert.ToBase64String(excelBytes);
+        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+        // Descargar archivo
+        string url = $"data:{mimeType};base64,{base64String}";
+        NavigationManager.NavigateTo(url);
+    }
+}
