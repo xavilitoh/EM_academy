@@ -34,4 +34,10 @@
       <Folder Include="Rotativa\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="app.db">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

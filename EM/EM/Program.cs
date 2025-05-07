@@ -67,6 +67,11 @@ builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<ThemeService>();
 
+builder.Services.Configure<RequestLocalizationOptions>(ops =>
+{
+    ops.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("es-DO");
+});
+
 builder.Services.AddRadzenCookieThemeService(options =>
 {
     options.Name = "theme"; // The name of the cookie
