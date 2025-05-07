@@ -58,7 +58,7 @@ public class FacturasWorker : IHostedService, IDisposable
                     {
                         IdAtleta = atleta.Id,
                         Monto = atleta?.Disciplinas?.MontoMensualidad ?? 0,
-                        Descripcion = $"Factura mensual de membresía de la diciplina {atleta?.Disciplinas?.Descripcion} - {fechaActual.Month}/{fechaActual.Year}",
+                        Descripcion = $"Factura de membresía (diciplina {atleta?.Disciplinas?.Descripcion}) - {fechaActual.Month}/{fechaActual.Year}",
                         Pagada = false,
                         FechaRegistro = fechaActual,
                         Resto = atleta?.Disciplinas?.MontoMensualidad ?? 0,

@@ -14,7 +14,16 @@
         <Columns>
             <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Id" Title="ID" Visible="false"/>
             <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Descripcion" Title="Descripcion" Visible="true"/>
-            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Monto" Title="Monto" Visible="true"/>
+            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Monto" Title="Monto" Visible="true">
+                <Template Context="data">
+                    <RadzenTextBox Value="@data.Monto.ToString("c2")" Style="width: 100%;" ReadOnly="true"/>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Resto" Title="Restante" Visible="true">
+                <Template Context="data">
+                    <RadzenTextBox Value="@data.Resto.ToString("c2")" Style="width: 100%;" ReadOnly="true"/>
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="FechaRegistro" Title="Fecha" Visible="true"/>
             <RadzenDataGridColumn Title="Estado" TextAlign="TextAlign.Center" >
                 <Template Context="data">

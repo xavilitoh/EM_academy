@@ -2,6 +2,7 @@
 @using EM.Data
 @using Microsoft.EntityFrameworkCore
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 @inject  ApplicationDbContext DbContext
 <RadzenRow AlignItems="AlignItems.Center">
@@ -17,7 +18,6 @@
                 <RadzenColumn Size="12" SizeMD="6" class="rz-p-4 rz-border-radius-1"
                               Style="border: var(--rz-grid-cell-border)">
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
-                        <RadzenGravatar Email="_atleta?.Persona.FullName"></RadzenGravatar>
                         <RadzenStack Gap="0" class="rz-text-truncate">
                             <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-2 rz-my-0"
                                         Style="color: var(--rz-text-tertiary-color);">Factura
@@ -28,12 +28,12 @@
                                         Style="color: var(--rz-text-tertiary-color);">Monto
                             </RadzenText>
                             <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate">
-                                <b>@_factura.Monto</b></RadzenText>
+                                <b>@_factura.Monto.ToString("c2")</b></RadzenText>
                             <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-2 rz-my-0"
-                                        Style="color: var(--rz-text-tertiary-color);">Restanta
+                                        Style="color: var(--rz-text-tertiary-color);">Restante
                             </RadzenText>
                             <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate">
-                                <b>@(_factura.Resto)</b></RadzenText>
+                                <b>@(_factura.Resto.ToString("c2"))</b></RadzenText>
                         </RadzenStack>
                     </RadzenStack>
                 </RadzenColumn>
@@ -51,19 +51,38 @@
                             </RadzenText>
                             <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate">
                                 <b>@_factura.FechaRegistro.ToShortTimeString()</b>
-                                </RadzenText>
+                            </RadzenText>
                         </RadzenStack>
                     </RadzenStack>
                 </RadzenColumn>
             </RadzenRow>
         </RadzenStack>
     </RadzenStack>
+    
+    <br/>
+    <RadzenRow AlignItems="AlignItems.End" JustifyContent="JustifyContent.Right" Wrap="FlexWrap.Wrap" Gap="1rem" class="rz-p-sm-12">
+        <RadzenColumn Size="12" SizeMD="6" SizeLG="3">
+            <RadzenFormField Text="Monto a pagar" Style="width: 100%;">
+                <RadzenNumeric @bind-Value="@_montoAPagar"/>
+            </RadzenFormField>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6" SizeLG="3">
+            <RadzenButton 
+                Icon="finance_chip" 
+                ButtonType="ButtonType.Button" 
+                Variant="Variant.Outlined" 
+                Text="Procesar pago" 
+                class="rz-info" 
+                Click="ProcesarPago" />
+        </RadzenColumn>
+    </RadzenRow>
 </RadzenCard>
 
 @code {
     [Parameter] public int Id { get; set; }
     
     FacturasAtletas? _factura = new FacturasAtletas();
+    decimal _montoAPagar = 0.00m;
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,6 +90,27 @@
             .Include(a=> a.Atleta)
             .ThenInclude(a=> a.Persona)
             .FirstOrDefaultAsync(a=> a.Id == Id);
+    }
+    
+    private async Task ProcesarPago()
+    {
+        if (_montoAPagar > 0)
+        {
+            _factura.Resto -= _montoAPagar;
+            if (_factura.Resto <= 0)
+            {
+                _factura.Pagada = true;
+                _factura.Resto = 0;
+            }
+            else
+            {
+                _factura.Pagada = false;
+            }
+            DbContext.FacturasAtletas.Update(_factura);
+            await DbContext.SaveChangesAsync();await DbContext.SaveChangesAsync();
+            await JSRuntime.InvokeVoidAsync("open", $"/Factura/{_factura.Id}", "_blank");
+            NavigationManager.NavigateTo($"atletas/Detalles/{_factura.IdAtleta}");
+        }
     }
     
     private void GoBack()
