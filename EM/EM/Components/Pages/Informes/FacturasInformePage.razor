@@ -3,7 +3,7 @@
 @using Microsoft.EntityFrameworkCore
 @inject ApplicationDbContext context
 @inject NavigationManager NavigationManager
-
+@attribute [Authorize(Roles = "Admin")]
 <RadzenCard>
     <RadzenRow>
         <RadzenColumn>
