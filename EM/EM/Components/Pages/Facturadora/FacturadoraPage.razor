@@ -110,7 +110,7 @@
                 else
                 {
                     _factura.Pagada = false;
-                    descripcion = $"Pago parcial de membresía de {_factura.Atleta.Persona.Nombre} {_factura.Atleta.Persona.Apellido}";
+                    descripcion = $"Factura #{_factura.Id} - Pago parcial de membresía de {_factura.Atleta.Persona.Nombre} {_factura.Atleta.Persona.Apellido}";
                 }
                 
                 var pagoFactura = new PagosFacturas()

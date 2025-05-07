@@ -28,7 +28,7 @@
                             class="rz-info" 
                             ButtonType="ButtonType.Button" 
                             Icon="finance_chip"
-                            Click=@(() => Reimprimir(data.IdAtleta,data.Id))
+                            Click=@(() => Reimprimir(data.IdFactura,data.Id))
                             Text="Reimprimir"/>
                 </Template>
             </RadzenDataGridColumn>
@@ -54,8 +54,8 @@
         StateHasChanged();
     }
     
-    protected async Task Reimprimir(int IdAtleta, int IdPago)
+    protected async Task Reimprimir(int IdFactura, int IdPago)
     {
-        await JSRuntime.InvokeVoidAsync("open", $"/Factura/{IdAtleta}/{IdPago}", "_blank");
+        await JSRuntime.InvokeVoidAsync("open", $"/Factura/{IdFactura}/{IdPago}", "_blank");
     }
 }

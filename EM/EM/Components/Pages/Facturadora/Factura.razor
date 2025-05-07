@@ -1,4 +1,4 @@
-@page "/Factura/{Id:int}/{IdPago:int}"
+@page "/Factura/{IdFactura:int}/{IdPago:int}"
 @using EM.Components.Layout
 @using EM.Data
 @using Microsoft.EntityFrameworkCore
@@ -56,7 +56,7 @@
 </RadzenStack>
 
 @code {
-    [Parameter] public int Id { get; set; }
+    [Parameter] public int IdFactura { get; set; }
     [Parameter] public int IdPago { get; set; }
     
     decimal Monto = 0;
@@ -69,10 +69,12 @@
         _factura = await DbContext.FacturasAtletas
             .Include(a=> a.Atleta)
             .ThenInclude(a=> a.Persona)
-            .FirstOrDefaultAsync(a=> a.Id == Id);
+            .FirstOrDefaultAsync(a=> a.Id == IdFactura);
 
         _pagosFacturas = await DbContext.PagosFacturas.FindAsync(IdPago);
         Monto = _pagosFacturas?.Monto ?? 0;
+        
+        StateHasChanged();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
