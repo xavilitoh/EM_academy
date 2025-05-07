@@ -5,6 +5,7 @@
 @layout FacturaLayout
 
 @inject  ApplicationDbContext DbContext
+@inject IJSRuntime JSRuntime
 
 
 <RadzenStack>
@@ -72,5 +73,13 @@
 
         _pagosFacturas = await DbContext.PagosFacturas.FindAsync(IdPago);
         Monto = _pagosFacturas?.Monto ?? 0;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("window.print");
+        }
     }
 }

@@ -65,7 +65,10 @@
         await base.OnInitializedAsync();
 
         _facturas = await DbContext.FacturasAtletas
-            .Where(a => a.IdAtleta == IdAtleta).ToListAsync();
+            .AsNoTracking()
+            .Where(a => a.IdAtleta == IdAtleta)
+            .OrderByDescending(a=> a.FechaRegistro)
+            .ToListAsync();
         StateHasChanged();
     }
 }
