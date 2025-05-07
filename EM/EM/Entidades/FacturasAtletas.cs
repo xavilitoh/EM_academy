@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace EM.Entidades;
@@ -13,4 +14,7 @@ public class FacturasAtletas : ModeloBAse
     public decimal Resto { get; set; }
 
     public bool Pagada { get; set; } = false;
+    
+    [ForeignKey("IdAtleta")]
+    public virtual Atleta Atleta{ get; set; }
 }

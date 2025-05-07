@@ -176,6 +176,8 @@ namespace EM.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IdAtleta");
+
                     b.ToTable("FacturasAtletas");
                 });
 
@@ -464,6 +466,17 @@ namespace EM.Data.Migrations
                     b.Navigation("Disciplinas");
 
                     b.Navigation("Persona");
+                });
+
+            modelBuilder.Entity("EM.Entidades.FacturasAtletas", b =>
+                {
+                    b.HasOne("EM.Entidades.Atleta", "Atleta")
+                        .WithMany()
+                        .HasForeignKey("IdAtleta")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Atleta");
                 });
 
             modelBuilder.Entity("EM.Entidades.HistorialMedico", b =>

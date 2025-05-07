@@ -1,5 +1,6 @@
 @using EM.Data
 @using Microsoft.EntityFrameworkCore
+@inject NavigationManager NavigationManager
 @inject ApplicationDbContext DbContext
 <RadzenStack>
     <RadzenDataGrid Data="@_facturas" TItem="Entidades.FacturasAtletas" AllowFiltering="true">
@@ -24,6 +25,20 @@
                     else
                     {
                         <RadzenBadge BadgeStyle="BadgeStyle.Danger" Text="No Pagada" />
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Title="Opciones">
+                <Template Context="data">
+                    @if (!data.Pagada)
+                    {
+                        <RadzenButton 
+                            Variant="Variant.Outlined" 
+                            class="rz-info" 
+                            ButtonType="ButtonType.Button" 
+                            Icon="finance_chip"
+                            Click='() => { NavigationManager.NavigateTo($"/Facturadora/{data.Id}"); }'
+                            Text="Pagar"/>
                     }
                 </Template>
             </RadzenDataGridColumn>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace EM.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,8 +58,10 @@ namespace EM.Data.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    MontoMensualidad = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
                     Descripcion = table.Column<string>(type: "TEXT", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Enable = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -73,7 +75,8 @@ namespace EM.Data.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Descripcion = table.Column<string>(type: "TEXT", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Enable = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -104,7 +107,8 @@ namespace EM.Data.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Descripcion = table.Column<string>(type: "TEXT", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Enable = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -276,6 +280,31 @@ namespace EM.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FacturasAtletas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    IdAtleta = table.Column<int>(type: "INTEGER", nullable: false),
+                    Monto = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
+                    Resto = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false),
+                    Pagada = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Descripcion = table.Column<string>(type: "TEXT", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Enable = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FacturasAtletas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FacturasAtletas_Atletas_IdAtleta",
+                        column: x => x.IdAtleta,
+                        principalTable: "Atletas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "HistorialesMedicos",
                 columns: table => new
                 {
@@ -286,7 +315,8 @@ namespace EM.Data.Migrations
                     Tratamiento = table.Column<string>(type: "TEXT", nullable: false),
                     FechaConsulta = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Descripcion = table.Column<string>(type: "TEXT", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    FechaRegistro = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Enable = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -347,6 +377,11 @@ namespace EM.Data.Migrations
                 column: "IdPersona");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FacturasAtletas_IdAtleta",
+                table: "FacturasAtletas",
+                column: "IdAtleta");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_HistorialesMedicos_IdAtleta",
                 table: "HistorialesMedicos",
                 column: "IdAtleta");
@@ -379,6 +414,9 @@ namespace EM.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "FacturasAtletas");
 
             migrationBuilder.DropTable(
                 name: "HistorialesMedicos");

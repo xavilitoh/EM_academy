@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EM.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250507005018_Factura_resto")]
-    partial class Factura_resto
+    [Migration("20250507025927_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -178,6 +178,8 @@ namespace EM.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IdAtleta");
 
                     b.ToTable("FacturasAtletas");
                 });
@@ -467,6 +469,17 @@ namespace EM.Data.Migrations
                     b.Navigation("Disciplinas");
 
                     b.Navigation("Persona");
+                });
+
+            modelBuilder.Entity("EM.Entidades.FacturasAtletas", b =>
+                {
+                    b.HasOne("EM.Entidades.Atleta", "Atleta")
+                        .WithMany()
+                        .HasForeignKey("IdAtleta")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Atleta");
                 });
 
             modelBuilder.Entity("EM.Entidades.HistorialMedico", b =>
