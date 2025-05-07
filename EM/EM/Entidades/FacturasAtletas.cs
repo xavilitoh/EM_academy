@@ -8,6 +8,9 @@ public class FacturasAtletas : ModeloBAse
     
     [Precision(18,2)]
     public decimal Monto { get; set; }
+    
+    [Precision(18,2)]
+    public decimal Resto { get; set; }
 
-    public bool Pagada { get; set; }
+    public bool Pagada { get; set; } = false;
 }
