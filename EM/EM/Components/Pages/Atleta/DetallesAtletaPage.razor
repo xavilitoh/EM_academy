@@ -6,7 +6,7 @@
 @inject IAtletaRepositorio RepositorioAtleta
 @inject IHistorialMedicoRepositorio RepositorioHistorialMedico
 @rendermode InteractiveServer
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Usuario,Admin")]
 
 <PageTitle>Atleta @_atleta?.Persona.FullName</PageTitle>
 
