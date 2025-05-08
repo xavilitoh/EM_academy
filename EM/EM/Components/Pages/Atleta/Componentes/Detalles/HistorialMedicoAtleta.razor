@@ -12,7 +12,7 @@
                     <h3>Historial Medico</h3>
                 </RadzenStack>
                 <RadzenStack>
-                    <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="add_circle" Text="Agregar"
+                    <RadzenButton Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Success" Icon="add_circle" Text="Agregar"
                                   Click="@InsertRow"
                                   Disabled="@(_editMode == DataGridEditMode.Single && _historialMedicosToInsert.Count() > 0)"/>
                 </RadzenStack>

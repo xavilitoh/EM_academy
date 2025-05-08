@@ -10,21 +10,31 @@ public interface IContactosAtletasRepositorio : IRepositorioBase<ContactoAtleta>
     
 }
 
-public class ContactosAtletasRepositorio : IContactosAtletasRepositorio
+public class ContactosAtletasRepositorio(ApplicationDbContext dbContext) : IContactosAtletasRepositorio
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public ContactosAtletasRepositorio(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-    
     public async Task<ContactoAtleta> Save(ContactoAtleta modelo)
     {
+        if (modelo == null || string.IsNullOrEmpty(modelo.Nombre) || string.IsNullOrEmpty(modelo.Telefono)|| string.IsNullOrEmpty(modelo.Direccion))
+        {
+            throw new ArgumentException("El modelo o sus campos requeridos no pueden ser nulos.");
+        }
+        
         try
         {
-            var result = await _dbContext.ContactoAtletas.AddAsync(modelo);
-            await _dbContext.SaveChangesAsync();
+            if (modelo.Principal)
+            {
+                var otrosContactos = await dbContext.ContactoAtletas
+                    .Where(a => a.AtletaId == modelo.AtletaId)
+                    .ToListAsync();
+    
+                foreach (var contacto in otrosContactos)
+                {
+                    contacto.Principal = false;
+                }
+            }
+    
+            var result = await dbContext.ContactoAtletas.AddAsync(modelo);
+            await dbContext.SaveChangesAsync();
             return result.Entity;
         }
         catch (Exception e)
@@ -38,16 +48,29 @@ public class ContactosAtletasRepositorio : IContactosAtletasRepositorio
     {
         try
         {
-            var toUpdate = await _dbContext.ContactoAtletas
+            var toUpdate = await dbContext.ContactoAtletas
                 .FirstOrDefaultAsync(a => a.Id == modelo.Id);
-
+            
             if (toUpdate != null)
             {
-                _dbContext.Entry(toUpdate).CurrentValues.SetValues(modelo);
+                // Si el modelo tiene Principal en true, desactivar Principal en otros contactos del mismo atleta
+                if (modelo.Principal)
+                {
+                    var otrosContactos = await dbContext.ContactoAtletas
+                        .Where(a => a.AtletaId == modelo.AtletaId && a.Id != modelo.Id)
+                        .ToListAsync();
+            
+                    foreach (var contacto in otrosContactos)
+                    {
+                        contacto.Principal = false;
+                    }
+                }
+            
+                dbContext.Entry(toUpdate).CurrentValues.SetValues(modelo);
+                dbContext.ContactoAtletas.Update(toUpdate);
             }
-
-            if (toUpdate != null) _dbContext.ContactoAtletas.Update(toUpdate);
-            return await _dbContext.SaveChangesAsync();
+            
+            return await dbContext.SaveChangesAsync();
         }
         catch (Exception e)
         {
@@ -60,7 +83,7 @@ public class ContactosAtletasRepositorio : IContactosAtletasRepositorio
     {
         try
         {
-            return await _dbContext
+            return await dbContext
                 .ContactoAtletas
                 .AsNoTracking()
                 .FirstOrDefaultAsync(d => d.Id == id);
@@ -76,7 +99,7 @@ public class ContactosAtletasRepositorio : IContactosAtletasRepositorio
     {
         try
         {
-            return await _dbContext
+            return await dbContext
                 .ContactoAtletas
                 .AsNoTracking()
                 .ToListAsync();

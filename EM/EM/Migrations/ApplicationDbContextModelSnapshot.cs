@@ -133,10 +133,12 @@ namespace EM.Migrations
 
                     b.Property<string>("Correo")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Direccion")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("FechaCreacion")
@@ -147,6 +149,7 @@ namespace EM.Migrations
 
                     b.Property<string>("Nombre")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("Principal")
@@ -154,6 +157,7 @@ namespace EM.Migrations
 
                     b.Property<string>("Telefono")
                         .IsRequired()
+                        .HasMaxLength(12)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

@@ -1,0 +1,157 @@
+@rendermode InteractiveServer
+@inject IContactosAtletasRepositorio repo
+<br/>
+<RadzenStack>
+    <RadzenDataGrid @ref="ContactosGrid" Data="@Contactos" TItem="ContactoAtleta" AllowFiltering="true"
+                    AllowPaging="true"
+                    AllowSorting="true" RowUpdate="@OnUpdateRow" EditMode="DataGridEditMode.Single"
+                    AllowColumnResizing="true" RowCreate="@OnCreateRow">
+        <HeaderTemplate>
+            <RadzenRow JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center">
+                <RadzenStack>
+                    <h3>Contactos del Atleta</h3>
+                </RadzenStack>
+                <RadzenStack>
+                    <RadzenButton Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Success" Icon="add_circle" Text="Agregar"
+                                  Click="@InsertRow"
+                                  Disabled="@(_editMode == DataGridEditMode.Single && _contactosToInsert.Count() > 0)"/>
+                </RadzenStack>
+            </RadzenRow>
+        </HeaderTemplate>
+        <Columns>
+            <RadzenDataGridColumn TItem="ContactoAtleta" Property="Id" Title="ID" Visible="false"/>
+            <RadzenDataGridColumn TItem="ContactoAtleta" Property="AtletaId" Title="IdAtleta" Visible="false"/>
+            <RadzenDataGridColumn TItem="ContactoAtleta" Property="Nombre" Title="Nombre">
+                <EditTemplate Context="contacto">
+                    <RadzenTextBox @bind-Value="contacto.Nombre"/>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ContactoAtleta" Property="Telefono" Title="Teléfono">
+                <EditTemplate Context="contacto">
+                    <RadzenTextBox @bind-Value="contacto.Telefono"/>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ContactoAtleta" Property="Correo" Title="Correo">
+                <EditTemplate Context="contacto">
+                    <RadzenTextBox @bind-Value="contacto.Correo"/>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ContactoAtleta" Property="Direccion" Title="Dirección">
+                <EditTemplate Context="contacto">
+                    <RadzenTextBox @bind-Value="contacto.Direccion"/>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ContactoAtleta" Property="Principal" Title="Principal">
+                <EditTemplate Context="contacto">
+                    <RadzenCheckBox @bind-Value="contacto.Principal"/>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="ContactoAtleta" Context="contacto">
+                <Template Context="order">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat"
+                                  Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1" Click="@(args => EditRow(order))"
+                                  @onclick:stopPropagation="true"/>
+                </Template>
+                <EditTemplate Context="order">
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat"
+                                  Size="ButtonSize.Medium" Click="@((args) => SaveRow(order))" aria-label="Save"/>
+                    <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat"
+                                  Size="ButtonSize.Medium" class="rz-my-1 rz-ms-1"
+                                  Click="@((args) => CancelEdit(order))" aria-label="Cancel"/>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenStack>
+
+@code {
+    [Parameter] public int IdAtleta { get; set; }
+
+    List<ContactoAtleta> Contactos { get; set; } = new List<ContactoAtleta>();
+
+    RadzenDataGrid<ContactoAtleta> ContactosGrid;
+
+    List<ContactoAtleta> _contactosToInsert = new List<ContactoAtleta>();
+    List<ContactoAtleta> _contactosToUpdate = new List<ContactoAtleta>();
+
+    DataGridEditMode _editMode = DataGridEditMode.Single;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        await GetData();
+    }
+
+    async Task GetData()
+    {
+        Contactos = await repo.Get();
+        Contactos = Contactos.Where(c => c.AtletaId == IdAtleta).ToList();
+    }
+
+    void Reset()
+    {
+        _contactosToInsert.Clear();
+        _contactosToUpdate.Clear();
+    }
+
+    void Reset(ContactoAtleta contacto)
+    {
+        _contactosToInsert.Remove(contacto);
+        _contactosToUpdate.Remove(contacto);
+    }
+
+    async Task EditRow(ContactoAtleta contacto)
+    {
+        if (!ContactosGrid.IsValid) return;
+
+        if (_editMode == DataGridEditMode.Single)
+        {
+            Reset();
+        }
+
+        _contactosToUpdate.Add(contacto);
+        await ContactosGrid.EditRow(contacto);
+    }
+
+    void OnUpdateRow(ContactoAtleta contacto)
+    {
+        Reset(contacto);
+
+        repo.Update(contacto);
+        GetData();
+    }
+
+    async Task SaveRow(ContactoAtleta contacto)
+    {
+        await ContactosGrid.UpdateRow(contacto);
+    }
+
+    void CancelEdit(ContactoAtleta contacto)
+    {
+        Reset(contacto);
+
+        ContactosGrid.CancelEditRow(contacto);
+    }
+
+    async Task InsertRow()
+    {
+        if (!ContactosGrid.IsValid) return;
+
+        if (_editMode == DataGridEditMode.Single)
+        {
+            Reset();
+        }
+
+        var contacto = new ContactoAtleta() { AtletaId = IdAtleta };
+        _contactosToInsert.Add(contacto);
+        await ContactosGrid.InsertRow(contacto);
+    }
+
+    void OnCreateRow(ContactoAtleta contacto)
+    {
+        repo.Save(contacto);
+
+        _contactosToInsert.Remove(contacto);
+        GetData();
+    }
+}

@@ -283,6 +283,33 @@ namespace EM.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ContactoAtletas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    AtletaId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Nombre = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Telefono = table.Column<string>(type: "TEXT", maxLength: 12, nullable: false),
+                    Correo = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Direccion = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Principal = table.Column<bool>(type: "INTEGER", nullable: false),
+                    FechaCreacion = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    FechaModificacion = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Activo = table.Column<bool>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContactoAtletas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContactoAtletas_Atletas_AtletaId",
+                        column: x => x.AtletaId,
+                        principalTable: "Atletas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "FacturasAtletas",
                 columns: table => new
                 {
@@ -410,6 +437,11 @@ namespace EM.Migrations
                 column: "IdPersona");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ContactoAtletas_AtletaId",
+                table: "ContactoAtletas",
+                column: "AtletaId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_FacturasAtletas_IdAtleta",
                 table: "FacturasAtletas",
                 column: "IdAtleta");
@@ -457,6 +489,9 @@ namespace EM.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "ContactoAtletas");
 
             migrationBuilder.DropTable(
                 name: "HistorialesMedicos");
