@@ -24,7 +24,8 @@
             usuario.UserName = usuario.Email;
             usuario.NormalizedEmail = usuario.Email.ToUpper();
             usuario.NormalizedUserName = usuario.Email.ToUpper();
-            await RepositorioUsuarios.Save(usuario);
+            usuario.EmailConfirmed = true;
+            await RepositorioUsuarios.Save(usuario, usuario.PasswordHash);
             NotificationService.Notify(
                 new NotificationMessage
                 {

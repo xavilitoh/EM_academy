@@ -23,6 +23,17 @@ public class MarcaRepositorio : IMarcaRepositorio
     {
         try
         {
+            var data = await _dbContext.Marcas
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Descripcion == modelo.Descripcion);
+
+            if (data?.Descripcion == modelo.Descripcion)
+            {
+                data.Enable = true;
+                await this.Update(data);
+                
+                return data;
+            }
             
             var result = await _dbContext.Marcas.AddAsync(modelo);
             await _dbContext.SaveChangesAsync();

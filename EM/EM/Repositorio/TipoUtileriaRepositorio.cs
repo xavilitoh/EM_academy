@@ -35,6 +35,19 @@ public class TipoUtileriaRepositorio : ITipoUtileriaRepositorio
     {
         try
         {
+            var data = await _dbContext.TiposUtileria
+                .AsNoTracking()
+                .FirstOrDefaultAsync(a => a.Descripcion == modelo.Descripcion);
+
+            if (data?.Descripcion == modelo.Descripcion)
+            {
+                data.Enable = true;
+                
+                await Update(data);
+                
+                return data;
+            }
+            
             var result = await _dbContext.TiposUtileria.AddAsync(modelo);
             await _dbContext.SaveChangesAsync();
             return result.Entity;

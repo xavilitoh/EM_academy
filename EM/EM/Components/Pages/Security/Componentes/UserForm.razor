@@ -52,6 +52,19 @@
                                 </RadzenFormField>
                             </RadzenColumn>
                         </RadzenRow>
+                        <RadzenRow AlignItems="AlignItems.Center">
+                            <RadzenColumn Size="12" SizeMD="4">
+                                <RadzenLabel Component="applicationUser" Property="Contraseña" Text="Contraseña"/>
+                            </RadzenColumn>
+                            <RadzenColumn Size="12" SizeMD="8">
+                                <RadzenFormField Text="Contraseña" Variant="Variant.Outlined">
+                                    <RadzenPassword Name="Contraseña" Placeholder="******" Style="width: 100%"
+                                                   @bind-Value="@ApplicationUser!.PasswordHash"/>
+                                    <RadzenRequiredValidator Component="Contraseña" Property="Contraseña"
+                                                             Text="Esto es requerido"/>
+                                </RadzenFormField>
+                            </RadzenColumn>
+                        </RadzenRow>
                     </RadzenStack>
                 </RadzenFieldset>
             </RadzenStack>

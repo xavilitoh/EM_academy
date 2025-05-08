@@ -8,7 +8,7 @@ public interface IUsuariosRepositorio
 {
     Task<ApplicationUser?> ObtenerUsuarioPorId(string id);
     Task<List<ApplicationUser>> ObtenerUsuarios();
-    Task<ApplicationUser> Save(ApplicationUser usuario);
+    Task<ApplicationUser> Save(ApplicationUser usuario, string password = "Password12$");
     
 }
 
@@ -33,11 +33,11 @@ public class UsuariosRepositorio : IUsuariosRepositorio
         return await _context.Users.ToListAsync();
     }
 
-    public async Task<ApplicationUser> Save(ApplicationUser usuario)
+    public async Task<ApplicationUser> Save(ApplicationUser usuario, string password = "Password12$")
     {
         try
         {
-            var resp = await _userManager.CreateAsync(usuario, "Password12$");
+            var resp = await _userManager.CreateAsync(usuario, password );
 
             if (resp.Succeeded)
             {
