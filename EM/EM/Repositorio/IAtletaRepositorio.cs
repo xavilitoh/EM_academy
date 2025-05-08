@@ -108,6 +108,8 @@ public class AtletaRepositorio(ApplicationDbContext context) : IAtletaRepositori
 
     public int Cantidad()
     {
-        return context.Atletas.Count();
+        return context.Atletas
+            .AsNoTracking()
+            .Count();
     }
 }

@@ -142,6 +142,9 @@ public class DiciplinaRepositorio : IDiciplinaRepositorio
 
     public int Cantidad()
     {
-        return _dbContext.Diciplinas.Count();
+        return _dbContext
+            .Diciplinas
+            .AsNoTracking()
+            .Count(a => a.Enable);
     }
 }

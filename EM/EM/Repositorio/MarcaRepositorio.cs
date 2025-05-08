@@ -23,6 +23,7 @@ public class MarcaRepositorio : IMarcaRepositorio
     {
         try
         {
+            
             var result = await _dbContext.Marcas.AddAsync(modelo);
             await _dbContext.SaveChangesAsync();
             return result.Entity;
@@ -134,6 +135,8 @@ public class MarcaRepositorio : IMarcaRepositorio
 
     public int Cantidad()
     {
-        return _dbContext.Marcas.Count();
+        return _dbContext.Marcas
+            .AsNoTracking()
+            .Count(a => a.Enable);
     }
 }

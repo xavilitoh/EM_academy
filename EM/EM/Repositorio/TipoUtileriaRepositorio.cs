@@ -142,6 +142,7 @@ public class TipoUtileriaRepositorio : ITipoUtileriaRepositorio
 
     public int Cantidad()
     {
-        return _dbContext.TiposUtileria.Count();
+        return _dbContext.TiposUtileria.AsNoTracking()
+            .Count(a => a.Enable);
     }
 }
