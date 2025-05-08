@@ -3,7 +3,7 @@
 @inject IUtileriaRepositorio UtileriaRepositorio
 @inject NotificationService NotificationService
 @inject NavigationManager NavigationManager
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Almacenes,Admin")]
 <PageTitle>Utilerías</PageTitle>
 
 <RadzenCard>
@@ -22,6 +22,7 @@
 
     async Task Guardar(Utileria utileria)
     {
+        utileria.FechaRegistro = DateTime.Now;
         try
         {
             await UtileriaRepositorio.Save(utileria);

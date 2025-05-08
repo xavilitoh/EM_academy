@@ -6,7 +6,7 @@
 @inject NavigationManager NavigationManager
 @inject NotificationService NotificationService
 @inject DialogService _dialogService
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Seguridad")]
 
 <PageTitle>Detalle de Usuario</PageTitle>
 

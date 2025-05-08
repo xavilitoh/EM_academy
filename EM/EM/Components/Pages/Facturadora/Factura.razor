@@ -1,0 +1,87 @@
+@page "/Factura/{IdFactura:int}/{IdPago:int}"
+@using EM.Components.Layout
+@using EM.Data
+@using Microsoft.EntityFrameworkCore
+@layout FacturaLayout
+
+@inject  ApplicationDbContext DbContext
+@inject IJSRuntime JSRuntime
+
+
+<RadzenStack>
+    <RadzenStack >
+        <RadzenRow JustifyContent="JustifyContent.SpaceBetween">
+            <RadzenStack JustifyContent="JustifyContent.Start" AlignItems="AlignItems.Start">
+                <h5>Academia Deportiva EM</h5>
+            </RadzenStack>
+        </RadzenRow>
+    </RadzenStack>
+    
+    <RadzenStack>
+        <RadzenFieldset Text="Detalles de la factura">
+            <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween">
+                <RadzenStack>
+                    <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                        <RadzenStack>Factura #: </RadzenStack>
+                        <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Right"> @_factura?.Id </RadzenStack>
+                    </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                        <RadzenStack> Fecha: </RadzenStack>
+                        <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Right"> @_pagosFacturas?.FechaRegistro.ToLongDateString() </RadzenStack>
+                    </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                        <RadzenStack>Nombre del atleta: </RadzenStack>
+                        <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Right"> @_factura?.Atleta?.Persona.FullName </RadzenStack>
+                    </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+                        <RadzenStack>Descripción: </RadzenStack>
+                        <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Right"> @_pagosFacturas?.Descripcion </RadzenStack>
+                    </RadzenRow>
+                </RadzenStack>
+            </RadzenStack>  
+            
+        </RadzenFieldset>
+    </RadzenStack>
+    
+    <RadzenRow AlignItems="AlignItems.End" JustifyContent="JustifyContent.End">
+        <RadzenStack AlignItems="AlignItems.End" JustifyContent="JustifyContent.Right"> Monto total pagado @Monto.ToString("c2") </RadzenStack>
+    </RadzenRow>
+    @if (_factura?.Resto > 0)
+    {
+        <RadzenRow AlignItems="AlignItems.End" JustifyContent="JustifyContent.End">
+            <RadzenStack AlignItems="AlignItems.End" JustifyContent="JustifyContent.Right"> Deuda restante: @_factura?.Resto.ToString("c2") </RadzenStack>
+        </RadzenRow>
+    }
+
+</RadzenStack>
+
+@code {
+    [Parameter] public int IdFactura { get; set; }
+    [Parameter] public int IdPago { get; set; }
+    
+    decimal Monto = 0;
+    
+    FacturasAtletas? _factura = new FacturasAtletas();
+    PagosFacturas? _pagosFacturas = new PagosFacturas();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _factura = await DbContext.FacturasAtletas
+            .Include(a=> a.Atleta)
+            .ThenInclude(a=> a.Persona)
+            .FirstOrDefaultAsync(a=> a.Id == IdFactura);
+
+        _pagosFacturas = await DbContext.PagosFacturas.FindAsync(IdPago);
+        Monto = _pagosFacturas?.Monto ?? 0;
+        
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("window.print");
+        }
+    }
+}

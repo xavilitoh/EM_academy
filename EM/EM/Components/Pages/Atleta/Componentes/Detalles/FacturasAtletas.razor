@@ -1,5 +1,6 @@
 @using EM.Data
 @using Microsoft.EntityFrameworkCore
+@inject NavigationManager NavigationManager
 @inject ApplicationDbContext DbContext
 <RadzenStack>
     <RadzenDataGrid Data="@_facturas" TItem="Entidades.FacturasAtletas" AllowFiltering="true">
@@ -13,7 +14,16 @@
         <Columns>
             <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Id" Title="ID" Visible="false"/>
             <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Descripcion" Title="Descripcion" Visible="true"/>
-            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Monto" Title="Monto" Visible="true"/>
+            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Monto" Title="Monto" Visible="true">
+                <Template Context="data">
+                    <RadzenTextBox Value="@data.Monto.ToString("c2")" Style="width: 100%;" ReadOnly="true"/>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Resto" Title="Restante" Visible="true">
+                <Template Context="data">
+                    <RadzenTextBox Value="@data.Resto.ToString("c2")" Style="width: 100%;" ReadOnly="true"/>
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="FechaRegistro" Title="Fecha" Visible="true"/>
             <RadzenDataGridColumn Title="Estado" TextAlign="TextAlign.Center" >
                 <Template Context="data">
@@ -24,6 +34,20 @@
                     else
                     {
                         <RadzenBadge BadgeStyle="BadgeStyle.Danger" Text="No Pagada" />
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Title="Opciones">
+                <Template Context="data">
+                    @if (!data.Pagada)
+                    {
+                        <RadzenButton 
+                            Variant="Variant.Outlined" 
+                            class="rz-info" 
+                            ButtonType="ButtonType.Button" 
+                            Icon="finance_chip"
+                            Click='() => { NavigationManager.NavigateTo($"/Facturadora/{data.Id}"); }'
+                            Text="Pagar"/>
                     }
                 </Template>
             </RadzenDataGridColumn>
@@ -41,7 +65,10 @@
         await base.OnInitializedAsync();
 
         _facturas = await DbContext.FacturasAtletas
-            .Where(a => a.IdAtleta == IdAtleta).ToListAsync();
+            .AsNoTracking()
+            .Where(a => a.IdAtleta == IdAtleta)
+            .OrderByDescending(a=> a.FechaRegistro)
+            .ToListAsync();
         StateHasChanged();
     }
 }

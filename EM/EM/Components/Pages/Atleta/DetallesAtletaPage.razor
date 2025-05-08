@@ -6,7 +6,7 @@
 @inject IAtletaRepositorio RepositorioAtleta
 @inject IHistorialMedicoRepositorio RepositorioHistorialMedico
 @rendermode InteractiveServer
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Usuario,Admin")]
 
 <PageTitle>Atleta @_atleta?.Persona.FullName</PageTitle>
 
@@ -70,7 +70,10 @@
                 <HistorialMedicoAtleta IdAtleta="Id"/>
             </RadzenTabsItem>
             <RadzenTabsItem Text="Facturas">
-               <FacturasAtletas IdAtleta="Id"></FacturasAtletas>
+                <FacturasAtletas IdAtleta="Id"></FacturasAtletas>
+            </RadzenTabsItem>
+            <RadzenTabsItem Text="Historial de pagos">
+                <HistoricoPagos IdAtleta="Id"></HistoricoPagos>
             </RadzenTabsItem>
         </Tabs>
     </RadzenTabs>

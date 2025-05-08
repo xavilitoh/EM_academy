@@ -6,7 +6,7 @@
 @inject RoleManager<IdentityRole> RoleManager
 @inject NotificationService NotificationService
 @inject NavigationManager NavigationManager
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Seguridad")]
 
 <PageTitle>Agregar Rol a Usuario</PageTitle>
 

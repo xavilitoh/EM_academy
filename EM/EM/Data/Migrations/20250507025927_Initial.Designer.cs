@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EM.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250307234231_Init")]
-    partial class Init
+    [Migration("20250507025927_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -132,12 +132,56 @@ namespace EM.Data.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("Enable")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("MontoMensualidad")
+                        .HasPrecision(18, 2)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.ToTable("Diciplinas");
+                });
+
+            modelBuilder.Entity("EM.Entidades.FacturasAtletas", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Enable")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("IdAtleta")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Monto")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Pagada")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Resto")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdAtleta");
+
+                    b.ToTable("FacturasAtletas");
                 });
 
             modelBuilder.Entity("EM.Entidades.HistorialMedico", b =>
@@ -153,6 +197,9 @@ namespace EM.Data.Migrations
                     b.Property<string>("Diagnostico")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("Enable")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("FechaConsulta")
                         .HasColumnType("TEXT");
@@ -183,6 +230,9 @@ namespace EM.Data.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("Enable")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("TEXT");
@@ -232,6 +282,9 @@ namespace EM.Data.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<bool>("Enable")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("TEXT");
@@ -416,6 +469,17 @@ namespace EM.Data.Migrations
                     b.Navigation("Disciplinas");
 
                     b.Navigation("Persona");
+                });
+
+            modelBuilder.Entity("EM.Entidades.FacturasAtletas", b =>
+                {
+                    b.HasOne("EM.Entidades.Atleta", "Atleta")
+                        .WithMany()
+                        .HasForeignKey("IdAtleta")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Atleta");
                 });
 
             modelBuilder.Entity("EM.Entidades.HistorialMedico", b =>

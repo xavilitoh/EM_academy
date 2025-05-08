@@ -3,7 +3,7 @@
 @inject IAtletaRepositorio AtletaRepositorio
 @inject NotificationService NotificationService
 @inject NavigationManager NavigationManager
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Usuario,Admin")]
 <PageTitle>Atletas</PageTitle>
 <RadzenCard>
     <h3>Registro de Nuevo Atleta</h3>

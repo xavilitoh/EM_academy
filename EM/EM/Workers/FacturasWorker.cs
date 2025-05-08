@@ -26,7 +26,7 @@ public class FacturasWorker : IHostedService, IDisposable
         //
         // _timer = new Timer(DoWork, null, initialDelay, TimeSpan.FromDays(1));
         
-        _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromDays(1));
+        _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
 
         return Task.CompletedTask;
     }
@@ -57,10 +57,11 @@ public class FacturasWorker : IHostedService, IDisposable
                     var nuevaFactura = new FacturasAtletas
                     {
                         IdAtleta = atleta.Id,
-                        Monto = atleta.Disciplinas?.MontoMensualidad ?? 0,
-                        Descripcion = $"Factura mensual de membresía de la diciplina {atleta?.Disciplinas?.Descripcion} - {fechaActual.Month}/{fechaActual.Year}",
+                        Monto = atleta?.Disciplinas?.MontoMensualidad ?? 0,
+                        Descripcion = $"Factura de membresía (diciplina {atleta?.Disciplinas?.Descripcion}) - {fechaActual.Month}/{fechaActual.Year}",
                         Pagada = false,
-                        FechaRegistro = fechaActual
+                        FechaRegistro = fechaActual,
+                        Resto = atleta?.Disciplinas?.MontoMensualidad ?? 0,
                     };
             
                     dbContext.FacturasAtletas.Add(nuevaFactura);

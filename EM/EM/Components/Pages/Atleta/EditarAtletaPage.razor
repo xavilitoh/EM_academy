@@ -5,7 +5,7 @@
 @rendermode InteractiveServer
 @inject NotificationService NotificationService
 @inject NavigationManager NavigationManager
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Usuario,Admin")]
 
 <RadzenComponents @rendermode="InteractiveServer" />
 <RadzenCard>

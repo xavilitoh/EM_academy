@@ -67,6 +67,11 @@ builder.Services.AddScoped<DialogService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<ThemeService>();
 
+builder.Services.Configure<RequestLocalizationOptions>(ops =>
+{
+    ops.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("es-DO");
+});
+
 builder.Services.AddRadzenCookieThemeService(options =>
 {
     options.Name = "theme"; // The name of the cookie
@@ -100,9 +105,11 @@ using (var scope = app.Services.CreateScope())
     try
     {
         await context.Database.MigrateAsync();
+        await SeedDefaultRoles(services);
         await SeedDefaultUser(services);
         await SeedDefaultDisciplinas(services);
         await SeedDefaultMarcas(services);
+        await SeedDefaultRoles(services);
     }
     catch (Exception e)
     {
@@ -133,14 +140,16 @@ static async Task SeedDefaultUser(IServiceProvider serviceProvider)
     if (user == null)
     {
         user = new ApplicationUser
-        {
-            Nombre = "Usuario",
-            Apellido = "Prueba",
-            UserName = "usuario1@prueba.dev",
-            Email = "usuario1@prueba.dev",
-            EmailConfirmed = true
-        };
-        await userManager.CreateAsync(user, "Abcd1234.");
+            {
+                Nombre = "Usuario",
+                Apellido = "Prueba",
+                UserName = "usuario1@prueba.dev",
+                Email = "usuario1@prueba.dev",
+                EmailConfirmed = true
+            };
+            await userManager.CreateAsync(user, "Abcd1234.");
+            await userManager.AddToRoleAsync(user, "Admin");
+            await userManager.AddToRoleAsync(user, "Seguridad");
         
         ApplicationUser user2 = new ApplicationUser
         {
@@ -151,6 +160,22 @@ static async Task SeedDefaultUser(IServiceProvider serviceProvider)
             EmailConfirmed = true
         };
         await userManager.CreateAsync(user2, "Abcd1234.");
+        await userManager.AddToRoleAsync(user2, "Seguridad");
+    }
+}
+
+static async Task SeedDefaultRoles(IServiceProvider serviceProvider)
+{
+    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    var roles = new[] { "Admin", "Seguridad", "Almacenes", "Usuario" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
     }
 }
 

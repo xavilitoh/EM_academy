@@ -170,7 +170,13 @@ namespace EM.Data.Migrations
                     b.Property<bool>("Pagada")
                         .HasColumnType("INTEGER");
 
+                    b.Property<decimal>("Resto")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("IdAtleta");
 
                     b.ToTable("FacturasAtletas");
                 });
@@ -231,6 +237,41 @@ namespace EM.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Marcas");
+                });
+
+            modelBuilder.Entity("EM.Entidades.PagosFacturas", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Enable")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("IdAtleta")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("IdFactura")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Monto")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdAtleta");
+
+                    b.HasIndex("IdFactura");
+
+                    b.ToTable("PagosFacturas");
                 });
 
             modelBuilder.Entity("EM.Entidades.Persona", b =>
@@ -462,6 +503,17 @@ namespace EM.Data.Migrations
                     b.Navigation("Persona");
                 });
 
+            modelBuilder.Entity("EM.Entidades.FacturasAtletas", b =>
+                {
+                    b.HasOne("EM.Entidades.Atleta", "Atleta")
+                        .WithMany()
+                        .HasForeignKey("IdAtleta")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Atleta");
+                });
+
             modelBuilder.Entity("EM.Entidades.HistorialMedico", b =>
                 {
                     b.HasOne("EM.Entidades.Atleta", "Atleta")
@@ -471,6 +523,25 @@ namespace EM.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Atleta");
+                });
+
+            modelBuilder.Entity("EM.Entidades.PagosFacturas", b =>
+                {
+                    b.HasOne("EM.Entidades.Atleta", "Atleta")
+                        .WithMany()
+                        .HasForeignKey("IdAtleta")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EM.Entidades.FacturasAtletas", "Factura")
+                        .WithMany()
+                        .HasForeignKey("IdFactura")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Atleta");
+
+                    b.Navigation("Factura");
                 });
 
             modelBuilder.Entity("EM.Entidades.Utileria", b =>

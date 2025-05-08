@@ -1,0 +1,119 @@
+@page "/FacturasInformePage"
+@using EM.Data
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext context
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Admin")]
+<RadzenCard>
+    <RadzenRow>
+        <RadzenColumn>
+            <RadzenDatePicker @bind-Value="FechaInicio" Placeholder="Fecha Inicio" />
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenDatePicker @bind-Value="FechaFin" Placeholder="Fecha Fin" />
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenButton Text="Buscar" Variant="Variant.Outlined" Click="FiltrarFacturas" />
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+<br/>
+<RadzenCard>
+    <RadzenRow AlignItems="AlignItems.End" JustifyContent="JustifyContent.Start">
+        <RadzenButton Variant="Variant.Outlined" class="rz-success" ButtonType="ButtonType.Button" Size="ButtonSize.Medium"
+                      Icon="download" Text="Exportar a Excel" Click="@(() => ExportarFacturasAExcel())"/>
+    </RadzenRow>
+    <br/>
+    <RadzenDataGrid TItem="FacturasAtletas" Data="@Facturas" AllowPaging="true" PageSize="10">
+        <Columns>
+            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Id" Title="ID" Visible="false"/>
+            <RadzenDataGridColumn Title="Atleta" TextAlign="TextAlign.Center">
+                <Template Context="data">
+                    <p>@data.Atleta.Persona.FullName</p>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Descripcion" Title="Descripcion" Visible="true"/>
+            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Monto" Title="Monto" Visible="true">
+                <Template Context="data">
+                    <RadzenTextBox Value="@data.Monto.ToString("c2")" Style="width: 100%;" ReadOnly="true"/>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="Resto" Title="Restante" Visible="true">
+                <Template Context="data">
+                    <RadzenTextBox Value="@data.Resto.ToString("c2")" Style="width: 100%;" ReadOnly="true"/>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Entidades.FacturasAtletas" Property="FechaRegistro" Title="Fecha" Visible="true"/>
+            <RadzenDataGridColumn Title="Estado" TextAlign="TextAlign.Center">
+                <Template Context="data">
+                    @if (data.Pagada)
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Success" Text="Pagada"/>
+                    }
+                    else
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Danger" Text="No Pagada"/>
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenCard>
+
+@code {
+    private DateTime? FechaInicio { get; set; }
+    private DateTime? FechaFin { get; set; }
+    private List<FacturasAtletas> Facturas { get; set; } = new();
+
+    private async Task FiltrarFacturas()
+    {
+        Facturas = await context.FacturasAtletas
+            .AsNoTracking()
+            .Include(a=> a.Atleta)
+            .ThenInclude(a=> a.Persona)
+            .Where(f => (!FechaInicio.HasValue || f.FechaRegistro >= FechaInicio) &&
+                        (!FechaFin.HasValue || f.FechaRegistro <= FechaFin))
+            .ToListAsync();
+    }
+    
+    public async Task ExportarFacturasAExcel()
+    {
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        using var package = new ExcelPackage();
+        var worksheet = package.Workbook.Worksheets.Add("Facturas");
+    
+        // Agregar encabezados
+        worksheet.Cells[1, 1].Value = "ID";
+        worksheet.Cells[1, 2].Value = "Atleta";
+        worksheet.Cells[1, 3].Value = "Descripción";
+        worksheet.Cells[1, 4].Value = "Monto";
+        worksheet.Cells[1, 5].Value = "Restante";
+        worksheet.Cells[1, 6].Value = "Fecha";
+        worksheet.Cells[1, 7].Value = "Estado";
+    
+        // Agregar datos
+        for (int i = 0; i < Facturas.Count; i++)
+        {
+            var factura = Facturas[i];
+            worksheet.Cells[i + 2, 1].Value = factura.Id;
+            worksheet.Cells[i + 2, 2].Value = factura.Atleta.Persona.FullName;
+            worksheet.Cells[i + 2, 3].Value = factura.Descripcion;
+            worksheet.Cells[i + 2, 4].Value = factura.Monto;
+            worksheet.Cells[i + 2, 5].Value = factura.Resto;
+            worksheet.Cells[i + 2, 6].Value = factura.FechaRegistro.ToShortDateString();
+            worksheet.Cells[i + 2, 7].Value = factura.Pagada ? "Pagada" : "No Pagada";
+        }
+    
+        // Ajustar columnas
+        worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+    
+        // Generar archivo Excel
+        byte[] excelBytes = package.GetAsByteArray();
+        string base64String = Convert.ToBase64String(excelBytes);
+        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    
+        // Descargar archivo
+        string url = $"data:{mimeType};base64,{base64String}";
+        NavigationManager.NavigateTo(url);
+    }
+}

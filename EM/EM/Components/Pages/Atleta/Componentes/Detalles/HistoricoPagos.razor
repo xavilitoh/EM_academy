@@ -1,0 +1,61 @@
+@using EM.Data
+@using Microsoft.EntityFrameworkCore
+@inject NavigationManager NavigationManager
+@inject ApplicationDbContext DbContext
+@inject IJSRuntime JSRuntime
+<RadzenStack>
+    <RadzenDataGrid Data="@_pagos" TItem="PagosFacturas" AllowFiltering="true">
+        <HeaderTemplate>
+            <RadzenRow JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center">
+                <RadzenStack>
+                    <h3>Pagos de Facturas</h3>
+                </RadzenStack>
+            </RadzenRow>
+        </HeaderTemplate>
+        <Columns>
+            <RadzenDataGridColumn TItem="PagosFacturas" Property="Id" Title="ID" Visible="false"/>
+            <RadzenDataGridColumn TItem="PagosFacturas" Property="Descripcion" Title="Descripcion" Visible="true"/>
+            <RadzenDataGridColumn TItem="PagosFacturas" Property="Monto" Title="Monto" Visible="true">
+                <Template Context="data">
+                    <RadzenTextBox Value="@data.Monto.ToString("c2")" Style="width: 100%;" ReadOnly="true"/>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="PagosFacturas" Property="FechaRegistro" Title="Fecha" Visible="true"/>
+            <RadzenDataGridColumn TItem="PagosFacturas" Title="Opciones">
+                <Template Context="data">
+                        <RadzenButton 
+                            Variant="Variant.Outlined" 
+                            class="rz-info" 
+                            ButtonType="ButtonType.Button" 
+                            Icon="finance_chip"
+                            Click=@(() => Reimprimir(data.IdFactura,data.Id))
+                            Text="Reimprimir"/>
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenStack>
+
+@code {
+    [Parameter] public int IdAtleta { get; set; }
+
+    List<PagosFacturas> _pagos = new List<PagosFacturas>();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _pagos = await DbContext.PagosFacturas
+            .AsNoTracking()
+            .Include(a=> a.Factura)
+            .Where(a => a.IdAtleta == IdAtleta)
+            .OrderByDescending(a=> a.FechaRegistro)
+            .ToListAsync();
+        StateHasChanged();
+    }
+    
+    protected async Task Reimprimir(int IdFactura, int IdPago)
+    {
+        await JSRuntime.InvokeVoidAsync("open", $"/Factura/{IdFactura}/{IdPago}", "_blank");
+    }
+}

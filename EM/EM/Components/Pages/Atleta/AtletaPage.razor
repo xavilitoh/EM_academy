@@ -1,15 +1,20 @@
 @page "/Atletas"
+
 @inject IAtletaRepositorio AtletaRepositorio
 @inject NavigationManager NavigationManager
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Usuario,Admin")]
+@inject IJSRuntime JSRuntime
+
 <PageTitle>Atletas</PageTitle>
 
 <RadzenCard>
 
-    <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.SpaceBetween">
+    <RadzenRow AlignItems="AlignItems.Start" JustifyContent="JustifyContent.Start">
         <h3>Atleta</h3>
         <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Size="ButtonSize.Medium"
                       Icon="add" Text="Crear" Click='() => { NavigationManager.NavigateTo("/Atletas/Crear"); }'/>
+        <RadzenButton Variant="Variant.Outlined" class="rz-success" ButtonType="ButtonType.Button" Size="ButtonSize.Medium"
+                      Icon="download" Text="Exportar a Excel" Click="@(() => ExportarAtletasAExcel(atletas))"/>
     </RadzenRow>
     <br/>
     <RadzenDataGrid TItem="Atleta" AllowPaging="true" PageSize="10" Data="@atletas" AllowColumnResize="true"
@@ -26,8 +31,8 @@
                     <RadzenLabel>@atleta.Disciplinas.Descripcion </RadzenLabel> 
                 </Template>
             </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Atleta" Property="Peso" Title="Peso"/>
-            <RadzenDataGridColumn TItem="Atleta" Property="Altura" Title="Altura"/>
+            <RadzenDataGridColumn TItem="Atleta" Property="Peso" Title="Peso (Libras)"/>
+            <RadzenDataGridColumn TItem="Atleta" Property="Altura" Title="Altura (Pies)"/>
             <RadzenDataGridColumn TItem="Atleta" Title="Opciones" Frozen="true"
                                   FrozenPosition="FrozenColumnPosition.Right">
                 <Template Context="atleta">
@@ -51,5 +56,43 @@
     protected override async Task OnInitializedAsync()
     {
         atletas = await AtletaRepositorio.Get();
+    }
+    
+    public async Task ExportarAtletasAExcel(List<Atleta> atletas)
+    {
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        using var package = new ExcelPackage();
+        var worksheet = package.Workbook.Worksheets.Add("Atletas");
+    
+        // Agregar encabezados
+        worksheet.Cells[1, 1].Value = "ID";
+        worksheet.Cells[1, 2].Value = "Nombre";
+        worksheet.Cells[1, 3].Value = "Disciplina";
+        worksheet.Cells[1, 4].Value = "Peso (Libras)";
+        worksheet.Cells[1, 5].Value = "Altura (Pies)";
+        worksheet.Cells[1, 6].Value = "Fecha de Registro";
+    
+        // Agregar datos
+        for (int i = 0; i < atletas.Count; i++)
+        {
+            var atleta = atletas[i];
+            worksheet.Cells[i + 2, 1].Value = atleta.Id;
+            worksheet.Cells[i + 2, 2].Value = $"{atleta.Persona.Nombre} {atleta.Persona.Apellido}";
+            worksheet.Cells[i + 2, 3].Value = atleta.Disciplinas.Descripcion;
+            worksheet.Cells[i + 2, 4].Value = atleta.Peso;
+            worksheet.Cells[i + 2, 5].Value = atleta.Altura;
+            worksheet.Cells[i + 2, 6].Value = atleta.FechaRegistro.ToLongDateString();
+        }
+    
+        // Ajustar columnas
+        worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+        
+        byte[] exceBytes = package.GetAsByteArray();
+        string base64String = Convert.ToBase64String(exceBytes);
+        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        
+        string url = $"data:{mimeType};base64,{base64String}";
+        
+        NavigationManager.NavigateTo(url);
     }
 }

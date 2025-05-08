@@ -5,7 +5,7 @@
 @inject ITipoUtileriaRepositorio    TipoUtileriasRepositorio
 @inject IMarcaRepositorio MarcasRepositorio
 @inject NavigationManager NavigationManager
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Almacenes,Admin")]
 <PageTitle>Utilerías</PageTitle>
 
 <RadzenRow AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
