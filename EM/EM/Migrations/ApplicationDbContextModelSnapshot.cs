@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EM.Data.Migrations
+namespace EM.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -285,19 +285,35 @@ namespace EM.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("FechaNacimiento")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Genero")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Nacionalidad")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasMaxLength(12)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

@@ -1,0 +1,167 @@
+@page "/AtletasInformePage"
+@using EM.Data
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext context
+@inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Admin")]
+
+<RadzenCard>
+    <RadzenRow>
+        <RadzenColumn>
+            <RadzenDatePicker @bind-Value="FechaInicio" Placeholder="Fecha Inicio" />
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenDatePicker @bind-Value="FechaFin" Placeholder="Fecha Fin" />
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenNumeric @bind-Value="EdadMinima" Placeholder="Edad Mínima" />
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenNumeric @bind-Value="EdadMaxima" Placeholder="Edad Máxima" />
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenDropDown Data="@Disciplinas" TextProperty="Descripcion" ValueProperty="Id" @bind-Value="DisciplinaSeleccionada"
+                            Placeholder="Seleccionar Disciplina" />
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenButton Text="Buscar" Variant="Variant.Outlined" Click="FiltrarAtletas" />
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenButton Text="Quitar Filtros" Variant="Variant.Outlined" Click="QuitarFiltros" />
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenCard>
+<br/>
+<RadzenCard>
+    <RadzenRow AlignItems="AlignItems.End" JustifyContent="JustifyContent.Start">
+        <RadzenButton Variant="Variant.Outlined" class="rz-success" ButtonType="ButtonType.Button" Size="ButtonSize.Medium"
+                      Icon="download" Text="Exportar a Excel" Click="@(() => ExportarAtletasAExcel())"/>
+    </RadzenRow>
+    <br/>
+    <RadzenDataGrid TItem="Atleta" Data="@Atletas" AllowPaging="true" PageSize="10">
+        <Columns>
+            <RadzenDataGridColumn TItem="Atleta" Visible="false" Property="Id" Title="ID"/>
+            <RadzenDataGridColumn TItem="Atleta" Title="Nombre" Frozen="true">
+                <Template Context="atleta">
+                    <RadzenLabel>@atleta.Persona.Nombre @atleta.Persona.Apellido</RadzenLabel>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Atleta" Title="Telefono">
+                <Template Context="atleta">
+                    <RadzenLabel>@atleta.Persona.Telefono </RadzenLabel> 
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Atleta" Title="Genero">
+                <Template Context="atleta">
+                    <RadzenLabel>
+                        @if (atleta.Persona.Genero == "M")
+                        {
+                            <span>Masculino</span>
+                        }
+                        else
+                        {
+                            <span>Femenino</span>
+                        }
+                    </RadzenLabel> 
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Atleta" Title="Diciplina">
+                <Template Context="atleta">
+                    <RadzenLabel>@atleta.Disciplinas.Descripcion </RadzenLabel> 
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Atleta" Property="Peso" Title="Peso (Libras)"/>
+            <RadzenDataGridColumn TItem="Atleta" Property="Altura" Title="Altura (Pies)"/>
+        </Columns>
+    </RadzenDataGrid>
+</RadzenCard>
+
+@code {
+    private DateTime? FechaInicio { get; set; }
+    private DateTime? FechaFin { get; set; }
+    private int? EdadMinima { get; set; }
+    private int? EdadMaxima { get; set; }
+    private int? DisciplinaSeleccionada { get; set; }
+    private List<Atleta> Atletas { get; set; } = new();
+    private List<Disciplinas> Disciplinas { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Disciplinas = await context.Diciplinas.AsNoTracking().ToListAsync();
+    }
+
+    private async Task FiltrarAtletas()
+    {
+        Atletas = await context.Atletas
+            .AsNoTracking()
+            .Include(a => a.Persona)
+            .Include(a => a.Disciplinas)
+            .Where(a => (!FechaInicio.HasValue || a.FechaRegistro >= FechaInicio) &&
+                        (!FechaFin.HasValue || a.FechaRegistro <= FechaFin) &&
+                        // (!EdadMinima.HasValue || a.Persona.Edad >= EdadMinima) &&
+                        // (!EdadMaxima.HasValue || a.Persona.Edad <= EdadMaxima) &&
+                        (!DisciplinaSeleccionada.HasValue || a.IdDisciplina == DisciplinaSeleccionada))
+            .ToListAsync();
+
+        Atletas = Atletas.Where(a =>  (!EdadMinima.HasValue || a.Persona.Edad >= EdadMinima) &&
+        (!EdadMaxima.HasValue || a.Persona.Edad <= EdadMaxima)).ToList();
+    }
+
+    private void QuitarFiltros()
+    {
+        FechaInicio = null;
+        FechaFin = null;
+        EdadMinima = null;
+        EdadMaxima = null;
+        DisciplinaSeleccionada = null;
+        Atletas.Clear();
+        StateHasChanged();
+    }
+
+    public async Task ExportarAtletasAExcel()
+    {
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        using var package = new ExcelPackage();
+        var worksheet = package.Workbook.Worksheets.Add("Atletas");
+
+        // Agregar encabezados
+        worksheet.Cells[1, 1].Value = "ID";
+        worksheet.Cells[1, 2].Value = "Nombre Completo";
+        worksheet.Cells[1, 3].Value = "Tel.";
+        worksheet.Cells[1, 4].Value = "Direccion";
+        worksheet.Cells[1, 5].Value = "Genero";
+        worksheet.Cells[1, 6].Value = "Dicsiplina";
+        worksheet.Cells[1, 7].Value = "Peso (Libras)";
+        worksheet.Cells[1, 8].Value = "Altura (Pies)";
+        worksheet.Cells[1, 9].Value = "Edad";
+        worksheet.Cells[1, 10].Value = "Fecha Registro";
+
+        // Agregar datos
+        for (int i = 0; i < Atletas.Count; i++)
+        {
+            var atleta = Atletas[i];
+            worksheet.Cells[i + 2, 1].Value = atleta.Id;
+            worksheet.Cells[i + 2, 2].Value = atleta?.Persona?.FullName ?? "";
+            worksheet.Cells[i + 2, 3].Value = atleta?.Persona?.Telefono;
+            worksheet.Cells[i + 2, 4].Value = atleta?.Persona?.Direccion;
+            worksheet.Cells[i + 2, 5].Value = atleta?.Persona?.Genero == "M" ? "Masculino" : "Femenino";
+            worksheet.Cells[i + 2, 6].Value = atleta?.Disciplinas?.Descripcion;
+            worksheet.Cells[i + 2, 7].Value = atleta?.Peso;
+            worksheet.Cells[i + 2, 8].Value = atleta?.Altura;
+            worksheet.Cells[i + 2, 9].Value = atleta?.Persona?.Edad ?? 0;
+            worksheet.Cells[i + 2, 10].Value = atleta?.FechaRegistro.ToShortDateString() ?? "";
+        }
+
+        // Ajustar columnas
+        worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+        // Generar archivo Excel
+        byte[] excelBytes = package.GetAsByteArray();
+        string base64String = Convert.ToBase64String(excelBytes);
+        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+        // Descargar archivo
+        string url = $"data:{mimeType};base64,{base64String}";
+        NavigationManager.NavigateTo(url);
+    }
+}

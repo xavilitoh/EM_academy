@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EM.Data.Migrations
+namespace EM.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250507025927_Initial")]
+    [Migration("20250508171908_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -242,6 +242,41 @@ namespace EM.Data.Migrations
                     b.ToTable("Marcas");
                 });
 
+            modelBuilder.Entity("EM.Entidades.PagosFacturas", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Enable")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("IdAtleta")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("IdFactura")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Monto")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdAtleta");
+
+                    b.HasIndex("IdFactura");
+
+                    b.ToTable("PagosFacturas");
+                });
+
             modelBuilder.Entity("EM.Entidades.Persona", b =>
                 {
                     b.Property<int>("Id")
@@ -253,19 +288,35 @@ namespace EM.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("FechaNacimiento")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Genero")
+                        .IsRequired()
+                        .HasMaxLength(1)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Nacionalidad")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasMaxLength(12)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -491,6 +542,25 @@ namespace EM.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Atleta");
+                });
+
+            modelBuilder.Entity("EM.Entidades.PagosFacturas", b =>
+                {
+                    b.HasOne("EM.Entidades.Atleta", "Atleta")
+                        .WithMany()
+                        .HasForeignKey("IdAtleta")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EM.Entidades.FacturasAtletas", "Factura")
+                        .WithMany()
+                        .HasForeignKey("IdFactura")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Atleta");
+
+                    b.Navigation("Factura");
                 });
 
             modelBuilder.Entity("EM.Entidades.Utileria", b =>

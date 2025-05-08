@@ -26,6 +26,25 @@
                     <RadzenLabel>@atleta.Persona.Nombre @atleta.Persona.Apellido</RadzenLabel>
                 </Template>
             </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Atleta" Title="Telefono">
+                <Template Context="atleta">
+                    <RadzenLabel>@atleta.Persona.Telefono </RadzenLabel> 
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Atleta" Title="Genero">
+                <Template Context="atleta">
+                    <RadzenLabel>
+                        @if (atleta.Persona.Genero == "M")
+                        {
+                            <span>Masculino</span>
+                        }
+                        else
+                        {
+                            <span>Femenino</span>
+                        }
+                    </RadzenLabel> 
+                </Template>
+            </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Atleta" Title="Diciplina">
                 <Template Context="atleta">
                     <RadzenLabel>@atleta.Disciplinas.Descripcion </RadzenLabel> 

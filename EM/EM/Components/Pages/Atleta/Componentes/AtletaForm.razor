@@ -62,6 +62,43 @@
                             </RadzenFormField>
                         </RadzenColumn>
                     </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Género" Component="Persona.Genero" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenFormField Text="Género" Variant="Variant.Outlined">
+                                <RadzenDropDown Name="Genero" Placeholder="Seleccione Género" @bind-Value="@Atleta.Persona.Genero"
+                                                Data="@(new List<object> { new { Value = "M", Text = "Masculino" }, new { Value = "F", Text = "Femenino" } })"
+                                                TextProperty="Text" ValueProperty="Value" AllowClear="true" Style="width: 100%; max-width: 400px;" />
+                                <RadzenRequiredValidator Component="Genero" Property="@Atleta.Persona.Genero" Text="Esto es requerido" />
+                            </RadzenFormField>
+                        </RadzenColumn>
+                    </RadzenRow>
+                    
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Teléfono" Component="Persona.Telefono" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenFormField Text="Teléfono" Variant="Variant.Outlined">
+                                <RadzenTextBox Name="Telefono" Placeholder="Teléfono" @bind-Value="@Atleta.Persona.Telefono" />
+                                <RadzenRequiredValidator Component="Telefono" Property="@Atleta.Persona.Telefono" Text="Esto es requerido" />
+                            </RadzenFormField>
+                        </RadzenColumn>
+                    </RadzenRow>
+                    
+                    <RadzenRow AlignItems="AlignItems.Center">
+                        <RadzenColumn Size="12" SizeMD="4">
+                            <RadzenLabel Text="Dirección" Component="Persona.Direccion" />
+                        </RadzenColumn>
+                        <RadzenColumn Size="12" SizeMD="8">
+                            <RadzenFormField Text="Dirección" Variant="Variant.Outlined">
+                                <RadzenTextBox Name="Direccion" Placeholder="Dirección" @bind-Value="@Atleta.Persona.Direccion" />
+                                <RadzenRequiredValidator Component="Direccion" Property="@Atleta.Persona.Direccion" Text="Esto es requerido" />
+                            </RadzenFormField>
+                        </RadzenColumn>
+                    </RadzenRow>
                 </RadzenStack>
             </RadzenFieldset>
         </RadzenColumn>
