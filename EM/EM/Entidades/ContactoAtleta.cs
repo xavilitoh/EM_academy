@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EM.Entidades;
 
@@ -33,5 +34,6 @@ public class ContactoAtleta
     public bool Activo { get; set; } = true;
 
     // Relacion
+    [ForeignKey("AtletaId")]
     public virtual Atleta Atleta { get; set; } = null!;
 }
