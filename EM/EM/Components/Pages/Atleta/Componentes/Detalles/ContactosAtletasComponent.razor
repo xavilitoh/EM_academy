@@ -1,4 +1,5 @@
 @rendermode InteractiveServer
+@inject NotificationService NotificationService
 @inject IContactosAtletasRepositorio repo
 <br/>
 <RadzenStack>
@@ -113,12 +114,29 @@
         await ContactosGrid.EditRow(contacto);
     }
 
-    void OnUpdateRow(ContactoAtleta contacto)
+    async Task OnUpdateRow(ContactoAtleta contacto)
     {
-        Reset(contacto);
+        try
+        {
+            Reset(contacto);
 
-        repo.Update(contacto);
-        GetData();
+            await repo.Update(contacto);
+            await GetData();
+        }
+        catch (Exception e)
+        {
+            Reset();
+            NotificationService.Notify(
+                new NotificationMessage
+                {
+                    Style = "position: absolute; top: -100%; right: 50%;",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "",
+                    Detail = e.Message,
+                    Duration = 5000
+                });
+        }
+        
     }
 
     async Task SaveRow(ContactoAtleta contacto)
@@ -147,11 +165,27 @@
         await ContactosGrid.InsertRow(contacto);
     }
 
-    void OnCreateRow(ContactoAtleta contacto)
+    async Task OnCreateRow(ContactoAtleta contacto)
     {
-        repo.Save(contacto);
+        try
+        {
+            await repo.Save(contacto);
 
-        _contactosToInsert.Remove(contacto);
-        GetData();
+            _contactosToInsert.Remove(contacto);
+            await GetData();
+        }
+        catch (Exception e)
+        {
+            Reset(contacto);
+            NotificationService.Notify(
+                new NotificationMessage
+                {
+                    Style = "position: absolute; top: -100%; right: 50%;",
+                    Severity = NotificationSeverity.Error,
+                    Summary = "",
+                    Detail = e.Message,
+                    Duration = 5000
+                });
+        }
     }
 }
