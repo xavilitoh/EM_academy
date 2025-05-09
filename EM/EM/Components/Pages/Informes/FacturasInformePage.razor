@@ -4,8 +4,15 @@
 @inject ApplicationDbContext context
 @inject NavigationManager NavigationManager
 @attribute [Authorize(Roles = "Admin")]
+
 <RadzenCard>
     <RadzenRow>
+        <RadzenColumn>
+            <RadzenTextBox @bind-Value="NombreFiltro" Placeholder="Nombre del Atleta" />
+        </RadzenColumn>
+        <RadzenColumn>
+            <RadzenTextBox @bind-Value="ApellidoFiltro" Placeholder="Apellido del Atleta" />
+        </RadzenColumn>
         <RadzenColumn>
             <RadzenDatePicker @bind-Value="FechaInicio" Placeholder="Fecha Inicio" />
         </RadzenColumn>
@@ -13,14 +20,15 @@
             <RadzenDatePicker @bind-Value="FechaFin" Placeholder="Fecha Fin" />
         </RadzenColumn>
         <RadzenColumn>
-        <RadzenDropDown Data="@context.Diciplinas.ToList()" TextProperty="Descripcion" ValueProperty="Id" @bind-Value="DisciplinaSeleccionada"
-                        Placeholder="Seleccionar Disciplina" />
+            <RadzenDropDown Data="@context.Diciplinas.ToList()" TextProperty="Descripcion" ValueProperty="Id" @bind-Value="DisciplinaSeleccionada"
+                            Placeholder="Seleccionar Disciplina" />
         </RadzenColumn>
         <RadzenColumn>
             <RadzenButton Text="Buscar" Variant="Variant.Outlined" Click="FiltrarFacturas" />
         </RadzenColumn>
     </RadzenRow>
 </RadzenCard>
+
 <br/>
 <RadzenCard>
     <RadzenRow AlignItems="AlignItems.End" JustifyContent="JustifyContent.Start">
@@ -69,6 +77,8 @@
     private DateTime? FechaFin { get; set; }
     private List<FacturasAtletas> Facturas { get; set; } = new();
     private int DisciplinaSeleccionada = 0;
+    private string? NombreFiltro { get; set; }
+    private string? ApellidoFiltro { get; set; }
 
     private async Task FiltrarFacturas()
     {
@@ -77,8 +87,10 @@
             .Include(a=> a.Atleta)
             .ThenInclude(a=> a.Persona)
             .Where(f => (!FechaInicio.HasValue || f.FechaRegistro >= FechaInicio) &&
+                        (!FechaFin.HasValue || f.FechaRegistro <= FechaFin) &&
                         (DisciplinaSeleccionada == 0 || f.Atleta.IdDisciplina == DisciplinaSeleccionada) &&
-                        (!FechaFin.HasValue || f.FechaRegistro <= FechaFin))
+                        (string.IsNullOrEmpty(NombreFiltro) || f.Atleta.Persona.Nombre.ToLower().Contains(NombreFiltro.ToLower())) &&
+                        (string.IsNullOrEmpty(ApellidoFiltro) || f.Atleta.Persona.Apellido.ToLower().Contains(ApellidoFiltro.ToLower())))
             .ToListAsync();
     }
     
