@@ -1,12 +1,15 @@
 ﻿@page "/"
 @using EM.Components.Pages.Home.Componentes
+@using EM.Data
 @using EM.Models
+@using Microsoft.EntityFrameworkCore
 @inject NotificationService NotificationService
 @inject IAtletaRepositorio AtletaRepositorio
 @inject ITipoUtileriaRepositorio TipoUtileriaRepositorio
 @inject IMarcaRepositorio MarcaRepositorio
 @inject IDiciplinaRepositorio DisciplinaRepositorio
 @inject IUtileriaRepositorio UtileriaRepositorio
+@inject ApplicationDbContext context
 @rendermode InteractiveServer
 @attribute [Authorize]
 
@@ -49,6 +52,15 @@
             </RadzenChart>
         </RadzenCard>
     </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="6" SizeSM="12" SizeXS="12">
+        <RadzenCard>
+            <h4>Pagos realizados por mes (últimos 12 meses)</h4>
+            <RadzenChart style="height: 250px">
+                <RadzenBarSeries Data="@_pagosPorMes" CategoryProperty="Mes" ValueProperty="MontoTotal" Title="Pagos"/>
+                <RadzenSeriesDataLabels Visible="true"/>
+            </RadzenChart>
+        </RadzenCard>
+    </RadzenColumn>
 </RadzenRow>
 
 @code {
@@ -59,7 +71,8 @@
     int _cantidadDisciplinas = 0;
     private List<DisciplinaAtletasCount> _disciplinaToChar = new();
     private List<TipoUtileriaCount> _tipoUtilkeriaToChar = new();
-
+    private List<PagosPorMes> _pagosPorMes = new();
+    
     protected override async Task OnInitializedAsync()
     {
         _cantidadAtletas = AtletaRepositorio.Cantidad();
@@ -68,6 +81,48 @@
         _disciplinaToChar = await DisciplinaRepositorio.GetDisciplinasConCantidadDeAtletas();
         _tipoUtilkeriaToChar = await TipoUtileriaRepositorio.GetTiposUtileriaConCantidad();
         _cantidadMarcas = MarcaRepositorio.Cantidad();
+        await getPagosPorMes();
+    }
+    
+    async Task getPagosPorMes()
+    {
+        var hoy = DateTime.Today;
+        var hace12Meses = hoy.AddMonths(-11);
+
+        _pagosPorMes = (await context.PagosFacturas
+                    .AsNoTracking()
+                    .Where(p => p.FechaRegistro >= hace12Meses)
+                    .GroupBy(p => new { p.FechaRegistro.Year, p.FechaRegistro.Month })
+                    .Select(g => new
+                    {
+                        Year = g.Key.Year,
+                        Month = g.Key.Month,
+                        MontoTotal = g.Sum(p => p.Monto)
+                    })
+                    .ToListAsync())
+                .Select(g => new PagosPorMes
+                {
+                    Mes = $"{g.Month:00}/{g.Year}",
+                    MontoTotal = g.MontoTotal
+                })
+                .OrderBy(x => x.Mes)
+                .ToList();
+
+        // Rellenar meses faltantes con monto 0
+        for (int i = 0; i < 12; i++)
+        {
+            var fecha = hace12Meses.AddMonths(i);
+            var mes = $"{fecha.Month:00}/{fecha.Year}";
+            if (!_pagosPorMes.Any(x => x.Mes == mes))
+                _pagosPorMes.Add(new PagosPorMes { Mes = mes, MontoTotal = 0 });
+        }
+        _pagosPorMes = _pagosPorMes.OrderBy(x => DateTime.ParseExact("01/" + x.Mes, "dd/MM/yyyy", null)).ToList();
+    }
+    
+    public class PagosPorMes
+    {
+        public string Mes { get; set; } = "";
+        public decimal MontoTotal { get; set; }
     }
 
 }
