@@ -99,6 +99,30 @@
                             </RadzenFormField>
                         </RadzenColumn>
                     </RadzenRow>
+                    <RadzenRow AlignItems="AlignItems.Center">
+                                            <RadzenColumn Size="12" SizeMD="4">
+                                                <RadzenLabel Text="¿Presenta alergias?" Component="PresentaAlergias" />
+                                            </RadzenColumn>
+                                            <RadzenColumn Size="12" SizeMD="8">
+                                                <RadzenFormField Text="¿Presenta alergias?" Variant="Variant.Outlined">
+                                                    <RadzenSwitch Name="PresentaAlergias" @bind-Value="@Atleta.PresentaAlergias" />
+                                                </RadzenFormField>
+                                            </RadzenColumn>
+                                        </RadzenRow>
+                                        @if (Atleta.PresentaAlergias)
+                                        {
+                                            <RadzenRow AlignItems="AlignItems.Center">
+                                                <RadzenColumn Size="12" SizeMD="4">
+                                                    <RadzenLabel Text="Alérgico a" Component="AlrgicoA" />
+                                                </RadzenColumn>
+                                                <RadzenColumn Size="12" SizeMD="8">
+                                                    <RadzenFormField Text="Alérgico a" Variant="Variant.Outlined">
+                                                        <RadzenTextBox Name="AlrgicoA" Placeholder="¿A qué es alérgico?" @bind-Value="@Atleta.AlrgicoA" />
+                                                        <RadzenRequiredValidator Component="AlrgicoA" Property="@Atleta.AlrgicoA" Text="Esto es requerido" />
+                                                    </RadzenFormField>
+                                                </RadzenColumn>
+                                            </RadzenRow>
+                                        }
                 </RadzenStack>
             </RadzenFieldset>
         </RadzenColumn>

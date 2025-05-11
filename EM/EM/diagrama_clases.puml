@@ -1,0 +1,112 @@
+@startuml
+
+class Atleta {
+    int Id
+    int IdPersona
+    int IdDisciplina
+    decimal Peso
+    decimal Altura
+    DateTime FechaRegistro
+}
+
+class Persona {
+    int Id
+    string Nombre
+    string Apellido
+    string Nacionalidad
+    string Genero
+    string Direccion
+    string Telefono
+    DateTime FechaNacimiento
+    DateTime FechaRegistro
+    string FullName
+    int Edad
+}
+
+class Disciplinas {
+    int Id
+    string Descripcion
+    decimal MontoMensualidad
+    DateTime FechaRegistro
+    bool Enable
+}
+
+class HistorialMedico {
+    int Id
+    int IdAtleta
+    string Diagnostico
+    string Tratamiento
+    DateTime FechaConsulta
+    DateTime FechaRegistro
+    bool Enable
+}
+
+class FacturasAtletas {
+    int Id
+    int IdAtleta
+    decimal Monto
+    decimal Resto
+    bool Pagada
+    DateTime FechaRegistro
+    bool Enable
+}
+
+class PagosFacturas {
+    int Id
+    int IdFactura
+    int IdAtleta
+    decimal Monto
+    DateTime FechaRegistro
+    bool Enable
+}
+
+class ContactoAtleta {
+    int Id
+    int AtletaId
+    string Nombre
+    string Telefono
+    string Correo
+    string Direccion
+    bool Principal
+    DateTime FechaCreacion
+    DateTime FechaModificacion
+    bool Activo
+}
+
+class Utileria {
+    int Id
+    Guid Code
+    DateTime FechaRegistro
+    decimal Cantidad
+    int IdTipo
+    int IdMarca
+}
+
+class TipoUtileria {
+    int Id
+    string Descripcion
+    DateTime FechaRegistro
+    bool Enable
+}
+
+class Marca {
+    int Id
+    string Descripcion
+    DateTime FechaRegistro
+    bool Enable
+}
+
+Atleta --> Persona : IdPersona
+Atleta --> Disciplinas : IdDisciplina
+Disciplinas "1" -- "0..*" Atleta : Atletas
+HistorialMedico --> Atleta : IdAtleta
+FacturasAtletas --> Atleta : IdAtleta
+PagosFacturas --> Atleta : IdAtleta
+PagosFacturas --> FacturasAtletas : IdFactura
+ContactoAtleta --> Atleta : AtletaId
+Utileria --> TipoUtileria : IdTipo
+Utileria --> Marca : IdMarca
+TipoUtileria "1" -- "0..*" Utileria : Utilerias
+Marca "1" -- "0..*" Utileria : Utilerias
+
+@enduml

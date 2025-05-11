@@ -9,6 +9,8 @@ public class Atleta
     public int IdDisciplina { get; set; }
     public decimal Peso { get; set; }
     public decimal Altura { get; set; }
+    public bool PresentaAlergias { get; set; } = false;
+    public string AlrgicoA { get; set; } = string.Empty;
     public DateTime FechaRegistro { get; set; } = DateTime.Now;
 
     [ForeignKey("IdPersona")] public Persona Persona { get; set; }
