@@ -35,6 +35,13 @@
                             </RadzenText>
                             <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate">
                                 <b>@(_atleta?.Persona.Nacionalidad)</b></RadzenText>
+                            @if (_atleta?.PresentaAlergias == true)
+                            {
+                                <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-2 rz-my-0" Style="color: var(--rz-text-tertiary-color);">Alergias</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate">
+                                    <b>@(_atleta?.AlrgicoA)</b>
+                                </RadzenText>
+                            }
                         </RadzenStack>
                     </RadzenStack>
                 </RadzenColumn>
