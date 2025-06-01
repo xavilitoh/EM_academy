@@ -91,7 +91,6 @@ public class DiciplinaRepositorio : IDiciplinaRepositorio
             return await _dbContext
                 .Diciplinas
                 .AsNoTracking()
-                .Where(a => a.Enable)
                 .ToListAsync();
         }
         catch (Exception e)

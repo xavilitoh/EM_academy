@@ -27,16 +27,19 @@
                     <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
                                   Click='() => { NavigationManager.NavigateTo($"/Disciplina/editar/{diciplina.Id}"); }'
                                   Text="Editar"/>
-                    <RadzenButton Variant="Variant.Outlined" class="rz-danger" ButtonType="ButtonType.Button" Icon="delete"
-                                  Click=@(args => DialogService.Confirm("Está seguro que quiere eliminar esta diciplina? Esta accion no es reversible", "Eliminar Diciplina", new ConfirmOptions() { OkButtonText = "Si", CancelButtonText = "No" })
-                                            .ContinueWith(async task =>
-                                            {
-                                                if (task.Result == true)
-                                                {
-                                                    await Delete(diciplina.Id);
-                                                }
-                                            }))
-                                  Text="Eliminar"/>
+                    <RadzenButton Variant="Variant.Outlined" class="@(diciplina.Enable ? "rz-danger" : "rz-success")" ButtonType="ButtonType.Button" Icon="@(diciplina.Enable ? "block" : "check_circle")"
+                                              Click=@(args => DialogService.Confirm(
+                                                  diciplina.Enable ? "¿Está seguro que quiere deshabilitar esta disciplina? Esta acción no es reversible" : "¿Está seguro que quiere habilitar esta disciplina?",
+                                                  diciplina.Enable ? "Deshabilitar Disciplina" : "Habilitar Disciplina",
+                                                  new ConfirmOptions() { OkButtonText = "Si", CancelButtonText = "No" })
+                                                  .ContinueWith(async task =>
+                                                  {
+                                                      if (task.Result == true)
+                                                      {
+                                                          await Delete(diciplina.Id, !diciplina.Enable);
+                                                      }
+                                                  }))
+                                              Text="@(diciplina.Enable ? "Deshabilitar" : "Habilitar")"/>
                     
                 </Template>
             </RadzenDataGridColumn>
@@ -58,11 +61,11 @@
         _diciplinas = await DiciplinaRepositorio.Get();
     }
 
-    private async Task Delete(int id)
+    private async Task Delete(int id, bool enable)
     {
         try
         {
-            await DiciplinaRepositorio.CambiaEstado(id, false);
+            await DiciplinaRepositorio.CambiaEstado(id, enable);
             await GetData();
         }
         catch (Exception e)
