@@ -1,0 +1,57 @@
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components
+@inject DialogService DialogService
+
+<RadzenTemplateForm TItem="MovimientosUtileria.MovimientoForm" Data="@Form" Submit="@OnSubmit">
+    <RadzenStack Gap="1rem">
+        <RadzenFormField Text="Cantidad" Variant="Variant.Outlined">
+            <RadzenNumeric @bind-Value="@Form.Cantidad" Min="0.01m" Step="0.01m" style="width: 100%" />
+            @if (Form.Cantidad <= 0)
+            {
+                <RadzenText TextStyle="TextStyle.Caption" class="rz-color-danger">La cantidad debe ser mayor que cero</RadzenText>
+            }
+        </RadzenFormField>
+
+        <RadzenFormField Text="Observación" Variant="Variant.Outlined">
+            <RadzenTextArea @bind-Value="@Form.Observacion" Rows="3" />
+        </RadzenFormField>
+
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem">
+            <RadzenButton ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Text="Cancelar" Click="@OnCancel" />
+            <RadzenButton ButtonType="ButtonType.Submit" ButtonStyle="@(TipoMovimiento == TipoMovimiento.Ingreso ? ButtonStyle.Success : ButtonStyle.Danger)" 
+                          Text="@(TipoMovimiento == TipoMovimiento.Ingreso ? "Ingresar" : "Retirar")" />
+        </RadzenStack>
+    </RadzenStack>
+</RadzenTemplateForm>
+
+@code {
+    [Parameter] public MovimientosUtileria.MovimientoForm Form { get; set; } = new();
+    [Parameter] public TipoMovimiento TipoMovimiento { get; set; }
+    [Parameter] public string Title { get; set; } = "Movimiento de Utilería";
+
+    private void OnSubmit()
+    {
+        // Asegurarse de que el formulario tenga valores válidos
+        if (Form == null)
+        {
+            Form = new MovimientosUtileria.MovimientoForm();
+        }
+
+        if (Form.Cantidad <= 0)
+        {
+            Form.Cantidad = 0.01m;
+        }
+
+        if (Form.Observacion == null)
+        {
+            Form.Observacion = string.Empty;
+        }
+
+        DialogService.Close(Form);
+    }
+
+    private void OnCancel()
+    {
+        DialogService.Close();
+    }
+}

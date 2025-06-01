@@ -1,0 +1,198 @@
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Identity
+@inject IUtileriaRepositorio RepositorioUtileria
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+<br/>
+<RadzenStack>
+    <RadzenDataGrid @ref="MovimientosGrid" Data="@Movimientos" TItem="MovimientoUtileria" AllowFiltering="true"
+                    AllowPaging="true" AllowSorting="true"
+                    EditMode="DataGridEditMode.Single" AllowColumnResizing="true">
+        <HeaderTemplate>
+            <RadzenRow JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Center">
+                <RadzenStack>
+                    <h3>Movimientos de Utilería</h3>
+                </RadzenStack>
+                <RadzenStack Orientation="Orientation.Horizontal" Gap="1rem">
+                    <RadzenButton Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Success" Icon="add_circle" Text="Ingresar"
+                                  Click="@MostrarModalIngreso" />
+                    <RadzenButton Variant="Variant.Outlined" ButtonStyle="ButtonStyle.Danger" Icon="remove_circle" Text="Retirar"
+                                  Click="@MostrarModalRetiro" />
+                </RadzenStack>
+            </RadzenRow>
+        </HeaderTemplate>
+        <Columns>
+            <RadzenDataGridColumn TItem="MovimientoUtileria" Property="Id" Title="ID" Visible="false"/>
+            <RadzenDataGridColumn TItem="MovimientoUtileria" Property="TipoMovimiento" Title="Tipo" Width="100px">
+                <Template Context="movimiento">
+                    @if (movimiento.TipoMovimiento == TipoMovimiento.Ingreso)
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Success" Text="Ingreso" />
+                    }
+                    else
+                    {
+                        <RadzenBadge BadgeStyle="BadgeStyle.Danger" Text="Retiro" />
+                    }
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="MovimientoUtileria" Property="Cantidad" Title="Cantidad" Width="100px" />
+            <RadzenDataGridColumn TItem="MovimientoUtileria" Property="FechaMovimiento" Title="Fecha" FormatString="{0:dd/MM/yyyy HH:mm}" Width="180px" />
+            <RadzenDataGridColumn TItem="MovimientoUtileria" Property="Usuario.FullName" Title="Usuario" Width="200px" />
+            <RadzenDataGridColumn TItem="MovimientoUtileria" Property="Observacion" Title="Observación" />
+        </Columns>
+    </RadzenDataGrid>
+</RadzenStack>
+
+<!-- Modal de Ingreso -->
+<RadzenDialog />
+
+@code {
+    [Parameter] public int IdUtileria { get; set; }
+
+    List<MovimientoUtileria> Movimientos { get; set; } = new List<MovimientoUtileria>();
+    RadzenDataGrid<MovimientoUtileria> MovimientosGrid;
+    string _userId = string.Empty;
+    MovimientoForm _movimientoForm = new MovimientoForm();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        // Obtener usuario actual
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var appUser = await UserManager.GetUserAsync(user);
+            if (appUser != null)
+            {
+                _userId = appUser.Id;
+            }
+        }
+
+        await CargarMovimientos();
+    }
+
+    private async Task CargarMovimientos()
+    {
+        try
+        {
+            Movimientos = await RepositorioUtileria.ObtenerMovimientos(IdUtileria);
+        }
+        catch (Exception ex)
+        {
+            // Si hay un error, inicializar con lista vacía
+            Movimientos = new List<MovimientoUtileria>();
+            Console.WriteLine($"Error al cargar movimientos: {ex.Message}");
+        }
+    }
+
+    private async Task MostrarModalIngreso()
+    {
+        try
+        {
+            _movimientoForm = new MovimientoForm();
+
+            var result = await DialogService.OpenAsync<ModalMovimientoUtileria>("Ingresar Utilería",
+                new Dictionary<string, object>()
+                {
+                    { "Form", _movimientoForm },
+                    { "TipoMovimiento", TipoMovimiento.Ingreso },
+                    { "Title", "Ingresar Utilería" }
+                },
+                new DialogOptions() { Width = "500px", Height = "auto", CloseDialogOnOverlayClick = true });
+
+            if (result != null)
+            {
+                MovimientoForm form = (MovimientoForm)result;
+
+                // Validar datos antes de guardar
+                if (form.Cantidad <= 0)
+                {
+                    throw new Exception("La cantidad debe ser mayor que cero");
+                }
+
+                await RepositorioUtileria.IngresarUtileria(IdUtileria, form.Cantidad, _userId, form.Observacion ?? "");
+                await CargarMovimientos();
+
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Operación exitosa",
+                    Detail = $"Se ha ingresado {form.Cantidad} unidad(es) correctamente",
+                    Duration = 4000
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al mostrar modal de ingreso: {ex.Message}");
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Error",
+                Detail = $"No se pudo realizar el ingreso: {ex.Message}",
+                Duration = 4000
+            });
+        }
+    }
+
+    private async Task MostrarModalRetiro()
+    {
+        try
+        {
+            _movimientoForm = new MovimientoForm();
+
+            var result = await DialogService.OpenAsync<ModalMovimientoUtileria>("Retirar Utilería",
+                new Dictionary<string, object>()
+                {
+                    { "Form", _movimientoForm },
+                    { "TipoMovimiento", TipoMovimiento.Retiro },
+                    { "Title", "Retirar Utilería" }
+                },
+                new DialogOptions() { Width = "500px", Height = "auto", CloseDialogOnOverlayClick = true });
+
+            if (result != null)
+            {
+                MovimientoForm form = (MovimientoForm)result;
+
+                // Validar datos antes de guardar
+                if (form.Cantidad <= 0)
+                {
+                    throw new Exception("La cantidad debe ser mayor que cero");
+                }
+
+                await RepositorioUtileria.RetirarUtileria(IdUtileria, form.Cantidad, _userId, form.Observacion ?? "");
+                await CargarMovimientos();
+
+                NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Operación exitosa",
+                    Detail = $"Se ha retirado {form.Cantidad} unidad(es) correctamente",
+                    Duration = 4000
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al mostrar modal de retiro: {ex.Message}");
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Error",
+                Detail = $"No se pudo realizar el retiro: {ex.Message}",
+                Duration = 4000
+            });
+        }
+    }
+
+    public class MovimientoForm
+    {
+        public decimal Cantidad { get; set; } = 1m;
+        public string? Observacion { get; set; } = string.Empty;
+    }
+}

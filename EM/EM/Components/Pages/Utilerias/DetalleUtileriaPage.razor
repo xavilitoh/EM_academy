@@ -1,0 +1,90 @@
+@page "/Utilerias/Detalle/{Id:int}"
+@using EM.Components.Pages.Utilerias.Componentes
+@inject IUtileriaRepositorio UtileriasRepositorio
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+@rendermode InteractiveServer
+@attribute [Authorize(Roles = "Almacenes,Admin")]
+
+<PageTitle>Detalle de Utilería</PageTitle>
+
+<RadzenCard>
+    <RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween"
+                 Style="height: 100%;">
+        <RadzenStack>
+            <RadzenRow>
+                <RadzenColumn Size="12" SizeMD="6" class="rz-p-4 rz-border-radius-1"
+                              Style="border: var(--rz-grid-cell-border)">
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+                        <RadzenIcon Icon="inventory" Style="font-size: 48px; color: var(--rz-primary-light);" />
+                        <RadzenStack Gap="0" class="rz-text-truncate">
+                            <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-2 rz-my-0"
+                                        Style="color: var(--rz-text-tertiary-color);">Tipo
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate">
+                                <b>@(_utileria?.Tipo?.Descripcion)</b>
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-4 rz-mb-0"
+                                        Style="color: var(--rz-text-tertiary-color);">Marca
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate">
+                                <b>@_utileria?.Marca?.Descripcion</b>
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-2 rz-my-0"
+                                        Style="color: var(--rz-text-tertiary-color);">Fecha de Registro
+                            </RadzenText>
+                            <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate">
+                                <b>@(_utileria?.FechaRegistro.ToString("dd/MM/yyyy"))</b>
+                            </RadzenText>
+                        </RadzenStack>
+                    </RadzenStack>
+                </RadzenColumn>
+                <RadzenColumn Size="12" SizeMD="6" class="rz-p-4 rz-border-radius-1"
+                              Style="border: var(--rz-grid-cell-border)">
+                    <RadzenStack Gap="0" class="rz-text-truncate">
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-2 rz-my-0" 
+                                    Style="color: var(--rz-text-tertiary-color);">ID
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate">
+                            <b>@(_utileria?.Id)</b>
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-2 rz-my-0" 
+                                    Style="color: var(--rz-text-tertiary-color);">Código
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate">
+                            <b>@(_utileria?.Code)</b>
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Overline" class="rz-mt-2 rz-my-0" 
+                                    Style="color: var(--rz-text-tertiary-color);">Cantidad Actual
+                        </RadzenText>
+                        <RadzenText TextStyle="TextStyle.Body1" class="rz-text-truncate">
+                            <b>@(_utileria?.Cantidad)</b>
+                        </RadzenText>
+                    </RadzenStack>
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenStack>
+    </RadzenStack>
+</RadzenCard>
+<br/>
+<RadzenCard>
+    <RadzenTabs TabPosition="TabPosition.Top" @bind-SelectedIndex=@selectedIndex>
+        <Tabs>
+            <RadzenTabsItem Text="Movimientos">
+                <MovimientosUtileria IdUtileria="Id"/>
+            </RadzenTabsItem>
+        </Tabs>
+    </RadzenTabs>
+</RadzenCard>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    Utileria? _utileria = new Utileria();
+    int selectedIndex = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _utileria = await UtileriasRepositorio.Get(Id);
+    }
+}

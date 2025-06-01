@@ -47,9 +47,14 @@
             </RadzenDataGridColumn>
             <RadzenDataGridColumn TItem="Utileria" Title="Opciones">
                 <Template Context="utileria">
-                    <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
-                                  Click='() => { NavigationManager.NavigateTo($"/Utilerias/editar/{utileria.Id}"); }'
-                                  Text="Editar"/>
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0.5rem">
+                        <RadzenButton Variant="Variant.Outlined" class="rz-info" ButtonType="ButtonType.Button" Icon="edit"
+                                      Click='() => { NavigationManager.NavigateTo($"/Utilerias/editar/{utileria.Id}"); }'
+                                      Text="Editar"/>
+                        <RadzenButton Variant="Variant.Outlined" class="rz-success" ButtonType="ButtonType.Button" Icon="visibility"
+                                      Click='() => { NavigationManager.NavigateTo($"/Utilerias/Detalle/{utileria.Id}"); }'
+                                      Text="Detalle"/>
+                    </RadzenStack>
                 </Template>
             </RadzenDataGridColumn>
         </Columns>
