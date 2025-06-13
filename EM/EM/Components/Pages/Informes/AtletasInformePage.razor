@@ -98,8 +98,6 @@
             .Include(a => a.Disciplinas)
             .Where(a => (!FechaInicio.HasValue || a.FechaRegistro >= FechaInicio) &&
                         (!FechaFin.HasValue || a.FechaRegistro <= FechaFin) &&
-                        // (!EdadMinima.HasValue || a.Persona.Edad >= EdadMinima) &&
-                        // (!EdadMaxima.HasValue || a.Persona.Edad <= EdadMaxima) &&
                         (!DisciplinaSeleccionada.HasValue || a.IdDisciplina == DisciplinaSeleccionada))
             .ToListAsync();
 
