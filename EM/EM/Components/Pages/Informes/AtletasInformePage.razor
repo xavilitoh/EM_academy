@@ -88,6 +88,7 @@
     protected override async Task OnInitializedAsync()
     {
         Disciplinas = await context.Diciplinas.AsNoTracking().ToListAsync();
+        Disciplinas.Insert(0, new Disciplinas { Id = 0, Descripcion = "Todas las disciplinas" });
     }
 
     private async Task FiltrarAtletas()
@@ -98,7 +99,7 @@
             .Include(a => a.Disciplinas)
             .Where(a => (!FechaInicio.HasValue || a.FechaRegistro >= FechaInicio) &&
                         (!FechaFin.HasValue || a.FechaRegistro <= FechaFin) &&
-                        (!DisciplinaSeleccionada.HasValue || a.IdDisciplina == DisciplinaSeleccionada))
+                        (!DisciplinaSeleccionada.HasValue || DisciplinaSeleccionada == 0 || a.IdDisciplina == DisciplinaSeleccionada))
             .ToListAsync();
 
         Atletas = Atletas.Where(a =>  (!EdadMinima.HasValue || a.Persona.Edad >= EdadMinima) &&

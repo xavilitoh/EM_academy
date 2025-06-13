@@ -20,7 +20,7 @@
             <RadzenDatePicker @bind-Value="FechaFin" Placeholder="Fecha Fin" />
         </RadzenColumn>
         <RadzenColumn>
-            <RadzenDropDown Data="@context.Diciplinas.ToList()" TextProperty="Descripcion" ValueProperty="Id" @bind-Value="DisciplinaSeleccionada"
+            <RadzenDropDown Data="@Disciplinas" TextProperty="Descripcion" ValueProperty="Id" @bind-Value="DisciplinaSeleccionada"
                             Placeholder="Seleccionar Disciplina" />
         </RadzenColumn>
         <RadzenColumn>
@@ -79,6 +79,13 @@
     private int DisciplinaSeleccionada = 0;
     private string? NombreFiltro { get; set; }
     private string? ApellidoFiltro { get; set; }
+    private List<Disciplinas> Disciplinas { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Disciplinas = await context.Diciplinas.AsNoTracking().ToListAsync();
+        Disciplinas.Insert(0, new Disciplinas { Id = 0, Descripcion = "Todas las disciplinas" });
+    }
 
     private async Task FiltrarFacturas()
     {

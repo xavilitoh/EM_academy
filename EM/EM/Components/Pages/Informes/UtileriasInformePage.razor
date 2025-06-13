@@ -66,7 +66,9 @@
     protected override async Task OnInitializedAsync()
     {
         TiposUtileria = await context.TiposUtileria.AsNoTracking().ToListAsync();
+        TiposUtileria.Insert(0, new TipoUtileria { Id = 0, Descripcion = "Todos los tipos" });
         Marcas = await context.Marcas.AsNoTracking().ToListAsync();
+        Marcas.Insert(0, new Marca { Id = 0, Descripcion = "Todas las marcas" });
     }
 
     private async Task FiltrarUtilerias()
@@ -77,8 +79,8 @@
             .Include(u => u.Marca)
             .Where(u => (!FechaInicio.HasValue || u.FechaRegistro >= FechaInicio) &&
                         (!FechaFin.HasValue || u.FechaRegistro <= FechaFin) &&
-                        (!TipoSeleccionado.HasValue || u.IdTipo == TipoSeleccionado) &&
-                        (!MarcaSeleccionada.HasValue || u.IdMarca == MarcaSeleccionada))
+                        (!TipoSeleccionado.HasValue || TipoSeleccionado == 0 || u.IdTipo == TipoSeleccionado) &&
+                        (!MarcaSeleccionada.HasValue || MarcaSeleccionada == 0 || u.IdMarca == MarcaSeleccionada))
             .ToListAsync();
     }
     
