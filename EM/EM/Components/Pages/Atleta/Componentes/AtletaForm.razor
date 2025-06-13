@@ -1,4 +1,5 @@
 @using EM.Models
+@using Radzen
 @inject IJSRuntime JsRuntime
 @inject IDiciplinaRepositorio DisciplinaRepositorio
 
@@ -55,11 +56,15 @@
                         <RadzenColumn Size="12" SizeMD="8">
                             <RadzenFormField Text="Fecha de Nacimiento" Variant="Variant.Outlined">
                                 <RadzenDatePicker Name="fNAcimiento" Placeholder="Fecha de Nacimiento"
-                                                  @bind-Value="@Atleta.Persona.FechaNacimiento"/>
+                                                  @bind-Value="@Atleta.Persona.FechaNacimiento" DateFormat="dd-MM-yyyy" Change="OnFechaNacimientoChange" />
                                 <RadzenRequiredValidator Component="fNAcimiento"
                                                          Property="@Atleta.Persona.FechaNacimiento"
                                                          Text="Esto es requerido"/>
                             </RadzenFormField>
+                            @if (!string.IsNullOrEmpty(errorFechaNacimiento))
+                            {
+                                <div style="color: red;">@errorFechaNacimiento</div>
+                            }
                         </RadzenColumn>
                     </RadzenRow>
                     <RadzenRow AlignItems="AlignItems.Center">
@@ -203,5 +208,27 @@
     private async Task GoBack()
     {
         await JsRuntime.InvokeVoidAsync("history.back");
+    }
+
+    private string? errorFechaNacimiento;
+
+    private void OnFechaNacimientoChange(DateTime? value)
+    {
+        errorFechaNacimiento = null;
+        if (value.HasValue)
+        {
+            var hoy = DateTime.Today;
+            int edad = hoy.Year - value.Value.Year;
+            // Si aún no ha cumplido años este año, restar uno
+            if (hoy.Month < value.Value.Month || (hoy.Month == value.Value.Month && hoy.Day < value.Value.Day))
+            {
+                edad--;
+            }
+            if (edad < 4)
+            {
+                errorFechaNacimiento = "El atleta debe ser mayor de 4 años";
+            }
+        }
+        StateHasChanged();
     }
 }

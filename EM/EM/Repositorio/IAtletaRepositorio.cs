@@ -39,6 +39,10 @@ public class AtletaRepositorio(ApplicationDbContext context) : IAtletaRepositori
     {
         try
         {
+            if (modelo.Persona.Edad  < 4)
+            {
+                throw new Exception("El atleta no puede ser menor de 4 años");
+            }
             var toUpdate = await context.Atletas
                 .Include(a => a.Persona)
                 .FirstOrDefaultAsync(a => a.Id == modelo.Id);
